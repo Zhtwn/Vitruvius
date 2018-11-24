@@ -38,9 +38,9 @@ has _hash_data => (
     builder => '_build__hash_data',
 );
 
-sub elements { shift->_hashes->{elements} }
+sub elements { shift->_hash_data->{elements} }
 
-sub hashes { shift->_hashes->{hashes} }
+sub hashes { shift->_hash_data->{hashes} }
 
 sub __make_hash {
     return crc32( join( '||', @_ ) );
