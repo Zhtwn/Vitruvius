@@ -22,65 +22,13 @@ has ast => (
 
 =head1 ATTRIBUTES
 
-=head2 bare
-
-RENAMEME - syntax tree without only the code content
-
-=cut
-
-has bare => (
-    is      => 'lazy',
-    isa     => InstanceOf ['PPI::Node'],
-    builder => '_build_bare',
-);
-
-sub _build_bare {
-    my $self = shift;
-
-    my $bare = $self->ast->clone;
-
-    $bare->prune(
-        sub {
-            my ( $top, $elt ) = @_;
-            return
-                 $elt->isa('PPI::Token::Comment')
-              || $elt->isa('PPI::Token::Data')
-              || $elt->isa('PPI::Token::End')
-              || $elt->isa('PPI::Token::Pod');
-        }
-    );
-
-    return $bare;
-}
-
-=head2 raw
-
-RENAMEME - bare syntax tree without whitespace
-
-=cut
-
-has raw => (
-    is      => 'lazy',
-    isa     => InstanceOf ['PPI::Node'],
-    builder => '_build_raw',
-);
-
-sub _build_raw {
-    my $self = shift;
-
-    my $raw = $self->ast->clone;
-    $raw->prune('PPI::Token::Whitespace');
-
-    return $raw;
-}
-
 =head2 hashes
 
-RENAMEME - hashes of all elements within raw syntax tree, by stringified element
+RENAMEME - hashes of all elements within syntax tree, hashed by stringified element
 
 =head2 elements
 
-RENAMEME - arrayrefs of all elements, by hash
+RENAMEME - arrayrefs of all elements, hashed by element hash
 
 =cut
 
@@ -101,7 +49,18 @@ sub __make_hash {
 sub __make_hash_data {
     my ( $elt, $hash_data, $seen ) = @_;
     $seen //= {};
+
+    # skip already-seen nodes (JIC)
     return if $seen->{$elt}++;
+
+    # skip non-code elements
+    return
+         if $elt->isa('PPI::Token::Comment')
+      || $elt->isa('PPI::Token::Data')
+      || $elt->isa('PPI::Token::End')
+      || $elt->isa('PPI::Token::Pod')
+      || $elt->isa('PPI::Token::Whitespace');
+
     my $hash;
     if ( $elt->isa('PPI::Node') ) {
         my @children = $elt->children;
@@ -124,10 +83,10 @@ sub __make_hash_data {
 sub _build_hash_data {
     my $self = shift;
 
-    my $raw = $self->raw;
+    my $ast = $self->ast;
 
     my $hash_data = { hashes => {}, elements => {} };
-    __make_hash_data( $raw, $hash_data );
+    __make_hash_data( $ast, $hash_data );
 
     return $hash_data;
 }
