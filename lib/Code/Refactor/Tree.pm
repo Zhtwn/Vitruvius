@@ -67,15 +67,16 @@ sub __make_hash_data {
       || $elt->isa('PPI::Token::Whitespace');
 
     my $hash;
-    if ( $elt->isa('PPI::Node') ) {
-        my @children = $elt->children;
-
+    if ( $elt->isa('PPI::Node') && (my @children = $elt->children) ) {
+        my @code_children;
         for my $child (@children) {
-            __make_hash_data( $child, $hash_data, $seen );
+            if ( __make_hash_data( $child, $hash_data, $seen ) ) {
+                push @code_children, $child;
+            }
         }
 
         # build hash from hashes of all children
-        $hash = __make_hash( map { $hash_data->{hashes}->{$_} } @children );
+        $hash = __make_hash( map { no overloading; $hash_data->{hashes}->{$_} } @code_children );
     }
     else {
         $hash = __make_hash( $elt->content );
@@ -83,6 +84,8 @@ sub __make_hash_data {
 
     $hash_data->{hashes}->{$elt_id} = $hash;
     push @{ $hash_data->{elements}->{$hash} }, $elt;
+
+    return 1;
 }
 
 sub _build__hash_data {
