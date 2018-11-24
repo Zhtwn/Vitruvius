@@ -51,7 +51,7 @@ sub __make_hash_data {
     $seen //= {};
 
     my $elt_id = do {
-        no overloading; # disable PPI stringification, to get class and refaddr
+        no overloading;    # disable PPI stringification, to get class and refaddr
         $elt . '';
     };
 
@@ -85,7 +85,7 @@ sub __make_hash_data {
     push @{ $hash_data->{elements}->{$hash} }, $elt;
 }
 
-sub _build_hash_data {
+sub _build__hash_data {
     my $self = shift;
 
     my $ast = $self->ast;
