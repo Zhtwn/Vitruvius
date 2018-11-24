@@ -8,13 +8,13 @@ use Digest::CRC qw{ crc32 };
 
 =head1 PARAMETERS
 
-=head2 ast
+=head2 ppi
 
 PPI::Node for this abstract syntax tree
 
 =cut
 
-has ast => (
+has ppi => (
     is       => 'ro',
     isa      => InstanceOf ['PPI::Node'],
     required => 1,
@@ -67,7 +67,7 @@ sub __make_hash_data {
       || $elt->isa('PPI::Token::Whitespace');
 
     my $hash;
-    if ( $elt->isa('PPI::Node') && (my @children = $elt->children) ) {
+    if ( $elt->isa('PPI::Node') && ( my @children = $elt->children ) ) {
         my @code_children;
         for my $child (@children) {
             if ( __make_hash_data( $child, $hash_data, $seen ) ) {
@@ -91,10 +91,10 @@ sub __make_hash_data {
 sub _build__hash_data {
     my $self = shift;
 
-    my $ast = $self->ast;
+    my $ppi = $self->ppi;
 
     my $hash_data = { hashes => {}, elements => {} };
-    __make_hash_data( $ast, $hash_data );
+    __make_hash_data( $ppi, $hash_data );
 
     return $hash_data;
 }
