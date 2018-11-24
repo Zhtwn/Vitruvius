@@ -34,7 +34,7 @@ RENAMEME - arrayrefs of all elements, hashed by element hash
 
 has _hash_data => (
     is      => 'lazy',
-    isa     => Dict [ hashes => HashRef, elements => HashRef [ ArrayRef [ InstanceOf ['PPI::Element'] ] ] ],
+    isa     => Dict [ hashes => HashRef, elements => HashRef [ HashRef [ ArrayRef [ InstanceOf ['PPI::Element'] ] ] ] ],
     builder => '_build__hash_data',
 );
 
@@ -83,7 +83,7 @@ sub __make_hash_data {
     }
 
     $hash_data->{hashes}->{$elt_id} = $hash;
-    push @{ $hash_data->{elements}->{$hash} }, $elt;
+    push @{ $hash_data->{elements}->{ ref $elt }->{$hash} }, $elt;
 
     return 1;
 }
