@@ -1,0 +1,3 @@
+-l=130  # Max line width is 130 cols
+-i=4    # Indent level is 4 cols
+-nolq   # Don't outdent long quoted strings
