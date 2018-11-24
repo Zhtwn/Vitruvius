@@ -50,8 +50,13 @@ sub __make_hash_data {
     my ( $elt, $hash_data, $seen ) = @_;
     $seen //= {};
 
+    my $elt_id = do {
+        no overloading; # disable PPI stringification, to get class and refaddr
+        $elt . '';
+    };
+
     # skip already-seen nodes (JIC)
-    return if $seen->{$elt}++;
+    return if $seen->{$elt_id}++;
 
     # skip non-code elements
     return
@@ -76,7 +81,7 @@ sub __make_hash_data {
         $hash = __make_hash( $elt->content );
     }
 
-    $hash_data->{hashes}->{$elt} = $hash;
+    $hash_data->{hashes}->{$elt_id} = $hash;
     push @{ $hash_data->{elements}->{$hash} }, $elt;
 }
 
