@@ -144,7 +144,7 @@ Distance from this node to provided node
 sub distance {
     my ( $self, $other ) = @_;
 
-    return $self->tlsh->total_diff($other);
+    return $self->tlsh->total_diff($other->tlsh);
 }
 
 1;

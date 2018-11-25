@@ -5,6 +5,7 @@ use Moo;
 use Types::Standard qw< Str HashRef ArrayRef InstanceOf >;
 
 use Code::Refactor::File;
+use Code::Refactor::SnippetGroup;
 
 =head1 PARAMETERS
 
@@ -38,6 +39,34 @@ sub _build_files {
     my $self = shift;
 
     return [ map { Code::Refactor::File->new( file => $_ ) } $self->filenames->@* ];
+}
+
+=head2 snippet_groups
+
+Snippets grouped by class
+
+=cut
+
+has snippet_groups => (
+    is      => 'lazy',
+    isa     => HashRef [ InstanceOf ['Code::Refactor::SnippetGroup'] ],
+    builder => '_build_snippet_groups',
+);
+
+sub _build_snippet_groups {
+    my $self = shift;
+
+    my %snippet_groups;
+
+    for my $file ( $self->files->@* ) {
+        for my $snippet ( $file->snippets->@* ) {
+            my $class = $snippet->class;
+            my $group = $snippet_groups{$class} //= Code::Refactor::SnippetGroup->new( class => $class );
+            $group->add_snippet($snippet);
+        }
+    }
+
+    return \%snippet_groups;
 }
 
 =head2 distances
