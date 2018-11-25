@@ -133,18 +133,4 @@ sub _build_hash {
     return $self->tlsh->get_hash;
 }
 
-=head1 METHODS
-
-=head2 distance
-
-Distance from this node to provided node
-
-=cut
-
-sub distance {
-    my ( $self, $other ) = @_;
-
-    return $self->tlsh->total_diff($other->tlsh);
-}
-
 1;
