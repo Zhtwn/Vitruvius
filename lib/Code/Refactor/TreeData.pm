@@ -101,9 +101,6 @@ around BUILDARGS => sub {
     my ( $orig, $self, @args ) = @_;
     my $args = $self->$orig(@args);
 
-    my $hash_data = { hashes => {}, elements => {} };
-    __make_hash_data( $args->{ppi}, $hash_data );
-
     # skip all document-level non-code elements
     my $raw_ppi = $args->{ppi}->clone;
 
@@ -118,6 +115,9 @@ around BUILDARGS => sub {
     );
 
     $args->{ppi} = $raw_ppi;
+
+    my $hash_data = { hashes => {}, elements => {} };
+    __make_hash_data( $args->{ppi}, $hash_data );
 
     return { %$args, %$hash_data };
 };
