@@ -50,7 +50,7 @@ has elements => (
     required => 1,
 );
 
-my $MIN_TLSH_LENGTH = 50;
+my $MIN_CONTENT_LENGTH = 50;
 
 sub __make_hash {
     my $ppi = shift;
@@ -60,8 +60,6 @@ sub __make_hash {
     my $tlsh = Code::Refactor::Tlsh->new;
     $tlsh->final($content, 1);
     my $hash = $tlsh->get_hash;
-
-    $hash ||= crc32($content);
 
     return $hash;
 }
@@ -81,13 +79,16 @@ sub __make_hash_data {
     # skip non-code elements
     return if $elt->isa('PPI::Token::Comment') || $elt->isa('PPI::Token::Whitespace');
 
+    return if length $elt->content < $MIN_CONTENT_LENGTH;
+
     if ( $elt->isa('PPI::Node') && ( my @children = $elt->children ) ) {
         __make_hash_data( $_, $hash_data, $seen ) for @children;
     }
 
-    my $hash = __make_hash($elt);
-    $hash_data->{hashes}->{$elt_id} = $hash;
-    push @{ $hash_data->{elements}->{ ref $elt }->{$hash} }, $elt;
+    if ( my $hash = __make_hash($elt) ) {
+        $hash_data->{hashes}->{$elt_id} = $hash;
+        push @{ $hash_data->{elements}->{ ref $elt }->{$hash} }, $elt;
+    }
 
     return 1;
 }
