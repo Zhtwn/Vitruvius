@@ -12,6 +12,8 @@ use Digest::CRC qw{ crc32 };
 
 PPI::Node for this abstract syntax tree
 
+NOTE: all document-level non-code sections are pruned in BUILDARGS
+
 =cut
 
 has ppi => (
@@ -63,12 +65,7 @@ sub __make_hash_data {
     return if $seen->{$elt_id}++;
 
     # skip non-code elements
-    return
-         if $elt->isa('PPI::Token::Comment')
-      || $elt->isa('PPI::Token::Data')
-      || $elt->isa('PPI::Token::End')
-      || $elt->isa('PPI::Token::Pod')
-      || $elt->isa('PPI::Token::Whitespace');
+    return if $elt->isa('PPI::Token::Comment') || $elt->isa('PPI::Token::Whitespace');
 
     my $hash;
     if ( $elt->isa('PPI::Node') && ( my @children = $elt->children ) ) {
@@ -98,6 +95,21 @@ around BUILDARGS => sub {
 
     my $hash_data = { hashes => {}, elements => {} };
     __make_hash_data( $args->{ppi}, $hash_data );
+
+    # skip all document-level non-code elements
+    my $raw_ppi = $args->{ppi}->clone;
+
+    $raw_ppi->prune(
+        sub {
+            my ( $top, $elt ) = @_;
+            return
+                 $elt->isa('PPI::Token::Data')
+              || $elt->isa('PPI::Token::End')
+              || $elt->isa('PPI::Token::Pod');
+        }
+    );
+
+    $args->{ppi} = $raw_ppi;
 
     return { %$args, %$hash_data };
 };
