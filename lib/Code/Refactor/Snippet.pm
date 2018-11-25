@@ -62,6 +62,9 @@ has raw_ppi => (
     is      => 'lazy',
     isa     => InstanceOf ['PPI::Element'],
     builder => '_build_raw_ppi',
+    handles => {
+        raw_content => 'content',
+    },
 );
 
 sub _build_raw_ppi {
