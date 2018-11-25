@@ -31,7 +31,7 @@ has ppi => (
     is       => 'ro',
     isa      => InstanceOf ['PPI::Element'],
     required => 1,
-    handles  => [qw< content >],
+    handles  => [qw< content class >],
 );
 
 =head2 min_content_length
