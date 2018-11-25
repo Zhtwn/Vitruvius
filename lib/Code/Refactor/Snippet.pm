@@ -104,8 +104,6 @@ has tlsh => (
     is      => 'lazy',
     isa     => InstanceOf['Code::Refactor::Tlsh'],
     builder => '_build_tlsh',
-    handles => [ qw< total_diff > ],
-
 );
 
 sub _build_tlsh {
@@ -133,6 +131,20 @@ sub _build_hash {
     my $self = shift;
 
     return $self->tlsh->get_hash;
+}
+
+=head1 METHODS
+
+=head2 distance
+
+Distance from this node to provided node
+
+=cut
+
+sub distance {
+    my ( $self, $other ) = @_;
+
+    return $self->tlsh->total_diff($other);
 }
 
 1;
