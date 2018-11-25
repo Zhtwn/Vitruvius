@@ -6,6 +6,8 @@ use Types::Standard qw{ ArrayRef HashRef InstanceOf Dict };
 
 use Digest::CRC qw{ crc32 };
 
+use Code::Refactor::Tlsh;
+
 =head1 PARAMETERS
 
 =head2 ppi
@@ -48,8 +50,25 @@ has elements => (
     required => 1,
 );
 
+my $MIN_TLSH_LENGTH = 50;
+
 sub __make_hash {
-    return crc32( join( '||', @_ ) );
+    my $ppi = shift;
+
+    if ( $ppi->can('prune') ) {
+        $ppi = $ppi->clone;
+        $ppi->prune('PPI::Token::Comment');
+    }
+
+    my $content = $ppi->content;
+
+    my $tlsh = Code::Refactor::Tlsh->new;
+    $tlsh->final($content, 1);
+    my $hash = $tlsh->get_hash;
+
+    $hash ||= crc32($content);
+
+    return $hash;
 }
 
 sub __make_hash_data {
@@ -67,22 +86,11 @@ sub __make_hash_data {
     # skip non-code elements
     return if $elt->isa('PPI::Token::Comment') || $elt->isa('PPI::Token::Whitespace');
 
-    my $hash;
     if ( $elt->isa('PPI::Node') && ( my @children = $elt->children ) ) {
-        my @code_children;
-        for my $child (@children) {
-            if ( __make_hash_data( $child, $hash_data, $seen ) ) {
-                push @code_children, $child;
-            }
-        }
-
-        # build hash from hashes of all children
-        $hash = __make_hash( map { no overloading; $hash_data->{hashes}->{$_} } @code_children );
-    }
-    else {
-        $hash = __make_hash( $elt->content );
+        __make_hash_data( $_, $hash_data, $seen ) for @children;
     }
 
+    my $hash = __make_hash($elt);
     $hash_data->{hashes}->{$elt_id} = $hash;
     push @{ $hash_data->{elements}->{ ref $elt }->{$hash} }, $elt;
 
