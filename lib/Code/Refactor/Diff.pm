@@ -1,4 +1,4 @@
-package Code::Refactor::SnippetPair;
+package Code::Refactor::Diff;
 
 use Moo;
 

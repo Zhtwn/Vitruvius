@@ -4,7 +4,7 @@ use Moose;
 
 use Types::Standard qw< Str ArrayRef HashRef InstanceOf >;
 
-use Code::Refactor::SnippetPair;
+use Code::Refactor::Diff;
 
 =head1 PARAMETERS
 
@@ -48,7 +48,7 @@ FIXME - O(n^2)
 
 has snippet_pairs => (
     is      => 'ro',
-    isa     => ArrayRef [ InstanceOf ['Code::Refactor::SnippetPair'] ],
+    isa     => ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ],
     lazy    => 1,
     builder => '_build_snippet_pairs',
 );
@@ -63,7 +63,7 @@ sub _build_snippet_pairs {
     for my $i ( 0 .. $#$snippets ) {
         for my $j ( $i .. $#$snippets ) {
             next if $i == $j;
-            push @snippet_pairs, Code::Refactor::SnippetPair->new( snippets => [ $snippets->[$i], $snippets->[$j] ] );
+            push @snippet_pairs, Code::Refactor::Diff->new( snippets => [ $snippets->[$i], $snippets->[$j] ] );
         }
     }
 
@@ -78,7 +78,7 @@ Distances between each snippet pair
 
 has distances => (
     is      => 'ro',
-    isa     => HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::SnippetPair'] ] ],
+    isa     => HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ] ],
     lazy    => 1,
     builder => '_build_distances',
 );
