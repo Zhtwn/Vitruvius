@@ -55,11 +55,6 @@ my $MIN_TLSH_LENGTH = 50;
 sub __make_hash {
     my $ppi = shift;
 
-    if ( $ppi->can('prune') ) {
-        $ppi = $ppi->clone;
-        $ppi->prune('PPI::Token::Comment');
-    }
-
     my $content = $ppi->content;
 
     my $tlsh = Code::Refactor::Tlsh->new;
@@ -108,7 +103,8 @@ around BUILDARGS => sub {
         sub {
             my ( $top, $elt ) = @_;
             return
-                 $elt->isa('PPI::Token::Data')
+                 $elt->isa('PPI::Token::Comment')
+              || $elt->isa('PPI::Token::Data')
               || $elt->isa('PPI::Token::End')
               || $elt->isa('PPI::Token::Pod');
         }
