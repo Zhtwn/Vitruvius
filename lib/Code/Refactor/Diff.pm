@@ -35,9 +35,9 @@ has distance => (
 sub _build_distance {
     my $self = shift;
 
-    my ( $first, $second ) = $self->snippets->@*;
+    my ( $first, $second ) = map { $_->tlsh } $self->snippets->@*;
 
-    return $first->distance($second);
+    return $first->total_diff($second);
 }
 
 1;
