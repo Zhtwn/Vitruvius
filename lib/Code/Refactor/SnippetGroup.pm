@@ -38,41 +38,41 @@ has snippets => (
     },
 );
 
-=head2 snippet_pairs
+=head2 diffs
 
-All possible pairs of snippets
+All possible pairs of snippets, as diffs
 
 FIXME - O(n^2)
 
 =cut
 
-has snippet_pairs => (
+has diffs => (
     is      => 'ro',
     isa     => ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ],
     lazy    => 1,
-    builder => '_build_snippet_pairs',
+    builder => '_build_diffs',
 );
 
-sub _build_snippet_pairs {
+sub _build_diffs {
     my $self = shift;
 
     my $snippets = $self->snippets;
 
-    my @snippet_pairs;
+    my @diffs;
 
     for my $i ( 0 .. $#$snippets ) {
         for my $j ( $i .. $#$snippets ) {
             next if $i == $j;
-            push @snippet_pairs, Code::Refactor::Diff->new( snippets => [ $snippets->[$i], $snippets->[$j] ] );
+            push @diffs, Code::Refactor::Diff->new( snippets => [ $snippets->[$i], $snippets->[$j] ] );
         }
     }
 
-    return \@snippet_pairs;
+    return \@diffs;
 }
 
 =head2 distances
 
-Distances between each snippet pair
+Distances between each snippet in a Diff
 
 =cut
 
@@ -88,8 +88,8 @@ sub _build_distances {
 
     my %distances;
 
-    for my $pair ( $self->snippet_pairs->@* ) {
-        push $distances{ $pair->distance }->@*, $pair;
+    for my $diff ( $self->diffs->@* ) {
+        push $distances{ $diff->distance }->@*, $diff;
     }
 
     return \%distances;
