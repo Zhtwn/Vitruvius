@@ -95,7 +95,8 @@ sub _build_distances {
     my %distances;
 
     for my $diff ( $self->diffs->@* ) {
-        push $distances{ $diff->distance }->@*, $diff;
+        my $distance = $diff->identical ? -1 : $diff->distance;
+        push $distances{$distance}->@*, $diff;
     }
 
     return \%distances;
