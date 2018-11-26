@@ -2,8 +2,9 @@ package Code::Refactor::Diff;
 
 use Moo;
 
-use Types::Standard qw< Int InstanceOf Tuple >;
+use Types::Standard qw< Int Str InstanceOf Tuple >;
 
+use Diff::LibXDiff;
 use Text::Levenshtein;
 
 =head1 PARAMETERS
@@ -59,6 +60,24 @@ sub _build_levenshtein_distance {
 
     $DB::single = 1;
     return Text::Levenshtein::distance( map { $_->raw_content } $self->snippets->@* );
+}
+
+=head2 xdiff
+
+Diff from libxdiff
+
+=cut
+
+has xdiff => (
+    is      => 'lazy',
+    isa     => Str,
+    builder => '_build_xdiff',
+);
+
+sub _build_xdiff {
+    my $self = shift;
+
+    return Diff::LibXDiff->diff( map { $_->raw_content } $self->snippets->@* );
 }
 
 1;
