@@ -118,19 +118,19 @@ sub _build_tlsh {
     return $tlsh;
 }
 
-=head2 hash
+=head2 tlsh_hash
 
 TLSH hash for code snippet
 
 =cut
 
-has hash => (
+has tlsh_hash => (
     is      => 'lazy',
     isa     => Str,
-    builder => '_build_hash',
+    builder => '_build_tlsh_hash',
 );
 
-sub _build_hash {
+sub _build_tlsh_hash {
     my $self = shift;
 
     my $full_hash = $self->tlsh->get_hash;
