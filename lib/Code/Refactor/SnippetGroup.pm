@@ -63,7 +63,13 @@ sub _build_diffs {
     for my $i ( 0 .. $#$snippets ) {
         for my $j ( $i .. $#$snippets ) {
             next if $i == $j;
-            push @diffs, Code::Refactor::Diff->new( snippets => [ $snippets->[$i], $snippets->[$j] ] );
+
+            my $first  = $snippets->[$i];
+            my $second = $snippets->[$j];
+
+            # HACK - only look at different files
+            next if $first->file eq $second->file;
+            push @diffs, Code::Refactor::Diff->new( snippets => [ $first, $second ] );
         }
     }
 
