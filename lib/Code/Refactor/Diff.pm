@@ -4,6 +4,8 @@ use Moo;
 
 use Types::Standard qw< Int InstanceOf Tuple >;
 
+use Text::Levenshtein;
+
 =head1 PARAMETERS
 
 =head2 snippets
@@ -38,6 +40,25 @@ sub _build_distance {
     my ( $first, $second ) = map { $_->tlsh } $self->snippets->@*;
 
     return $first->total_diff($second);
+}
+
+=head2 levenshtein_distance
+
+Levenshtein distance between uncommented versions of snippets
+
+=cut
+
+has levenshtein_distance => (
+    is      => 'lazy',
+    isa     => Int,
+    builder => '_build_levenshtein_distance',
+);
+
+sub _build_levenshtein_distance {
+    my $self = shift;
+
+    $DB::single = 1;
+    return Text::Levenshtein::distance( map { $_->raw_content } $self->snippets->@* );
 }
 
 1;
