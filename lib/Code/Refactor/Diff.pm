@@ -2,7 +2,7 @@ package Code::Refactor::Diff;
 
 use Moo;
 
-use Types::Standard qw< Int Str InstanceOf Tuple >;
+use Types::Standard qw< Int Str Bool InstanceOf Tuple >;
 
 use Diff::LibXDiff;
 use Text::Levenshtein;
@@ -22,6 +22,26 @@ has snippets => (
 );
 
 =head1 ATTRIBUTES
+
+=head2 identical
+
+Are the two snippets identical?
+
+=cut
+
+has identical => (
+    is      => 'lazy',
+    isa     => Bool,
+    builder => '_build_identical',
+);
+
+sub _build_identical {
+    my $self = shift;
+
+    my ( $first, $second ) = $self->snippets->@*;
+
+    return $first->crc_hash == $second->crc_hash;
+}
 
 =head2 distance
 
