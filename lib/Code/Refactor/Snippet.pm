@@ -133,7 +133,10 @@ has hash => (
 sub _build_hash {
     my $self = shift;
 
-    return $self->tlsh->get_hash;
+    my $full_hash = $self->tlsh->get_hash;
+
+    # HACK - strip off the length/Q ratios from the hash (first 6 chars)
+    return substr $full_hash, 6;
 }
 
 1;
