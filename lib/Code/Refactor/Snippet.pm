@@ -5,6 +5,8 @@ use Moo;
 use Types::Path::Tiny qw< File >;
 use Types::Standard qw< Int Str Bool InstanceOf >;
 
+use Digest::CRC qw< crc32 >;
+
 use Code::Refactor::Tlsh;
 
 =head1 PARAMETERS
@@ -137,6 +139,25 @@ sub _build_tlsh_hash {
 
     # HACK - strip off the length/Q ratios from the hash (first 6 chars)
     return substr $full_hash, 6;
+}
+
+
+=head2 crc_hash
+
+CRC32 hash for code snippet
+
+=cut
+
+has crc_hash => (
+    is      => 'lazy',
+    isa     => Int,
+    builder => '_build_crc_hash',
+);
+
+sub _build_crc_hash {
+    my $self = shift;
+
+    return crc32( $self->raw_content );
 }
 
 1;
