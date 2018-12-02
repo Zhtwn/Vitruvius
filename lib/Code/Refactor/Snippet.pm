@@ -6,6 +6,7 @@ use Types::Path::Tiny qw< File >;
 use Types::Standard qw< Int Str Bool InstanceOf >;
 
 use Digest::CRC qw< crc32 >;
+use Perl::Tidy;
 
 use Code::Refactor::Location;
 use Code::Refactor::Tlsh;
@@ -83,9 +84,6 @@ has raw_ppi => (
     is      => 'lazy',
     isa     => InstanceOf ['PPI::Element'],
     builder => '_build_raw_ppi',
-    handles => {
-        raw_content => 'content',
-    },
 );
 
 sub _build_raw_ppi {
@@ -98,6 +96,30 @@ sub _build_raw_ppi {
     }
 
     return $ppi;
+}
+
+=head2 raw_content
+
+Code content of C<raw_ppi>, run through L<Perl::Tidy> for whitespace standardization
+
+=cut
+
+has raw_content => (
+    is      => 'lazy',
+    isa     => Str,
+    builder => '_build_raw_content',
+);
+
+sub _build_raw_content {
+    my $self = shift;
+
+    my $ppi_content = $self->raw_ppi->content;
+
+    my $raw_content;
+
+    my $perltidy_error = Perl::Tidy::perltidy( source => \$ppi_content, destination => \$raw_content );
+
+    return $perltidy_error ? $ppi_content : $raw_content;
 }
 
 =head2 is_valid
