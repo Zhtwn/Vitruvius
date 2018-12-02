@@ -7,6 +7,7 @@ use Types::Standard qw< Int Str Bool InstanceOf >;
 
 use Digest::CRC qw< crc32 >;
 
+use Code::Refactor::Location;
 use Code::Refactor::Tlsh;
 
 =head1 PARAMETERS
@@ -53,6 +54,24 @@ has min_content_length => (
 );
 
 =head1 ATTRIBUTES
+
+=head2 location
+
+Human-readable location for snippet
+
+=cut
+
+has location => (
+    is      => 'lazy',
+    isa     => InstanceOf['Code::Refactor::Location'],
+    builder => '_build_location',
+);
+
+sub _build_location {
+    my $self = shift;
+
+    return Code::Refactor::Location->new( file => $self->file, ppi => $self->ppi );
+}
 
 =head2 raw_ppi
 
