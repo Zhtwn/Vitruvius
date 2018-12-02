@@ -2,7 +2,12 @@ package Code::Refactor;
 
 use Moo;
 
+use feature 'state';
+
 use Types::Standard qw< Str HashRef ArrayRef InstanceOf >;
+
+use Hash::Merge;
+use List::Util 'reduce';
 
 use Code::Refactor::File;
 use Code::Refactor::SnippetGroup;
@@ -39,6 +44,35 @@ sub _build_files {
     my $self = shift;
 
     return [ map { Code::Refactor::File->new( file => $_ ) } $self->filenames->@* ];
+}
+
+=head2 snippet_hashes
+
+All snippets from all files, grouped by class and all hash types
+
+=cut
+
+has snippet_hashes => (
+    is      => 'lazy',
+    isa     => HashRef [ HashRef [ HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Snippet'] ] ] ] ],
+    builder => '_build_snippet_hashes',
+);
+
+sub _build_snippet_hashes {
+    my $self = shift;
+
+    my @files = $self->files->@*;
+    my @snippet_hashes = map { $_->snippet_hashes } @files;
+
+    state $merger = do {
+        my $m = Hash::Merge->new('LEFT_PRECEDENT');
+        $m->set_clone_behavior(0);  # do not clone internally (preserves PPI objects)
+        $m;
+    };
+
+    my $hashes = reduce { $merger->merge($a, $b) } @snippet_hashes;
+
+    return $hashes;
 }
 
 =head2 snippet_groups
