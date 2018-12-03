@@ -3,7 +3,7 @@ package Code::Refactor::File;
 use Moo;
 use v5.16;
 
-use Types::Path::Tiny qw< File >;
+use Types::Path::Tiny qw< File Path >;
 use Types::Standard qw{ HashRef ArrayRef InstanceOf };
 
 use PPI;
@@ -11,6 +11,18 @@ use PPI;
 use Code::Refactor::Snippet;
 
 =head1 PARAMETERS
+
+=head2 base_dir
+
+Base directory for files
+
+=cut
+
+has base_dir => (
+    is       => 'ro',
+    isa      => Path,
+    required => 1,
+);
 
 =head2 file
 
@@ -44,7 +56,7 @@ sub _build_ppi {
 
     my $filename = $self->file . '';    # stringify Path::Tiny obj
 
-    say "Processing $filename";
+    say "Reading and parsing " . $self->file->relative( $self->base_dir );
 
     my $ppi = PPI::Document->new($filename);
 
@@ -79,14 +91,18 @@ sub _build_snippets {
     my @stack = ( $self->ppi );
     my @snippets;
 
+    my $base_dir = $self->base_dir;
+    my $file     = $self->file;
+
     while ( my $ppi = shift @stack ) {
         if ( $ppi->can('children') && ( my @children = $ppi->children ) ) {
             push @stack, @children;
         }
 
         my $snippet = Code::Refactor::Snippet->new(
-            file => $self->file,
-            ppi  => $ppi,
+            base_dir => $base_dir,
+            file     => $file,
+            ppi      => $ppi,
         );
 
         push @snippets, $snippet

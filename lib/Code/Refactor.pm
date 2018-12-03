@@ -4,15 +4,32 @@ use Moo;
 
 use feature 'state';
 
+use Types::Path::Tiny qw< Path >;
 use Types::Standard qw< Str HashRef ArrayRef InstanceOf >;
 
+use Cwd;
 use Hash::Merge;
 use List::Util 'reduce';
+use Path::Tiny;
 
 use Code::Refactor::File;
 use Code::Refactor::SnippetGroup;
 
 =head1 PARAMETERS
+
+=head2 base_dir
+
+Base directory for all files
+
+Default: C<cwd>
+
+=cut
+
+has base_dir => (
+    is      => 'ro',
+    isa     => Path,
+    default => sub { path( cwd() ) },
+);
 
 =head2 filenames
 
@@ -43,7 +60,9 @@ has files => (
 sub _build_files {
     my $self = shift;
 
-    return [ map { Code::Refactor::File->new( file => $_ ) } $self->filenames->@* ];
+    my $base_dir = $self->base_dir;
+
+    return [ map { Code::Refactor::File->new( base_dir => $base_dir, file => $_ ) } $self->filenames->@* ];
 }
 
 =head2 snippet_hashes

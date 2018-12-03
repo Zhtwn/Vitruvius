@@ -2,12 +2,29 @@ package Code::Refactor::Location;
 
 use Moo;
 
-use Types::Path::Tiny qw< File >;
+use feature 'state';
+
+use Types::Path::Tiny qw< File Path >;
 use Types::Standard qw< Str Int InstanceOf >;
+
+use Path::Tiny;
+use Cwd;
 
 use overload '""' => 'stringify';
 
 =head1 PARAMETERS
+
+=head2 base_dir
+
+Base directory for files
+
+=cut
+
+has base_dir => (
+    is       => 'ro',
+    isa      => Path,
+    required => 1,
+);
 
 =head2 file
 
@@ -102,7 +119,8 @@ Human-readable location for snippet, as string
 sub stringify {
     my $self = shift;
 
-    return join ', ', grep { $_ } ( $self->file . '', $self->subname, $self->line_number );
+    my $base_dir = $self->base_dir;
+    return join ', ', grep { $_ } ( $self->file->relative($base_dir) . '', $self->subname, $self->line_number );
 }
 
 1;

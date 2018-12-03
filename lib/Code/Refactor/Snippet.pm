@@ -2,7 +2,7 @@ package Code::Refactor::Snippet;
 
 use Moo;
 
-use Types::Path::Tiny qw< File >;
+use Types::Path::Tiny qw< File Path >;
 use Types::Standard qw< Int Str Bool HashRef ArrayRef InstanceOf Tuple >;
 
 use Digest::CRC qw< crc32 >;
@@ -13,6 +13,18 @@ use Code::Refactor::Tlsh;
 use Code::Refactor::Util qw< hash_ppi >;
 
 =head1 PARAMETERS
+
+=head2 base_dir
+
+Base directory for files
+
+=cut
+
+has base_dir => (
+    is       => 'ro',
+    isa      => Path,
+    required => 1,
+);
 
 =head2 file
 
@@ -72,7 +84,7 @@ has location => (
 sub _build_location {
     my $self = shift;
 
-    return Code::Refactor::Location->new( file => $self->file, ppi => $self->ppi );
+    return Code::Refactor::Location->new( base_dir => $self->base_dir, file => $self->file, ppi => $self->ppi );
 }
 
 =head2 raw_ppi
