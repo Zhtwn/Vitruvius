@@ -3,13 +3,14 @@ package Code::Refactor::Snippet;
 use Moo;
 
 use Types::Path::Tiny qw< File >;
-use Types::Standard qw< Int Str Bool InstanceOf >;
+use Types::Standard qw< Int Str Bool HashRef ArrayRef InstanceOf Tuple >;
 
 use Digest::CRC qw< crc32 >;
 use Perl::Tidy;
 
 use Code::Refactor::Location;
 use Code::Refactor::Tlsh;
+use Code::Refactor::Util qw< hash_ppi >;
 
 =head1 PARAMETERS
 
@@ -140,9 +141,74 @@ sub _build_is_valid {
     return length( $self->raw_ppi->content ) >= $self->min_content_length;
 }
 
+=head2 hashes
+
+Hashes of raw PPI structure, excluding comments and whitespace, using different hash methods:
+
+=over
+
+=item * CRC - crc32 hash of raw code content
+
+=item * PPI - hash of PPI structure
+
+=item * TLSH - TLSH hash of raw code content
+
+=back
+
+=cut
+
+has hashes => (
+    is      => 'lazy',
+    isa     => HashRef [Str],
+    builder => '_build_hashes',
+);
+
+sub _build_hashes {
+    my $self = shift;
+
+    my $raw_ppi = $self->raw_ppi;
+
+#   my $full_hash = $self->tlsh->get_hash;
+
+    # HACK - strip off the length/Q ratios from the hash (first 6 chars)
+#   my $tlsh_hash = substr $full_hash, 6;
+
+    return {
+        CRC  => crc32( $raw_ppi->content ),
+        PPI  => hash_ppi($raw_ppi),
+#       TLSH => $tlsh_hash,
+    };
+}
+
+# my kingdom for a Moo::Meta::Attribute::Native::Trait::Hash ...
+
+=head2 crc_hash
+
+CRC32 hash for raw code snippet
+
+=cut
+
+sub crc_hash { shift->hashes->{CRC} }
+
+=head2 ppi_hash
+
+PPI structure hash for raw code snippet
+
+=cut
+
+sub ppi_hash   { shift->hashes->{PPI} }
+
+=head2 tlsh_hash
+
+TLSH hash for code snippet
+
+=cut
+
+sub tlsh_hash  { shift->hashes->{TLSH} }
+
 =head2 tlsh
 
-Code::Refactor::Tlsh instance
+Code::Refactor::Tlsh instance - used to build TLSH hash
 
 =cut
 
@@ -159,46 +225,6 @@ sub _build_tlsh {
     $tlsh->final( $self->raw_ppi->content, 1 );
 
     return $tlsh;
-}
-
-=head2 tlsh_hash
-
-TLSH hash for code snippet
-
-=cut
-
-has tlsh_hash => (
-    is      => 'lazy',
-    isa     => Str,
-    builder => '_build_tlsh_hash',
-);
-
-sub _build_tlsh_hash {
-    my $self = shift;
-
-    my $full_hash = $self->tlsh->get_hash;
-
-    # HACK - strip off the length/Q ratios from the hash (first 6 chars)
-    return substr $full_hash, 6;
-}
-
-
-=head2 crc_hash
-
-CRC32 hash for code snippet
-
-=cut
-
-has crc_hash => (
-    is      => 'lazy',
-    isa     => Int,
-    builder => '_build_crc_hash',
-);
-
-sub _build_crc_hash {
-    my $self = shift;
-
-    return crc32( $self->raw_content );
 }
 
 1;
