@@ -9,6 +9,7 @@ use Types::Standard qw{ HashRef ArrayRef InstanceOf };
 use PPI;
 
 use Code::Refactor::Snippet;
+use Code::Refactor::Util qw< is_interesting >;
 
 =head1 PARAMETERS
 
@@ -99,6 +100,8 @@ sub _build_snippets {
         if ( $ppi->can('children') && ( my @children = $ppi->children ) ) {
             push @stack, @children;
         }
+
+        next unless is_interesting($ppi);
 
         my $snippet = Code::Refactor::Snippet->new(
             base_dir => $base_dir,
