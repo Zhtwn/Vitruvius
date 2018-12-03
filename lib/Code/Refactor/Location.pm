@@ -120,7 +120,7 @@ sub stringify {
     my $self = shift;
 
     my $base_dir = $self->base_dir;
-    return join ', ', grep { $_ } ( $self->file->relative($base_dir) . '', $self->subname, $self->line_number );
+    return join ', ', grep { $_ } ( $self->file->relative($base_dir) . '', $self->subname, 'L' . $self->line_number );
 }
 
 1;
