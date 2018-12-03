@@ -1,6 +1,7 @@
 package Code::Refactor::File;
 
 use Moo;
+use v5.16;
 
 use Types::Path::Tiny qw< File >;
 use Types::Standard qw{ ArrayRef InstanceOf };
@@ -42,6 +43,8 @@ sub _build_ppi {
     my $self = shift;
 
     my $filename = $self->file . '';    # stringify Path::Tiny obj
+
+    say "Processing $filename";
 
     my $ppi = PPI::Document->new($filename);
 
