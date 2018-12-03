@@ -1,21 +1,38 @@
 package Code::Refactor;
 
 use Moo;
+use v5.16;
 
 use feature 'state';
 
 use Types::Path::Tiny qw< Path >;
-use Types::Standard qw< Str HashRef ArrayRef InstanceOf >;
+use Types::Standard qw< Str Int HashRef ArrayRef InstanceOf >;
 
 use Cwd;
 use Hash::Merge;
+use List::MoreUtils 'part';
 use List::Util 'reduce';
+use Parallel::ForkManager;
 use Path::Tiny;
 
 use Code::Refactor::File;
 use Code::Refactor::SnippetGroup;
 
 =head1 PARAMETERS
+
+=head2 jobs
+
+Number of jobs to use to parse files
+
+Default: 1
+
+=cut
+
+has jobs => (
+    is      => 'ro',
+    isa     => Int,
+    default => 1,
+);
 
 =head2 base_dir
 
@@ -62,7 +79,50 @@ sub _build_files {
 
     my $base_dir = $self->base_dir;
 
-    return [ map { Code::Refactor::File->new( base_dir => $base_dir, file => $_ ) } $self->filenames->@* ];
+    my $jobs = $self->jobs;
+
+    if ( $jobs == 1 ) {
+        return [ map { Code::Refactor::File->new( base_dir => $base_dir, file => $_ ) } $self->filenames->@* ];
+    }
+    else {
+        # partition files across jobs
+        my $i = 0;
+        my @filename_batches = part { $i++ % $jobs } $self->filenames->@*;
+
+        my @files;
+
+        my $pm = Parallel::ForkManager->new($jobs);
+
+        $pm->run_on_finish(
+            sub {
+                my ( $pid, $exit_code, $ident, $exit_signal, $core_dump, $job_files ) = @_;
+                if ($job_files) {
+                    push @files, @$job_files;
+                }
+            }
+        );
+
+      JOB:
+        for my $job_num ( 0 .. $jobs - 1 ) {
+            $pm->start and next JOB;
+
+            my $job_files = [];
+            for my $filename ( $filename_batches[$job_num]->@* ) {
+                my $file = Code::Refactor::File->new(
+                    base_dir => $base_dir,
+                    file     => $filename,
+                );
+                $file->snippet_hashes;    # force all building to be done in parallel
+                push @$job_files, $file;
+            }
+
+            $pm->finish( 0, $job_files );
+        }
+
+        $pm->wait_all_children;
+
+        return \@files;
+    }
 }
 
 =head2 snippet_hashes
