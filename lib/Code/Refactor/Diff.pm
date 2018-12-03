@@ -2,9 +2,10 @@ package Code::Refactor::Diff;
 
 use Moo;
 
-use Types::Standard qw< Int Str Bool InstanceOf Tuple >;
+use Types::Standard qw< Int Str Num Bool InstanceOf Tuple >;
 
 use Diff::LibXDiff;
+use List::Util qw< max min >;
 use Text::Levenshtein;
 
 =head1 PARAMETERS
@@ -78,7 +79,6 @@ has levenshtein_distance => (
 sub _build_levenshtein_distance {
     my $self = shift;
 
-    $DB::single = 1;
     return Text::Levenshtein::distance( map { $_->raw_content } $self->snippets->@* );
 }
 
@@ -98,6 +98,41 @@ sub _build_xdiff {
     my $self = shift;
 
     return Diff::LibXDiff->diff( map { $_->raw_content } $self->snippets->@* );
+}
+
+=head2 diff_lines
+
+Number of line differences
+
+=cut
+
+has diff_lines => (
+    is => 'lazy',
+    isa => Num,
+    builder => '_build_diff_lines',
+);
+
+sub _build_diff_lines {
+    my $self = shift;
+
+    my $xdiff = $self->xdiff;
+
+    my %counts;
+    $counts{$_}++ for map { substr( $_, 0, 1 ) } split /\n/, $xdiff;
+
+    my $line_count = max( $counts{'+'}, $counts{'-'} );
+
+    my @content = map { $_->ppi->content } $self->snippets->@*;
+
+    my @lines = map { [ split /\n/, $_ ] } @content;
+
+    my @line_counts = map { scalar @$_ } @lines;
+
+    my $tot_lines = min @line_counts;
+
+#   my $tot_lines = max map { @$_ } map { [ split /\n/, $_ ] } map { $_->ppi->content } $self->snippets->@*;
+
+    return $line_count / $tot_lines;
 }
 
 1;
