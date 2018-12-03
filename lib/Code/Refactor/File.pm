@@ -118,7 +118,7 @@ sub _build_snippets {
 
 =head2 snippet_hashes
 
-Snippets grouped by class and hashed value (using multiple hash types)
+Snippets grouped by class, hash type, and hashed value (using multiple hash types)
 
 =cut
 
