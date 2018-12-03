@@ -4,7 +4,7 @@ use Moo;
 use v5.16;
 
 use Types::Path::Tiny qw< File >;
-use Types::Standard qw{ ArrayRef InstanceOf };
+use Types::Standard qw{ HashRef ArrayRef InstanceOf };
 
 use PPI;
 
@@ -94,6 +94,34 @@ sub _build_snippets {
     }
 
     return \@snippets;
+}
+
+=head2 snippet_hashes
+
+Snippets grouped by class and hashed value (using multiple hash types)
+
+=cut
+
+has snippet_hashes => (
+    is      => 'lazy',
+    isa     => HashRef [ HashRef [ HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Snippet'] ] ] ] ],
+    builder => '_build_snippet_hashes',
+);
+
+sub _build_snippet_hashes {
+    my $self = shift;
+
+    my %hashes;
+    for my $snippet ( $self->snippets->@* ) {
+        my $class  = $snippet->class;
+        my $hashes = $snippet->hashes;
+        for my $type ( keys %$hashes ) {
+            my $hash = $hashes->{$type};
+            push $hashes{$class}->{$type}->{$hash}->@*, $snippet;
+        }
+    }
+
+    return \%hashes;
 }
 
 1;
