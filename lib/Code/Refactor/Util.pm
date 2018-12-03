@@ -5,7 +5,10 @@ use warnings;
 
 use parent 'Exporter';
 
-our @EXPORT_OK = qw< hash_ppi >;
+our @EXPORT_OK = qw<
+  hash_ppi
+  is_interesting
+>;
 
 use Scalar::Util qw< blessed >;
 
@@ -111,6 +114,31 @@ sub hash_ppi {
     else {
         return '[' . join(',', map { hash_ppi($_) } @children ) . ']';
     }
+}
+
+=head2 is_interesting
+
+Is this PPI "interesting" for refactoring?
+
+FIXME: bad name
+
+=cut
+
+sub is_interesting {
+    my $ppi = shift;
+
+    my $class = $ppi->class;
+
+    if ( $class eq 'PPI::Statement::Sub' ) {
+        return 1;
+    }
+    elsif ( $class eq 'PPI::Structure::Block' ) {
+        if ($ppi->parent->class ne 'PPI::Statment::Sub' ) {
+            return 1;
+        }
+    }
+
+    return;
 }
 
 1;
