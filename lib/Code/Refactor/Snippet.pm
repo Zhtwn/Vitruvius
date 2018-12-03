@@ -174,7 +174,7 @@ sub _build_hashes {
 #   my $tlsh_hash = substr $full_hash, 6;
 
     return {
-        CRC  => crc32( $raw_ppi->content ),
+#       CRC  => crc32( $raw_ppi->content ),
         PPI  => hash_ppi($raw_ppi),
 #       TLSH => $tlsh_hash,
     };
