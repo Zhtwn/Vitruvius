@@ -52,6 +52,24 @@ has ppi => (
 
 =head1 ATTRIBUTES
 
+=head2 rel_file
+
+File, relative to base directory
+
+=cut
+
+has rel_file => (
+    is      => 'lazy',
+    isa     => InstanceOf ['Path::Tiny'],
+    builder => '_build_rel_file',
+);
+
+sub _build_rel_file {
+    my $self = shift;
+
+    return $self->file->relative( $self->base_dir );
+}
+
 =head2 subname
 
 String representation of related subroutine name
@@ -69,20 +87,37 @@ sub _build_subname {
 
     my $ppi = $self->ppi;
 
+    return $ppi->class eq 'PPI::Statement::Sub' && $ppi->name ? $ppi->name : '';
+}
+
+=head2 containing_sub
+
+Subroutine containing this ppi
+
+FIXME: bad name
+
+=cut
+
+has containing_sub => (
+    is      => 'lazy',
+    isa     => Str,
+    builder => '_build_containing_sub',
+);
+
+sub _build_containing_sub {
+    my $self = shift;
+
     my $subname = '';
-    if ( $ppi->class eq 'PPI::Statement::Sub' && $ppi->name ) {
-        $subname = "sub " . $ppi->name;
-    }
-    else {
-        my $cur = $ppi;
-        while ( $cur->class ne 'PPI::Document' ) {
-            if ( $cur->class eq 'PPI::Statement::Sub' && $cur->name ) {
-                $subname = "in sub " . $cur->name;
-                last;
-            }
-            $cur = $cur->parent;
+
+    my $cur = $self->ppi;
+    while ( $cur->class ne 'PPI::Document' ) {
+        if ( $cur->class eq 'PPI::Statement::Sub' && $cur->name ) {
+            $subname = $cur->name;
+            last;
         }
+        $cur = $cur->parent;
     }
+
     return $subname;
 }
 
@@ -119,8 +154,8 @@ Human-readable location for snippet, as string
 sub stringify {
     my $self = shift;
 
-    my $base_dir = $self->base_dir;
-    return join ', ', grep { $_ } ( $self->file->relative($base_dir) . '', $self->subname, 'L' . $self->line_number );
+    my $sub = $self->subname ? 'sub ' . $self->subname : 'in sub ' . $self->containing_sub;
+    return join ', ', grep { $_ } ( $self->rel_file . '', $sub, 'L' . $self->line_number );
 }
 
 1;
