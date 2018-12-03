@@ -143,6 +143,7 @@ sub _build_snippet_hashes {
     my @files = $self->files->@*;
     my @snippet_hashes = map { $_->snippet_hashes } @files;
 
+    say "Merging snippets";
     state $merger = do {
         my $m = Hash::Merge->new('LEFT_PRECEDENT');
         $m->set_clone_behavior(0);  # do not clone internally (preserves PPI objects)

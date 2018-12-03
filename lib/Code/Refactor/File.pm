@@ -88,6 +88,7 @@ has snippets => (
 sub _build_snippets {
     my $self = shift;
 
+    say "Building snippets: " . $self->file->relative( $self->base_dir );
     my @stack = ( $self->ppi );
     my @snippets;
 
@@ -127,6 +128,7 @@ has snippet_hashes => (
 sub _build_snippet_hashes {
     my $self = shift;
 
+    say "Building snippets hashes: " . $self->file->relative( $self->base_dir );
     my %hashes;
     for my $snippet ( $self->snippets->@* ) {
         my $class  = $snippet->class;
