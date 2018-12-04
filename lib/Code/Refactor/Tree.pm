@@ -47,10 +47,19 @@ Root Node of decorated code tree
 =cut
 
 has root => (
-    is => 'lazy',
-    isa => InstanceOf['Code::Refactor::Node'],
+    is      => 'lazy',
+    isa     => InstanceOf ['Code::Refactor::Node'],
     builder => '_build_root',
-    handles => ['ppi_hashes'],
+    handles => [
+        qw<
+          class
+          content
+          crc_hash
+          ppi_hash
+          ppi_hashes
+          tlsh_hash
+          >
+    ],
 );
 
 sub _tree_node {
