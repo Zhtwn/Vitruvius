@@ -268,7 +268,7 @@ sub _build_ppi_hashes {
     my $self = shift;
 
     # start with own hash
-    my $hashes = { $self->ppi_hash => $self };
+    my $hashes = { $self->ppi_hash => [ $self ] };
 
     # merge in hashes of all children
     $hashes = reduce { $merger->merge( $a, $b ) }
