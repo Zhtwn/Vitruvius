@@ -6,6 +6,7 @@ use warnings;
 use parent 'Exporter';
 
 our @EXPORT_OK = qw<
+  ppi_type
   hash_ppi
   is_interesting
 >;
@@ -94,6 +95,20 @@ my %token_for_class = map { $_ => $token++ } @pdom_classes;
 my %class_for_token = reverse %token_for_class;
 
 =head1 EXPORTABLE FUNCTIONS
+
+=head2 ppi_type
+
+Return string indicating type of PPI element
+
+=cut
+
+sub ppi_type {
+    my $ppi = shift;
+
+    die "not a PPI::Element" unless blessed $ppi && $ppi->isa('PPI::Element');
+
+    return $token_for_class{$ppi->class};
+}
 
 =head2 hash_ppi
 
