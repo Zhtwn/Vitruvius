@@ -263,6 +263,7 @@ has ppi_hashes => (
 );
 
 my $merger = Hash::Merge->new('LEFT_PRECEDENT');
+$merger->set_clone_behavior(0);
 
 sub _build_ppi_hashes {
     my $self = shift;
