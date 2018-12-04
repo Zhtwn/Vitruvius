@@ -7,6 +7,7 @@ use Types::Standard qw< Int Str Bool HashRef ArrayRef InstanceOf Tuple >;
 
 use Digest::CRC qw< crc32 >;
 use Hash::Merge;
+use List::Util qw< reduce >;
 use Perl::Tidy;
 
 use Code::Refactor::Location;
