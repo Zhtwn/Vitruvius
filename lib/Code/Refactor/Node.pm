@@ -41,6 +41,18 @@ has ppi => (
     handles  => [qw< content class >],
 );
 
+=head2 children
+
+Children of this node
+
+=cut
+
+has children => (
+    is      => 'ro',
+    isa     => ArrayRef [ InstanceOf ['Code::Refactor::Node'] ],
+    default => sub { return []; },
+);
+
 =head2 min_content_length
 
 Minimum content length for a snippet, in characters
