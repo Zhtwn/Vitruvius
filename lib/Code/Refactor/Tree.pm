@@ -8,6 +8,7 @@ use Types::Standard qw{ HashRef ArrayRef InstanceOf };
 
 use PPI;
 
+use Code::Refactor::Node;
 use Code::Refactor::Snippet;
 use Code::Refactor::Util qw< is_interesting >;
 
