@@ -8,7 +8,9 @@ use Types::Standard qw{ HashRef ArrayRef InstanceOf };
 
 use PPI;
 
+use Code::Refactor::LocationFactory;
 use Code::Refactor::Snippet;
+use Code::Refactor::Tree;
 use Code::Refactor::Util qw< is_interesting >;
 
 =head1 PARAMETERS
@@ -39,6 +41,27 @@ has file => (
 );
 
 =head1 ATTRIBUTES
+
+=head2 location_factory
+
+Factory to create Location with this base_dir and file
+
+=cut
+
+has location_factory => (
+    is      => 'lazy',
+    isa     => InstanceOf ['Code::Refactor::LocationFactory'],
+    builder => '_build_location_factory',
+);
+
+sub _build_location_factory {
+    my $self = shift;
+
+    return Code::Refactor::LocationFactory->new(
+        base_dir => $self->base_dir,
+        file     => $self->file,
+    );
+}
 
 =head2 ppi
 
@@ -143,6 +166,27 @@ sub _build_snippet_hashes {
     }
 
     return \%hashes;
+}
+
+=head2 tree
+
+Code tree
+
+=cut
+
+has tree => (
+    is      => 'lazy',
+    isa     => InstanceOf ['Code::Refactor::Tree'],
+    builder => '_build_tree',
+);
+
+sub _build_tree {
+    my $self = shift;
+
+    return Code::Refactor::Tree->new(
+        location_factory => $self->location_factory,
+        ppi              => $self->ppi,
+    );
 }
 
 1;
