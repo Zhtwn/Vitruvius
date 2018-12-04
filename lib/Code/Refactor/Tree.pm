@@ -82,7 +82,7 @@ sub _tree_node {
 sub _build_root {
     my $self = shift;
 
-    say "Building tree " . $self->file->relative( $self->base_dir );
+#   say "Building tree " . $self->file->relative( $self->base_dir );
 
     return $self->_tree_node($self->ppi);
 }
