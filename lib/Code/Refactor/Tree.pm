@@ -68,7 +68,7 @@ sub _tree_node {
 
     my $children = [];
     if ($ppi->can('children') && $ppi->children) {
-        $children = map { $self->_tree_node($_) } $ppi->children;
+        $children = [ map { $self->_tree_node($_) } $ppi->children ];
     }
 
     return Code::Refactor::Node->new(
