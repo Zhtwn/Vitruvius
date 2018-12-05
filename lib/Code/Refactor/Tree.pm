@@ -64,16 +64,17 @@ has root => (
 );
 
 sub _tree_node {
-    my ($self, $ppi) = @_;
+    my ($self, $ppi, $parent) = @_;
 
     my $children = [];
-    if ($ppi->can('children') && $ppi->children) {
-        $children = [ map { $self->_tree_node($_) } $ppi->children ];
+    if ( $ppi->can('children') && $ppi->children ) {
+        $children = [ map { $self->_tree_node( $_, $self ) } $ppi->children ];
     }
 
     return Code::Refactor::Node->new(
         location => $self->new_location($ppi),
         ppi      => $ppi,
+        parent   => $parent,
         children => $children,
     );
 }
