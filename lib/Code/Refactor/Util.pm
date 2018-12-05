@@ -89,9 +89,9 @@ my @pdom_classes = qw<
   PPI::Token::Unknown
 >;
 
-# NOTE: uses Perl's character increment, using 'a' - 'z', then 'aa' - 'az', etc
-my $token = 'a';
-my %token_for_class = map { $_ => $token++ } @pdom_classes;
+# encode all tokens to two-char hex strings
+my $i = 0;
+my %token_for_class = map { $_ => sprintf '%02x', $i++ } @pdom_classes;
 my %class_for_token = reverse %token_for_class;
 
 =head1 EXPORTABLE FUNCTIONS
