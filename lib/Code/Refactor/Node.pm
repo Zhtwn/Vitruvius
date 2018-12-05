@@ -3,7 +3,7 @@ package Code::Refactor::Node;
 use Moo;
 
 use Types::Path::Tiny qw< File Path >;
-use Types::Standard qw< Int Str Bool HashRef ArrayRef InstanceOf Tuple >;
+use Types::Standard qw< Int Str Bool HashRef ArrayRef InstanceOf Tuple Maybe >;
 
 use Digest::CRC qw< crc32 >;
 use Hash::Merge;
@@ -39,6 +39,19 @@ has ppi => (
     isa      => InstanceOf ['PPI::Element'],
     required => 1,
     handles  => [qw< content class >],
+);
+
+=head2 parent
+
+Parent of this node (undef for top-level node)
+
+=cut
+
+has parent => (
+    is       => 'ro',
+    isa      => Maybe [ InstanceOf ['Code::Refactor::Node'] ],
+    weakref  => 1,
+    required => 1,
 );
 
 =head2 children
