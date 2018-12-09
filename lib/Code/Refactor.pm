@@ -16,7 +16,7 @@ use Parallel::ForkManager;
 use Path::Tiny;
 
 use Code::Refactor::File;
-use Code::Refactor::SnippetGroup;
+use Code::Refactor::Group;
 
 =head1 PARAMETERS
 
@@ -125,62 +125,63 @@ sub _build_files {
     }
 }
 
-=head2 snippet_hashes
+=head2 node_hashes
 
-All snippets from all files, grouped by class and all hash types
+All nodes from all files, grouped by node type and hash value
 
 =cut
 
-has snippet_hashes => (
+has node_hashes => (
     is      => 'lazy',
-    isa     => HashRef [ HashRef [ HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Snippet'] ] ] ] ],
-    builder => '_build_snippet_hashes',
+    isa     => HashRef [ HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Node'] ] ] ] ,
+    builder => '_build_node_hashes',
 );
 
-sub _build_snippet_hashes {
+sub _build_node_hashes {
     my $self = shift;
 
-    my @files = $self->files->@*;
-    my @snippet_hashes = map { $_->snippet_hashes } @files;
-
-    say "Merging snippets";
+    say "Merging nodes";
     state $merger = do {
         my $m = Hash::Merge->new('LEFT_PRECEDENT');
         $m->set_clone_behavior(0);  # do not clone internally (preserves PPI objects)
         $m;
     };
 
-    my $hashes = reduce { $merger->merge($a, $b) } @snippet_hashes;
+    my $hashes = reduce { $merger->merge($a, $b) } map { $_->node_ppi_hashes } $self->files->@*;
 
     return $hashes;
 }
 
-=head2 snippet_groups
-
-Snippets grouped by class
+=head2 groups
 
 =cut
 
-has snippet_groups => (
-    is      => 'lazy',
-    isa     => HashRef [ InstanceOf ['Code::Refactor::SnippetGroup'] ],
-    builder => '_build_snippet_groups',
+has groups => (
+    is => 'lazy',
+    isa => ArrayRef [ InstanceOf ['Code::Refactor::Group' ] ],
+    builder => '_build_groups',
 );
 
-sub _build_snippet_groups {
+sub _build_groups {
     my $self = shift;
 
-    my %snippet_groups;
+    my $node_hashes = $self->node_hashes;
 
-    for my $file ( $self->files->@* ) {
-        for my $snippet ( $file->snippets->@* ) {
-            my $class = $snippet->class;
-            my $group = $snippet_groups{$class} //= Code::Refactor::SnippetGroup->new( class => $class );
-            $group->add_snippet($snippet);
+    my @groups;
+
+    for my $type ( keys %$node_hashes ) {
+        my $type_hashes = $node_hashes->{$type};
+
+        for my $hash ( keys %$type_hashes ) {
+            my $nodes = $type_hashes->{$hash};
+            next unless @$nodes > 1;
+            push @groups, Code::Refactor::Group->new(nodes => $nodes);
         }
     }
 
-    return \%snippet_groups;
+    # HACK - sort groups by descending PPI hash length for now
+    @groups = sort { $b->ppi_hash_length <=> $a->ppi_hash_length } @groups;
+    return \@groups;
 }
 
 =head2 distances

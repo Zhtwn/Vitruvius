@@ -3,12 +3,13 @@ package Code::Refactor::Node;
 use Moo;
 
 use Types::Path::Tiny qw< File Path >;
-use Types::Standard qw< Int Str Bool HashRef ArrayRef InstanceOf Tuple Maybe >;
+use Types::Standard qw< Int Str Bool HashRef ArrayRef InstanceOf Tuple Dict Maybe >;
 
 use Digest::CRC qw< crc32 >;
 use Hash::Merge;
 use List::Util qw< reduce >;
 use Perl::Tidy;
+use Scalar::Util qw< refaddr >;
 
 use Code::Refactor::Location;
 use Code::Refactor::Tlsh;
@@ -61,7 +62,7 @@ Children of this node
 =cut
 
 has children => (
-    is      => 'ro',
+    is      => 'rw',
     isa     => ArrayRef [ InstanceOf ['Code::Refactor::Node'] ],
     default => sub { return []; },
 );
@@ -200,6 +201,42 @@ sub _build_crc_hash {
     return crc32( $self->raw_content );
 }
 
+=head2 type
+
+Type of Node -- for now, just the reftype of the PPI node
+
+=cut
+
+has type => (
+    is      => 'lazy',
+    isa     => Str,
+    builder => '_build_type',
+);
+
+sub _build_type {
+    my $self = shift;
+
+    return ref $self->raw_ppi;
+}
+
+=head2 ppi_element_hash
+
+PPI structure hash for just this Node
+
+=cut
+
+has ppi_element_hash => (
+    is      => 'lazy',
+    isa     => Str,
+    builder => '_build_ppi_element_hash',
+);
+
+sub _build_ppi_element_hash {
+    my $self = shift;
+
+    return ppi_type( $self->raw_ppi );
+}
+
 =head2 ppi_hash
 
 PPI structure hash for "raw" code (without pod and comments)
@@ -215,7 +252,7 @@ has ppi_hash => (
 sub _build_ppi_hash {
     my $self = shift;
 
-    my $hash = ppi_type( $self->raw_ppi );
+    my $hash = $self->ppi_element_hash;
 
     my $children = $self->children;
 
@@ -224,6 +261,69 @@ sub _build_ppi_hash {
 
     return $hash;
 }
+
+=head2 ppi_hash_length
+
+Length of PPI hash
+
+=cut
+
+has ppi_hash_length => (
+    is      => 'lazy',
+    isa     => Int,
+    builder => '_build_ppi_hash_length',
+);
+
+sub _build_ppi_hash_length {
+    my $self = shift;
+
+    return length $self->ppi_hash;
+}
+
+=head2 sibling_ppi_hashes
+
+PPI hash to the left and right of this node
+
+=cut
+
+has sibling_ppi_hashes => (
+    is      => 'lazy',
+    isa     => Dict [ left => Str, right => Str ],
+    builder => '_build_left_ppi_hash',
+);
+
+sub _build_left_ppi_hash {
+    my $self = shift;
+
+    my %hashes = ( left => '', right => '' );
+
+    if ( my $parent = $self->parent ) {
+
+        my $siblings = $parent->children;
+
+        my $is_right;
+        for my $sibling (@$siblings) {
+            if ( refaddr $sibling == refaddr $self) {
+                $is_right = 1;
+            }
+            elsif ($is_right) {
+                $hashes{right} .= $sibling->ppi_hash;
+            }
+            else {
+                $hashes{left} .= $sibling->ppi_hash;
+            }
+        }
+
+        $hashes{left} = $parent->ppi_element_hash . '[' . $hashes{left};
+        $hashes{right} .= ']';
+    }
+
+    return \%hashes;
+}
+
+sub left_ppi_hash { return shift->sibling_ppi_hashes->{left} }
+
+sub right_ppi_hash { return shift->sibling_ppi_hashes->{right} }
 
 =head2 tlsh
 

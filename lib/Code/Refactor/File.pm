@@ -9,7 +9,6 @@ use Types::Standard qw{ HashRef ArrayRef InstanceOf };
 use PPI;
 
 use Code::Refactor::LocationFactory;
-use Code::Refactor::Snippet;
 use Code::Refactor::Tree;
 use Code::Refactor::Util qw< is_interesting >;
 
@@ -97,77 +96,6 @@ sub _build_ppi {
     return $ppi;
 }
 
-=head2 snippets
-
-Code snippets from file
-
-=cut
-
-has snippets => (
-    is      => 'lazy',
-    isa     => ArrayRef [ InstanceOf ['Code::Refactor::Snippet'] ],
-    builder => '_build_snippets',
-);
-
-sub _build_snippets {
-    my $self = shift;
-
-    say "Building snippets: " . $self->file->relative( $self->base_dir );
-    my @stack = ( $self->ppi );
-    my @snippets;
-
-    my $base_dir = $self->base_dir;
-    my $file     = $self->file;
-
-    while ( my $ppi = shift @stack ) {
-        if ( $ppi->can('children') && ( my @children = $ppi->children ) ) {
-            push @stack, @children;
-        }
-
-        next unless is_interesting($ppi);
-
-        my $snippet = Code::Refactor::Snippet->new(
-            base_dir => $base_dir,
-            file     => $file,
-            ppi      => $ppi,
-        );
-
-        push @snippets, $snippet
-          if $snippet->is_valid;
-    }
-
-    return \@snippets;
-}
-
-=head2 snippet_hashes
-
-Snippets grouped by class, hash type, and hashed value (using multiple hash types)
-
-=cut
-
-has snippet_hashes => (
-    is      => 'lazy',
-    isa     => HashRef [ HashRef [ HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Snippet'] ] ] ] ],
-    builder => '_build_snippet_hashes',
-);
-
-sub _build_snippet_hashes {
-    my $self = shift;
-
-    say "Building snippets hashes: " . $self->file->relative( $self->base_dir );
-    my %hashes;
-    for my $snippet ( $self->snippets->@* ) {
-        my $class  = $snippet->class;
-        my $hashes = $snippet->hashes;
-        for my $type ( keys %$hashes ) {
-            my $hash = $hashes->{$type};
-            push $hashes{$class}->{$type}->{$hash}->@*, $snippet;
-        }
-    }
-
-    return \%hashes;
-}
-
 =head2 tree
 
 Code tree
@@ -178,6 +106,11 @@ has tree => (
     is      => 'lazy',
     isa     => InstanceOf ['Code::Refactor::Tree'],
     builder => '_build_tree',
+    handles => [
+        qw<
+          node_ppi_hashes
+          >
+    ],
 );
 
 sub _build_tree {

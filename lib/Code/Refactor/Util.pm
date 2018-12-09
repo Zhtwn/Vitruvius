@@ -148,9 +148,8 @@ sub is_interesting {
         return 1;
     }
     elsif ( $class eq 'PPI::Structure::Block' ) {
-        if ($ppi->parent->class ne 'PPI::Statment::Sub' ) {
-            return 1;
-        }
+        return 1 unless $ppi->parent;
+        return 1 unless $ppi->parent->class eq 'PPI::Statement::Sub';
     }
 
     return;
