@@ -12,7 +12,6 @@ use Perl::Tidy;
 use Scalar::Util qw< refaddr >;
 
 use Code::Refactor::Location;
-use Code::Refactor::Tlsh;
 use Code::Refactor::Util qw< ppi_type hash_ppi >;
 
 =head1 PARAMETERS
@@ -179,7 +178,6 @@ sub _build_hashes {
     return {
         CRC  => $self->crc_hash,
         PPI  => $self->ppi_hash,
-        TLSH => $self->tlsh_hash,
     };
 }
 
@@ -324,50 +322,6 @@ sub _build_left_ppi_hash {
 sub left_ppi_hash { return shift->sibling_ppi_hashes->{left} }
 
 sub right_ppi_hash { return shift->sibling_ppi_hashes->{right} }
-
-=head2 tlsh
-
-Code::Refactor::Tlsh instance - used to build TLSH hash
-
-=cut
-
-has tlsh => (
-    is      => 'lazy',
-    isa     => InstanceOf['Code::Refactor::Tlsh'],
-    builder => '_build_tlsh',
-);
-
-sub _build_tlsh {
-    my $self = shift;
-
-    my $tlsh = Code::Refactor::Tlsh->new;
-    $tlsh->final( $self->raw_content, 1 );
-
-    return $tlsh;
-}
-
-=head2 tlsh_hash
-
-TLSH hash for code snippet
-
-=cut
-
-has tlsh_hash => (
-    is      => 'lazy',
-    isa     => Str,
-    builder => '_build_tlsh_hash',
-);
-
-sub _build_tlsh_hash {
-    my $self = shift;
-
-    my $full_hash = $self->tlsh->get_hash;
-
-    # HACK - strip off the length/Q ratios from the hash (first 6 chars)
-    my $tlsh_hash = substr $full_hash, 6;
-
-    return $tlsh_hash;
-}
 
 has ppi_hashes => (
     is      => 'lazy',
