@@ -112,7 +112,7 @@ sub _build_files {
                     base_dir => $base_dir,
                     file     => $filename,
                 );
-                $file->snippet_hashes;    # force all building to be done in parallel
+                $file->node_ppi_hashes;    # force all building to be done in parallel
                 push @$job_files, $file;
             }
 
