@@ -6,7 +6,7 @@ use Types::Standard qw< Int Str Num Bool InstanceOf Tuple >;
 
 use Diff::LibXDiff;
 use List::Util qw< max min >;
-use Text::Levenshtein;
+use Text::Levenshtein::XS;
 
 =head1 PARAMETERS
 
@@ -151,7 +151,7 @@ sub _build_ppi_levenshtein_similarity {
 
     my $nodes = $self->nodes;
 
-    my $distance = Text::Levenshtein::distance( map { $_->ppi_hash } @$nodes );
+    my $distance = Text::Levenshtein::XS::distance( map { $_->ppi_hash } @$nodes );
 
     my $max_length = max map { $_->ppi_hash_length } @$nodes;
 
