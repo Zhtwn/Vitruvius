@@ -108,6 +108,7 @@ has tree => (
     builder => '_build_tree',
     handles => [
         qw<
+          nodes
           node_ppi_hashes
           >
     ],

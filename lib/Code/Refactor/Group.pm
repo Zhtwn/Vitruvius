@@ -8,15 +8,15 @@ use Code::Refactor::Diff;
 
 =head1 PARAMETERS
 
-=head2 nodes
+=head2 diffs
 
-All nodes in group
+All Diffs in group
 
 =cut
 
-has nodes => (
+has diffs => (
     is       => 'ro',
-    isa      => ArrayRef [ InstanceOf ['Code::Refactor::Node'] ],
+    isa      => ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ],
     required => 1,
 );
 
@@ -24,7 +24,7 @@ has nodes => (
 
 =head2 base_node
 
-Node to be used as base for comparision
+Node that was used as base for comparision: first Node in each Diff
 
 =head2 type
 
@@ -36,60 +36,33 @@ has base_node => (
     is      => 'lazy',
     isa     => InstanceOf ['Code::Refactor::Node'],
     builder => '_build_base_node',
-    handles => [ qw< type ppi_hash_length > ],  # FIXME - assumes identical ppi_hash
+    handles => [ qw< type ppi_hash_length > ],
 );
 
 sub _build_base_node {
     my $self = shift;
 
-    return $self->nodes->[0];
+    return $self->diffs->[0]->nodes->[0];
 }
 
-=head2 diffs
+=head2 nodes
 
-Diffs from base node to all other nodes
+All other nodes in group, sorted by similarity to base node
 
 =cut
 
-has diffs => (
-    is      => 'ro',
-    isa     => ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ],
-    lazy    => 1,
-    builder => '_build_diffs',
+has nodes => (
+    is      => 'lazy',
+    isa     => ArrayRef [ InstanceOf ['Code::Refactor::Node'] ],
+    builder => '_build_nodes',
 );
 
-sub _build_diffs {
+sub _build_nodes {
     my $self = shift;
 
-    my $base_node = $self->base_node;
+    my @diffs = sort { $a->ppi_levenshtein_similarity <=> $b->ppi_levenshtein_similarity } $self->diffs->@*;
 
-    return [ map { Code::Refactor::Diff->new( nodes => [ $base_node, $_ ] ) } $self->nodes->@* ];
-}
-
-=head2 distances
-
-Distances between each snippet in a Diff
-
-=cut
-
-has distances => (
-    is      => 'ro',
-    isa     => HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ] ],
-    lazy    => 1,
-    builder => '_build_distances',
-);
-
-sub _build_distances {
-    my $self = shift;
-
-    my %distances;
-
-    for my $diff ( $self->diffs->@* ) {
-        my $distance = $diff->identical ? -1 : $diff->distance;
-        push $distances{$distance}->@*, $diff;
-    }
-
-    return \%distances;
+    return [ map { $_->node } @diffs ];
 }
 
 1;

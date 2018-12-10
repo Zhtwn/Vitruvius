@@ -30,7 +30,18 @@ Base node
 
 =cut
 
-sub base_node { shift->nodes->[0] }
+has base_node => (
+    is      => 'lazy',
+    isa     => InstanceOf ['Code::Refactor::Node'],
+    builder => '_build_base_node',
+    handles => ['type'],
+);
+
+sub _build_base_node {
+    my $self = shift;
+
+    return $self->nodes->[0];
+}
 
 =head2 node
 
@@ -119,6 +130,32 @@ sub _build_distance {
     my ( $first, $second ) = map { $_->tlsh } $self->nodes->@*;
 
     return $first->total_diff($second);
+}
+
+=head2 ppi_levenshtein_similarity
+
+Similarity of PPI hashes of the two nodes, as percent
+
+Ranges from 0 (completely different) to 100 (completely identical)
+
+=cut
+
+has ppi_levenshtein_similarity => (
+    is      => 'lazy',
+    isa     => Int,
+    builder => '_build_ppi_levenshtein_similarity',
+);
+
+sub _build_ppi_levenshtein_similarity {
+    my $self = shift;
+
+    my $nodes = $self->nodes;
+
+    my $distance = Text::Levenshtein::distance( map { $_->ppi_hash } @$nodes );
+
+    my $max_length = max map { $_->ppi_hash_length } @$nodes;
+
+    return int( 100 * ( $max_length - $distance ) / $max_length );
 }
 
 =head2 levenshtein_distance

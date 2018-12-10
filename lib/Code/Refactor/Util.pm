@@ -147,12 +147,14 @@ sub is_interesting {
     if ( $class eq 'PPI::Statement::Sub' ) {
         return 1;
     }
-    elsif ( $class eq 'PPI::Structure::Block' ) {
-        return 1 unless $ppi->parent;
-        return 1 unless $ppi->parent->class eq 'PPI::Statement::Sub';
-    }
 
     return;
+#   elsif ( $class eq 'PPI::Structure::Block' ) {
+#       return 1 unless $ppi->parent;
+#       return 1 unless $ppi->parent->class eq 'PPI::Statement::Sub';
+#   }
+
+#   return;
 }
 
 1;

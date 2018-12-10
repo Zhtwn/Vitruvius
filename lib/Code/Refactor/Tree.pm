@@ -108,7 +108,7 @@ sub _build_nodes {
     my @nodes;
 
     while ( my $node = shift @stack ) {
-        push @nodes, $node;
+        push @nodes, $node if is_interesting( $node->raw_ppi );
         push @stack, $node->children->@*;
     }
 

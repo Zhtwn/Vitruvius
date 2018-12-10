@@ -60,6 +60,30 @@ has filenames => (
     required => 1,
 );
 
+=head2 min_similarity
+
+Minimum "similarity" - defaults to 95
+
+=cut
+
+has min_similarity => (
+    is      => 'ro',
+    isa     => Int,
+    default => 95,
+);
+
+=head2 min_ppi_hash_length
+
+Minimum PPI hash length - defaults to 100
+
+=cut
+
+has min_ppi_hash_length => (
+    is      => 'ro',
+    isa     => Int,
+    default => 400,
+);
+
 =head1 ATTRIBUTES
 
 =head2 files
@@ -125,6 +149,58 @@ sub _build_files {
     }
 }
 
+=head2 nodes
+
+All nodes from all files
+
+=cut
+
+has nodes => (
+    is      => 'lazy',
+    isa     => ArrayRef [ InstanceOf ['Code::Refactor::Node'] ],
+    builder => '_build_nodes',
+);
+
+sub _build_nodes {
+    my $self = shift;
+
+    say "Building nodes...";
+
+    my $min_ppi_hash_length = $self->min_ppi_hash_length;
+
+    return [ grep { $_->ppi_hash_length >= $min_ppi_hash_length } map { $_->nodes->@* } $self->files->@* ];
+}
+
+=head2 node_diffs
+
+Diff instance for all pairs of nodes
+
+=cut
+
+has node_diffs => (
+    is      => 'lazy',
+    isa     => ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ],
+    builder => '_build_node_diffs',
+);
+
+sub _build_node_diffs {
+    my $self = shift;
+
+    my $nodes = $self->nodes;
+
+    say "Building node_diffs for " . $#$nodes . " nodes...";
+
+    my @node_diffs;
+
+    for my $i ( 0 .. $#$nodes - 1 ) {
+        for my $j ( $i + 1 .. $#$nodes ) {
+            push @node_diffs, Code::Refactor::Diff->new( nodes => [ $nodes->[$i], $nodes->[$j] ] );
+        }
+    }
+
+    return \@node_diffs;
+}
+
 =head2 node_hashes
 
 All nodes from all files, grouped by node type and hash value
@@ -152,35 +228,76 @@ sub _build_node_hashes {
     return $hashes;
 }
 
+=head2 similar_diffs
+
+FIXME: similar Diffs, hashed by type and base Node
+
+=cut
+
+has similar_diffs => (
+    is      => 'lazy',
+    isa     => HashRef [ HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ] ] ],
+    builder => '_build_similar_diffs',
+);
+
+sub _build_similar_diffs {
+    my $self = shift;
+
+    my $node_diffs = $self->node_diffs;
+
+    say "Building similar_diffs for " . $#$node_diffs . " node_diffs...";
+
+    # find all Diffs with the same base Node that are "similar"
+    my $min_similarity = $self->min_similarity;
+
+    my $cnt;
+
+    my %similar_diffs;
+
+    for my $node_diff (@$node_diffs) {
+        say "$cnt processed..." unless ++$cnt % 10;
+        my $similarity = $node_diff->ppi_levenshtein_similarity;
+        next if $similarity < $min_similarity;
+
+        my $type = $node_diff->type;
+
+        push $similar_diffs{$type}->{ $node_diff->nodes->[0] }->@*, $node_diff;
+    }
+
+    return \%similar_diffs;
+}
+
 =head2 groups
+
+FIXME: this is where the magic is supposed to happen: find similar Nodes
 
 =cut
 
 has groups => (
-    is => 'lazy',
-    isa => ArrayRef [ InstanceOf ['Code::Refactor::Group' ] ],
+    is      => 'lazy',
+    isa     => ArrayRef [ InstanceOf ['Code::Refactor::Group'] ],
     builder => '_build_groups',
 );
 
 sub _build_groups {
     my $self = shift;
 
-    my $node_hashes = $self->node_hashes;
+    my $similar_diffs = $self->similar_diffs;
+
+    say "Building groups...";
 
     my @groups;
 
-    for my $type ( keys %$node_hashes ) {
-        my $type_hashes = $node_hashes->{$type};
+    for my $type ( keys %$similar_diffs ) {
+        my $diffs_by_node = $similar_diffs->{$type};
 
-        for my $hash ( keys %$type_hashes ) {
-            my $nodes = $type_hashes->{$hash};
-            next unless @$nodes > 1;
-            push @groups, Code::Refactor::Group->new(nodes => $nodes);
+        for my $diffs ( values %$diffs_by_node ) {
+            push @groups, Code::Refactor::Group->new(diffs => $diffs);
         }
     }
 
-    # HACK - sort groups by descending PPI hash length for now
-    @groups = sort { $b->ppi_hash_length <=> $a->ppi_hash_length } @groups;
+    # FIXME - how should groups be sorted?
+#   @groups = sort { $b->base_node->ppi_hash_length <=> $a->base_node->ppi_hash_length } @groups;
     return \@groups;
 }
 
