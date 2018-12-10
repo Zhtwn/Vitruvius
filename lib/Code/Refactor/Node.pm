@@ -160,8 +160,6 @@ Hashes of raw PPI structure, excluding comments and whitespace, using different 
 
 =item * PPI - hash of PPI structure
 
-=item * TLSH - TLSH hash of raw code content
-
 =back
 
 =cut
