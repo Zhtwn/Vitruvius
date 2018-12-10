@@ -72,12 +72,15 @@ sub _tree_node {
         $raw_ppi->prune('PPI::Token::Comment');
     }
 
-    my $ppi_content = $raw_ppi->content;
-    my $raw_content;
+    my $raw_content = $raw_ppi->content;
 
-    my $perltidy_error = Perl::Tidy::perltidy( source => \$ppi_content, destination => \$raw_content );
+    if ($raw_ppi->class eq 'PPI::Statement::Sub') {
+        my ( $tidy_content, $stderr );
 
-    $raw_content = $ppi_content if $perltidy_error;
+        my $perltidy_error = Perl::Tidy::perltidy( argv => '-se', stderr => \$stderr, source => \$raw_content, destination => \$tidy_content );
+
+        $raw_content = $tidy_content unless $perltidy_error;
+    }
 
     my $node = Code::Refactor::Node->new(
         location    => $self->new_location($ppi),
