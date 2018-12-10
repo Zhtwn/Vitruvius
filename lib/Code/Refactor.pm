@@ -8,6 +8,8 @@ use feature 'state';
 use Types::Path::Tiny qw< Path >;
 use Types::Standard qw< Str Int HashRef ArrayRef InstanceOf >;
 
+use Data::Dumper;
+
 use Cwd;
 use Hash::Merge;
 use List::MoreUtils 'part';
@@ -151,13 +153,13 @@ sub _build_files {
 
 =head2 nodes
 
-All nodes from all files
+All nodes from all files, hashed by type
 
 =cut
 
 has nodes => (
     is      => 'lazy',
-    isa     => ArrayRef [ InstanceOf ['Code::Refactor::Node'] ],
+    isa     => HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Node'] ] ],
     builder => '_build_nodes',
 );
 
@@ -168,64 +170,96 @@ sub _build_nodes {
 
     my $min_ppi_hash_length = $self->min_ppi_hash_length;
 
-    return [ grep { $_->ppi_hash_length >= $min_ppi_hash_length } map { $_->nodes->@* } $self->files->@* ];
-}
+    my %nodes;
 
-=head2 node_diffs
-
-Diff instance for all pairs of nodes
-
-=cut
-
-has node_diffs => (
-    is      => 'lazy',
-    isa     => ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ],
-    builder => '_build_node_diffs',
-);
-
-sub _build_node_diffs {
-    my $self = shift;
-
-    my $nodes = $self->nodes;
-
-    say "Building node_diffs for " . $#$nodes . " nodes...";
-
-    my @node_diffs;
-
-    for my $i ( 0 .. $#$nodes - 1 ) {
-        for my $j ( $i + 1 .. $#$nodes ) {
-            push @node_diffs, Code::Refactor::Diff->new( nodes => [ $nodes->[$i], $nodes->[$j] ] );
+    for my $file ( $self->files->@* ) {
+        for my $node ( $file->nodes->@* ) {
+            push $nodes{ $node->type }->@*, $node;
         }
     }
 
-    return \@node_diffs;
+    return \%nodes;
 }
 
-=head2 node_hashes
+=head2 diffs
 
-All nodes from all files, grouped by node type and hash value
+Diff instance for all pairs of nodes, hashed by type
 
 =cut
 
-has node_hashes => (
+has diffs => (
     is      => 'lazy',
-    isa     => HashRef [ HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Node'] ] ] ] ,
-    builder => '_build_node_hashes',
+    isa     => HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ] ],
+    builder => '_build_diffs',
 );
 
-sub _build_node_hashes {
+sub _build_diffs {
     my $self = shift;
 
-    say "Merging nodes";
-    state $merger = do {
-        my $m = Hash::Merge->new('LEFT_PRECEDENT');
-        $m->set_clone_behavior(0);  # do not clone internally (preserves PPI objects)
-        $m;
-    };
+    my $all_nodes = $self->nodes;
 
-    my $hashes = reduce { $merger->merge($a, $b) } map { $_->node_ppi_hashes } $self->files->@*;
+    say "Building diffs...";
 
-    return $hashes;
+    # build pairs of nodes first, and then paralellize the Diff creation/calculation
+    my @node_pairs;
+
+    for my $type ( keys %$all_nodes ) {
+        say "Building $type diffs";
+        my $nodes = $all_nodes->{$type};
+        for my $i ( 0 .. $#$nodes - 1 ) {
+            for my $j ( $i + 1 .. $#$nodes ) {
+                push @node_pairs, [ $type, $nodes->[$i], $nodes->[$j] ];
+            }
+        }
+    }
+
+    my $jobs = $self->jobs;
+
+    my %diffs;
+
+    if ( $jobs == 1 ) {
+        for my $node_pair (@node_pairs) {
+            my ( $type, @nodes ) = @$node_pair;
+            push $diffs{$type}->@*, Code::Refactor::Diff->new( nodes => \@nodes );
+        }
+    }
+    else {
+        # partition diff building across jobs
+        my $i = 0;
+        my @diff_batches = part { $i++ % $jobs } @node_pairs;
+
+        my $pm = Parallel::ForkManager->new($jobs);
+
+        $pm->run_on_finish(
+            sub {
+                my ( $pid, $exit_code, $ident, $exit_signal, $core_dump, $return ) = @_;
+                if ($return) {
+                    foreach my $type ( keys %$return ) {
+                        push $diffs{$type}->@*, $return->{$type}->@*;
+                    }
+                }
+            }
+        );
+
+      JOB:
+        for my $job_num ( 0 .. $jobs - 1 ) {
+            $pm->start and next JOB;
+
+            my $job_diffs = {};
+            for my $node_pair ( $diff_batches[$job_num]->@* ) {
+                my ( $type, @nodes ) = @$node_pair;
+                my $diff = Code::Refactor::Diff->new( nodes => \@nodes );
+                $diff->ppi_levenshtein_similarity;  # caclulate in parallel
+                push $job_diffs->{$type}->@*, $diff;
+            }
+
+            $pm->finish( 0, $job_diffs );
+        }
+
+        $pm->wait_all_children;
+    }
+
+    return \%diffs;
 }
 
 =head2 similar_diffs
@@ -243,25 +277,24 @@ has similar_diffs => (
 sub _build_similar_diffs {
     my $self = shift;
 
-    my $node_diffs = $self->node_diffs;
+    my $diffs = $self->diffs;
 
-    say "Building similar_diffs for " . $#$node_diffs . " node_diffs...";
+    say "Building similar_diffs...";
 
     # find all Diffs with the same base Node that are "similar"
     my $min_similarity = $self->min_similarity;
 
-    my $cnt;
-
     my %similar_diffs;
 
-    for my $node_diff (@$node_diffs) {
-        say "$cnt processed..." unless ++$cnt % 10;
-        my $similarity = $node_diff->ppi_levenshtein_similarity;
-        next if $similarity < $min_similarity;
+    for my $type ( keys %$diffs ) {
+        my $type_diffs = $diffs->{$type};
 
-        my $type = $node_diff->type;
+        for my $node_diff (@$type_diffs) {
+            my $similarity = $node_diff->ppi_levenshtein_similarity;
+            next if $similarity < $min_similarity;
 
-        push $similar_diffs{$type}->{ $node_diff->nodes->[0] }->@*, $node_diff;
+            push $similar_diffs{$type}->{ $node_diff->nodes->[0] }->@*, $node_diff;
+        }
     }
 
     return \%similar_diffs;
