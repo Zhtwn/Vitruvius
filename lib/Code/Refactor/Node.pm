@@ -28,17 +28,28 @@ has location => (
     required => 1,
 );
 
-=head2 ppi
+=head2 type
 
-PPI for this snippet
+Type of Node -- for now, just the reftype of the PPI node
 
 =cut
 
-has ppi => (
-    is       => 'ro',
-    isa      => InstanceOf ['PPI::Element'],
+has type => (
+    is       => 'lazy',
+    isa      => Str,
     required => 1,
-    handles  => [qw< content class >],
+);
+
+=head2 raw_content
+
+Code content of C<raw_ppi>, run through L<Perl::Tidy> for whitespace standardization
+
+=cut
+
+has raw_content => (
+    is       => 'lazy',
+    isa      => Str,
+    required => 1,
 );
 
 =head2 parent
@@ -83,54 +94,6 @@ has min_content_length => (
 );
 
 =head1 ATTRIBUTES
-
-=head2 raw_ppi
-
-PPI for comparison: excludes comments
-
-=cut
-
-has raw_ppi => (
-    is      => 'lazy',
-    isa     => InstanceOf ['PPI::Element'],
-    builder => '_build_raw_ppi',
-);
-
-sub _build_raw_ppi {
-    my $self = shift;
-
-    my $ppi = $self->ppi->clone;
-
-    if ( $ppi->can('prune') ) {
-        $ppi->prune('PPI::Token::Comment');
-    }
-
-    return $ppi;
-}
-
-=head2 raw_content
-
-Code content of C<raw_ppi>, run through L<Perl::Tidy> for whitespace standardization
-
-=cut
-
-has raw_content => (
-    is      => 'lazy',
-    isa     => Str,
-    builder => '_build_raw_content',
-);
-
-sub _build_raw_content {
-    my $self = shift;
-
-    my $ppi_content = $self->raw_ppi->content;
-
-    my $raw_content;
-
-    my $perltidy_error = Perl::Tidy::perltidy( source => \$ppi_content, destination => \$raw_content );
-
-    return $perltidy_error ? $ppi_content : $raw_content;
-}
 
 =head2 is_valid
 
@@ -197,24 +160,6 @@ sub _build_crc_hash {
     return crc32( $self->raw_content );
 }
 
-=head2 type
-
-Type of Node -- for now, just the reftype of the PPI node
-
-=cut
-
-has type => (
-    is      => 'lazy',
-    isa     => Str,
-    builder => '_build_type',
-);
-
-sub _build_type {
-    my $self = shift;
-
-    return ref $self->raw_ppi;
-}
-
 =head2 ppi_element_hash
 
 PPI structure hash for just this Node
@@ -230,7 +175,7 @@ has ppi_element_hash => (
 sub _build_ppi_element_hash {
     my $self = shift;
 
-    return ppi_type( $self->raw_ppi );
+    return ppi_type( $self->type );
 }
 
 =head2 ppi_hash

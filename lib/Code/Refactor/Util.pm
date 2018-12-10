@@ -103,11 +103,9 @@ Return string indicating type of PPI element
 =cut
 
 sub ppi_type {
-    my $ppi = shift;
+    my $ppi_class = shift;
 
-    die "not a PPI::Element" unless blessed $ppi && $ppi->isa('PPI::Element');
-
-    return $token_for_class{$ppi->class};
+    return $token_for_class{$ppi_class};
 }
 
 =head2 hash_ppi
@@ -140,9 +138,7 @@ FIXME: bad name
 =cut
 
 sub is_interesting {
-    my $ppi = shift;
-
-    my $class = $ppi->class;
+    my $class = shift;
 
     if ( $class eq 'PPI::Statement::Sub' ) {
         return 1;

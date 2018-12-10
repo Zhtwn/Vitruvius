@@ -6,6 +6,7 @@ use v5.16;
 use Types::Path::Tiny qw< File Path >;
 use Types::Standard qw{ HashRef ArrayRef InstanceOf };
 
+use Perl::Tidy;
 use PPI;
 
 use Code::Refactor::Node;
@@ -65,10 +66,25 @@ has root => (
 sub _tree_node {
     my ($self, $ppi, $parent) = @_;
 
+    # pre-calculate the raw content, so Node doesn't need to store PPI
+    my $raw_ppi = $ppi->clone;
+    if ( $raw_ppi->can('prune') ) {
+        $raw_ppi->prune('PPI::Token::Comment');
+    }
+
+    my $ppi_content = $raw_ppi->content;
+    my $raw_content;
+
+    my $perltidy_error = Perl::Tidy::perltidy( source => \$ppi_content, destination => \$raw_content );
+
+    $raw_content = $ppi_content if $perltidy_error;
+
     my $node = Code::Refactor::Node->new(
-        location => $self->new_location($ppi),
-        ppi      => $ppi,
-        parent   => $parent,
+        location    => $self->new_location($ppi),
+        content     => $ppi->content,
+        raw_content => $raw_content,
+        type        => $raw_ppi->class,
+        parent      => $parent,
     );
 
     my $children = [];
@@ -108,7 +124,7 @@ sub _build_nodes {
     my @nodes;
 
     while ( my $node = shift @stack ) {
-        push @nodes, $node if is_interesting( $node->raw_ppi );
+        push @nodes, $node if is_interesting( $node->type );
         push @stack, $node->children->@*;
     }
 
@@ -133,7 +149,7 @@ sub _build_node_ppi_hashes {
     my %hashes;
 
     for my $node ( $self->nodes->@* ) {
-        next unless is_interesting( $node->raw_ppi );
+        next unless is_interesting( $node->type );
         push $hashes{ $node->type }->{ $node->ppi_hash }->@*, $node;
     }
 
