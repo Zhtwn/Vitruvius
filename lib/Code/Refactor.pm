@@ -107,11 +107,15 @@ sub _build_files {
 
     my $jobs = $self->jobs;
 
+    my $filenames = $self->filenames;
+
     if ( $jobs == 1 ) {
-        return [ map { Code::Refactor::File->new( base_dir => $base_dir, file => $_ ) } $self->filenames->@* ];
+        say "Reading " . scalar(@$filenames) . " files...";
+        return [ map { Code::Refactor::File->new( base_dir => $base_dir, file => $_ ) } @$filenames ];
     }
     else {
         # partition files across jobs
+        say "Reading " . scalar(@$filenames) . " files using $jobs jobs...";
         my $i = 0;
         my @filename_batches = part { $i++ % $jobs } $self->filenames->@*;
 
@@ -171,13 +175,16 @@ sub _build_nodes {
     my $min_ppi_hash_length = $self->min_ppi_hash_length;
 
     my %nodes;
+    my $cnt = 0;
 
     for my $file ( $self->files->@* ) {
         for my $node ( $file->nodes->@* ) {
             push $nodes{ $node->type }->@*, $node;
+            ++$cnt;
         }
     }
 
+    say "...found $cnt nodes.";
     return \%nodes;
 }
 
@@ -198,8 +205,6 @@ sub _build_diffs {
 
     my $all_nodes = $self->nodes;
 
-    say "Building diffs...";
-
     # build pairs of nodes first, and then paralellize the Diff creation/calculation
     my @node_pairs;
 
@@ -218,6 +223,8 @@ sub _build_diffs {
     my %diffs;
 
     if ( $jobs == 1 ) {
+        say "Building " . scalar(@node_pairs) . " diffs...";
+
         for my $node_pair (@node_pairs) {
             my ( $type, @nodes ) = @$node_pair;
             push $diffs{$type}->@*, Code::Refactor::Diff->new( nodes => \@nodes );
@@ -225,6 +232,7 @@ sub _build_diffs {
     }
     else {
         # partition diff building across jobs
+        say "Building " . scalar(@node_pairs) . " diffs using $jobs jobs...";
         my $i = 0;
         my @diff_batches = part { $i++ % $jobs } @node_pairs;
 
