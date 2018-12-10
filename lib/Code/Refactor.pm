@@ -179,6 +179,7 @@ sub _build_nodes {
 
     for my $file ( $self->files->@* ) {
         for my $node ( $file->nodes->@* ) {
+            next if $node->ppi_hash_length < $min_ppi_hash_length;
             push $nodes{ $node->type }->@*, $node;
             ++$cnt;
         }
