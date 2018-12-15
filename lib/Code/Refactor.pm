@@ -117,7 +117,8 @@ Code::Refactor::File instances for all files
 =cut
 
 has files => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => ArrayRef [ InstanceOf ['Code::Refactor::File'] ],
     builder => '_build_files',
 );
@@ -173,7 +174,8 @@ All nodes from all files, hashed by type
 =cut
 
 has nodes => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Node'] ] ],
     builder => '_build_nodes',
 );
@@ -207,7 +209,8 @@ Diff instance for all pairs of nodes, hashed by type
 =cut
 
 has diffs => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => ArrayRef [ ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ] ],
     builder => '_build_diffs',
 );
@@ -272,7 +275,8 @@ Groups, ordered by something reasonable
 =cut
 
 has groups => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => ArrayRef [ InstanceOf ['Code::Refactor::Group'] ],
     builder => '_build_groups',
 );

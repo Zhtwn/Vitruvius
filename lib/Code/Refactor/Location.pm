@@ -61,7 +61,8 @@ File, relative to base directory
 =cut
 
 has rel_file => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => InstanceOf ['Path::Tiny'],
     builder => '_build_rel_file',
 );
@@ -79,7 +80,8 @@ String representation of related subroutine name
 =cut
 
 has subname => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Str,
     builder => '_build_subname',
 );
@@ -101,7 +103,8 @@ FIXME: bad name
 =cut
 
 has containing_sub => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Str,
     builder => '_build_containing_sub',
 );
@@ -130,7 +133,8 @@ Line number within file
 =cut
 
 has line_number => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Int,
     builder => '_build_line_number',
 );
@@ -152,7 +156,8 @@ Human-readable location for node, as string
 =cut
 
 has as_string => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Str,
     builder => '_build_as_string',
 );

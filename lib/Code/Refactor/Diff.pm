@@ -31,7 +31,8 @@ has nodes => (
 =cut
 
 has indexes => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => ArrayRef [Str],
     builder => '_build_indexes',
 );
@@ -94,7 +95,8 @@ Are the two nodes identical?
 =cut
 
 has identical => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Bool,
     builder => '_build_identical',
 );
@@ -115,7 +117,8 @@ length
 =cut
 
 has tree_distance => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Num,
     builder => '_build_tree_distance',
 );
@@ -153,7 +156,8 @@ Edit distance between nodes
 =cut
 
 has distance => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Int,
     builder => '_build_distance',
 );
@@ -175,7 +179,8 @@ Ranges from 0 (completely different) to 100 (completely identical)
 =cut
 
 has ppi_levenshtein_similarity => (
-    is        => 'lazy',
+    is        => 'ro',
+    lazy      => 1,
     isa       => Int,
     predicate => 'has_ppi_levenshtein_similarity',
     builder   => '_build_ppi_levenshtein_similarity',
@@ -200,7 +205,8 @@ Levenshtein distance between uncommented versions of nodes
 =cut
 
 has levenshtein_distance => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Int,
     builder => '_build_levenshtein_distance',
 );
@@ -218,7 +224,8 @@ Diff from libxdiff
 =cut
 
 has xdiff => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Str,
     builder => '_build_xdiff',
 );
@@ -236,7 +243,8 @@ Number of line differences
 =cut
 
 has diff_lines => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Num,
     builder => '_build_diff_lines',
 );

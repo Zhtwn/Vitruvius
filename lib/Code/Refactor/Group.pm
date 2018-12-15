@@ -22,19 +22,22 @@ has diffs => (
 );
 
 has location => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Str,
     default => sub { shift->base_node->location . '' },
 );
 
 has count => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Int,
     default => sub { scalar @{ shift->diffs } },
 );
 
 has sum => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Int,
     default => sub {
         List::Util::sum( map { $_->ppi_levenshtein_similarity } shift->diffs->@* );
@@ -42,7 +45,8 @@ has sum => (
 );
 
 has mean => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Num,
     builder => '_build_mean',
 );

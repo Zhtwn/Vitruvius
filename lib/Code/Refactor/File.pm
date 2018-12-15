@@ -50,7 +50,8 @@ Factory to create Location with this base_dir and file
 =cut
 
 has location_factory => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => InstanceOf ['Code::Refactor::LocationFactory'],
     builder => '_build_location_factory',
 );
@@ -71,7 +72,8 @@ PPI from this file, excluding Data, End, and Pod sections
 =cut
 
 has ppi => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => InstanceOf ['PPI::Node'],
     builder => '_build_ppi',
 );
@@ -105,7 +107,8 @@ Code tree
 =cut
 
 has tree => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => InstanceOf ['Code::Refactor::Tree'],
     builder => '_build_tree',
     handles => [

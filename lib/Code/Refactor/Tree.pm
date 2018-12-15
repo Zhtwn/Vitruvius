@@ -50,7 +50,8 @@ Root Node of decorated code tree
 =cut
 
 has root => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => InstanceOf ['Code::Refactor::Node'],
     builder => '_build_root',
     handles => [
@@ -118,7 +119,8 @@ All nodes, depth-first, preorder
 =cut
 
 has nodes => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => ArrayRef [ InstanceOf ['Code::Refactor::Node'] ],
     builder => '_build_nodes',
 );

@@ -99,7 +99,8 @@ CRC32 hash for raw code snippet
 =cut
 
 has crc_hash => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Int,
     builder => '_build_crc_hash',
 );
@@ -117,7 +118,8 @@ PPI structure hash for just this Node
 =cut
 
 has ppi_element_hash => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Str,
     builder => '_build_ppi_element_hash',
 );
@@ -135,7 +137,8 @@ PPI structure hash for "raw" code (without pod and comments)
 =cut
 
 has ppi_hash => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Str,
     builder => '_build_ppi_hash',
 );
@@ -160,7 +163,8 @@ Length of PPI hash
 =cut
 
 has ppi_hash_length => (
-    is      => 'lazy',
+    is      => 'ro',
+    lazy    => 1,
     isa     => Int,
     builder => '_build_ppi_hash_length',
 );
