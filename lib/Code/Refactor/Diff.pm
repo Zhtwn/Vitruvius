@@ -2,7 +2,7 @@ package Code::Refactor::Diff;
 
 use Moo;
 
-use Types::Standard qw< Int Str Num Bool InstanceOf Tuple >;
+use Types::Standard qw< Int Str Num Bool ArrayRef InstanceOf Tuple >;
 
 use Diff::LibXDiff;
 use List::Util qw< max min >;
@@ -24,24 +24,40 @@ has nodes => (
 
 =head1 ATTRIBUTES
 
+=head2 indexes
+
+=cut
+
+has indexes => (
+    is      => 'lazy',
+    isa     => ArrayRef [Str],
+    builder => '_build_indexes',
+);
+
+sub _build_indexes {
+    my $self = shift;
+
+    my @locations = map { $_->location . '' } $self->nodes->@*;
+
+    return \@locations;
+#   return [ @locations, join( '||', @locations ) ];
+}
+
 =head2 base_node
 
 Base node
 
 =cut
 
-has base_node => (
-    is      => 'lazy',
-    isa     => InstanceOf ['Code::Refactor::Node'],
-    builder => '_build_base_node',
-    handles => ['type'],
-);
+sub base_node { shift->nodes->[0] }
 
-sub _build_base_node {
-    my $self = shift;
+=head2 type
 
-    return $self->nodes->[0];
-}
+Type of nodes (taken from base_node)
+
+=cut
+
+sub type { shift->nodes->[0]->type }
 
 =head2 node
 
@@ -50,6 +66,25 @@ Other node
 =cut
 
 sub node { shift->nodes->[1] }
+
+=head2 for_node
+
+Create Diff with given node first, if needed
+
+=cut
+
+sub for_node {
+    my ( $self, $index ) = @_;
+    return $self if $self->indexes->[0] eq $index;
+
+    my $class = ref $self;
+
+    my %args = ( nodes => [ reverse $self->nodes->@* ] );    # see, a copy
+    $args{ppi_levenshtein_similarity} = $self->ppi_levenshtein_similarity
+      if $self->has_ppi_levenshtein_similarity;
+
+    return $class->new(%args);
+}
 
 =head2 identical
 
@@ -141,9 +176,10 @@ Ranges from 0 (completely different) to 100 (completely identical)
 =cut
 
 has ppi_levenshtein_similarity => (
-    is      => 'lazy',
-    isa     => Int,
-    builder => '_build_ppi_levenshtein_similarity',
+    is        => 'lazy',
+    isa       => Int,
+    predicate => 'has_ppi_levenshtein_similarity',
+    builder   => '_build_ppi_levenshtein_similarity',
 );
 
 sub _build_ppi_levenshtein_similarity {

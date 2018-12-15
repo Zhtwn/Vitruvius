@@ -2,17 +2,16 @@ package Code::Refactor::Group;
 
 use Moo;
 
-use Types::Standard qw< Str ArrayRef HashRef InstanceOf >;
+use Types::Standard qw< Str Int Num HashRef ArrayRef InstanceOf >;
 
-use Code::Refactor::Diff;
+use List::Util;
 
-=head1 PARAMETERS
-
-=head2 diffs
-
-All Diffs in group
-
-=cut
+has base_node => (
+    is       => 'ro',
+    isa      => InstanceOf ['Code::Refactor::Node'],
+    required => 1,
+    handles  => [qw< type >],
+);
 
 has diffs => (
     is       => 'ro',
@@ -20,49 +19,38 @@ has diffs => (
     required => 1,
 );
 
-=head1 ATTRIBUTES
-
-=head2 base_node
-
-Node that was used as base for comparision: first Node in each Diff
-
-=head2 type
-
-Type of Nodes - derived from first (base) node
-
-=cut
-
-has base_node => (
+has location => (
     is      => 'lazy',
-    isa     => InstanceOf ['Code::Refactor::Node'],
-    builder => '_build_base_node',
-    handles => [ qw< type ppi_hash_length > ],
+    isa     => Str,
+    default => sub { shift->base_node->location . '' },
 );
 
-sub _build_base_node {
-    my $self = shift;
-
-    return $self->diffs->[0]->nodes->[0];
-}
-
-=head2 nodes
-
-All other nodes in group, sorted by similarity to base node
-
-=cut
-
-has nodes => (
+has count => (
     is      => 'lazy',
-    isa     => ArrayRef [ InstanceOf ['Code::Refactor::Node'] ],
-    builder => '_build_nodes',
+    isa     => Int,
+    default => sub { scalar @{ shift->diffs } },
 );
 
-sub _build_nodes {
+has sum => (
+    is      => 'lazy',
+    isa     => Int,
+    default => sub {
+        List::Util::sum( map { $_->ppi_levenshtein_similarity } shift->diffs->@* );
+    },
+);
+
+has mean => (
+    is      => 'lazy',
+    isa     => Num,
+    builder => '_build_mean',
+);
+
+sub _build_mean {
     my $self = shift;
 
-    my @diffs = sort { $a->ppi_levenshtein_similarity <=> $b->ppi_levenshtein_similarity } $self->diffs->@*;
+    return 0 unless $self->count;
 
-    return [ map { $_->node } @diffs ];
+    return $self->sum / $self->count;
 }
 
 1;

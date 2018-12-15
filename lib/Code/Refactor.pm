@@ -9,6 +9,8 @@ use Types::Path::Tiny qw< Path >;
 use Types::Standard qw< Str Int HashRef ArrayRef InstanceOf >;
 
 use Data::Dumper;
+$Data::Dumper::Sortkeys = 1;
+$Data::Dumper::Indent = 1;
 
 use Cwd;
 use Hash::Merge;
@@ -17,6 +19,7 @@ use List::Util 'reduce';
 use Parallel::ForkManager;
 use Path::Tiny;
 
+use Code::Refactor::Diff;
 use Code::Refactor::File;
 use Code::Refactor::Group;
 
@@ -197,12 +200,26 @@ Diff instance for all pairs of nodes, hashed by type
 
 has diffs => (
     is      => 'lazy',
-    isa     => HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ] ],
+    isa     => ArrayRef [ ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ] ],
     builder => '_build_diffs',
 );
 
+sub _process_node_pair {
+    my ( $self, $node_pair, $diffs ) = @_;
+
+    my @nodes = @$node_pair;    # see, a copy
+    my $diff = Code::Refactor::Diff->new( nodes => \@nodes );
+    my $similarity = $diff->ppi_levenshtein_similarity;
+    return if $similarity < $self->min_similarity;
+
+    # use for_node() to ensure that the base node is the first one in the Diff
+    push $diffs->{$_}->@*, $diff->for_node($_) for $diff->indexes->@*;
+}
+
 sub _build_diffs {
     my $self = shift;
+
+    my $min_similarity = $self->min_similarity;
 
     my $all_nodes = $self->nodes;
 
@@ -211,25 +228,22 @@ sub _build_diffs {
 
     for my $type ( keys %$all_nodes ) {
         say "Building $type diffs";
-        my $nodes = $all_nodes->{$type};
-        for my $i ( 0 .. $#$nodes - 1 ) {
-            for my $j ( $i + 1 .. $#$nodes ) {
-                push @node_pairs, [ $type, $nodes->[$i], $nodes->[$j] ];
+        my @nodes = sort { $a->location . ''  cmp $b->location . '' } $all_nodes->{$type}->@*;
+        for my $i ( 0 .. $#nodes - 1 ) {
+            for my $j ( $i + 1 .. $#nodes ) {
+                push @node_pairs, [ $nodes[$i], $nodes[$j] ];
             }
         }
     }
 
     my $jobs = $self->jobs;
 
-    my %diffs;
+    my $diffs = {};
 
     if ( $jobs == 1 ) {
         say "Building " . scalar(@node_pairs) . " diffs...";
 
-        for my $node_pair (@node_pairs) {
-            my ( $type, @nodes ) = @$node_pair;
-            push $diffs{$type}->@*, Code::Refactor::Diff->new( nodes => \@nodes );
-        }
+        $self->_process_node_pair($_, $diffs) for @node_pairs;
     }
     else {
         # partition diff building across jobs
@@ -243,8 +257,8 @@ sub _build_diffs {
             sub {
                 my ( $pid, $exit_code, $ident, $exit_signal, $core_dump, $return ) = @_;
                 if ($return) {
-                    foreach my $type ( keys %$return ) {
-                        push $diffs{$type}->@*, $return->{$type}->@*;
+                    foreach my $index ( keys %$return ) {
+                        push $diffs->{$index}->@*, $return->{$index}->@*;
                     }
                 }
             }
@@ -255,12 +269,7 @@ sub _build_diffs {
             $pm->start and next JOB;
 
             my $job_diffs = {};
-            for my $node_pair ( $diff_batches[$job_num]->@* ) {
-                my ( $type, @nodes ) = @$node_pair;
-                my $diff = Code::Refactor::Diff->new( nodes => \@nodes );
-                $diff->ppi_levenshtein_similarity;  # caclulate in parallel
-                push $job_diffs->{$type}->@*, $diff;
-            }
+            $self->_process_node_pair($_, $job_diffs) for $diff_batches[$job_num]->@*;
 
             $pm->finish( 0, $job_diffs );
         }
@@ -268,50 +277,20 @@ sub _build_diffs {
         $pm->wait_all_children;
     }
 
-    return \%diffs;
-}
+#my @FOO = map { [ $_->nodes->[0]->location . '', $_->nodes->[1]->location . '' ] } map { @$_ } values %diffs;
+#my %BAR;
+#map { push $BAR{$_->[0]}->@*, $_->[1] } @FOO;
 
-=head2 similar_diffs
+#$_ = [ sort @$_ ] for values %BAR;
 
-FIXME: similar Diffs, hashed by type and base Node
+#warn "DIFFS: " . Dumper \%BAR;
 
-=cut
-
-has similar_diffs => (
-    is      => 'lazy',
-    isa     => HashRef [ HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ] ] ],
-    builder => '_build_similar_diffs',
-);
-
-sub _build_similar_diffs {
-    my $self = shift;
-
-    my $diffs = $self->diffs;
-
-    say "Building similar_diffs...";
-
-    # find all Diffs with the same base Node that are "similar"
-    my $min_similarity = $self->min_similarity;
-
-    my %similar_diffs;
-
-    for my $type ( keys %$diffs ) {
-        my $type_diffs = $diffs->{$type};
-
-        for my $node_diff (@$type_diffs) {
-            my $similarity = $node_diff->ppi_levenshtein_similarity;
-            next if $similarity < $min_similarity;
-
-            push $similar_diffs{$type}->{ $node_diff->nodes->[0] }->@*, $node_diff;
-        }
-    }
-
-    return \%similar_diffs;
+    return [ values %$diffs ];
 }
 
 =head2 groups
 
-FIXME: this is where the magic is supposed to happen: find similar Nodes
+Groups, ordered by something reasonable
 
 =cut
 
@@ -324,23 +303,22 @@ has groups => (
 sub _build_groups {
     my $self = shift;
 
-    my $similar_diffs = $self->similar_diffs;
+    my $all_diffs = $self->diffs;
 
     say "Building groups...";
 
+    my %nodes_seen;
     my @groups;
 
-    for my $type ( keys %$similar_diffs ) {
-        my $diffs_by_node = $similar_diffs->{$type};
-
-        for my $diffs ( values %$diffs_by_node ) {
-            push @groups, Code::Refactor::Group->new(diffs => $diffs);
-        }
+    for my $diffs (@$all_diffs) {
+        my $base_node = $diffs->[0]->base_node;
+        next if $nodes_seen{$base_node->location};
+        push @groups, Code::Refactor::Group->new( base_node => $base_node, diffs => $diffs );
+        $nodes_seen{$_}++ for map { $_->indexes->@* } @$diffs;
     }
 
-    # FIXME - how should groups be sorted?
-#   @groups = sort { $b->base_node->ppi_hash_length <=> $a->base_node->ppi_hash_length } @groups;
-    return \@groups;
+    # sort by descending mean similarity
+    return [ sort { $b->mean <=> $a->mean } @groups ];
 }
 
 =head2 distances
