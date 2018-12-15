@@ -134,29 +134,4 @@ sub _build_nodes {
     return \@nodes;
 }
 
-=head2 node_ppi_hashes
-
-Interesting Nodes, hashed by node type and ppi_hash
-
-=cut
-
-has node_ppi_hashes => (
-    is      => 'lazy',
-    isa     => HashRef [ HashRef [ ArrayRef [ InstanceOf['Code::Refactor::Node'] ] ] ],
-    builder => '_build_node_ppi_hashes',
-);
-
-sub _build_node_ppi_hashes {
-    my $self = shift;
-
-    my %hashes;
-
-    for my $node ( $self->nodes->@* ) {
-        next unless is_interesting( $node->type );
-        push $hashes{ $node->type }->{ $node->ppi_hash }->@*, $node;
-    }
-
-    return \%hashes;
-}
-
 1;

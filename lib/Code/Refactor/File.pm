@@ -109,7 +109,6 @@ has tree => (
     handles => [
         qw<
           nodes
-          node_ppi_hashes
           >
     ],
 );
