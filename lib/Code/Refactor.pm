@@ -10,7 +10,7 @@ use Types::Standard qw< Str Int HashRef ArrayRef InstanceOf >;
 
 use Data::Dumper;
 $Data::Dumper::Sortkeys = 1;
-$Data::Dumper::Indent = 1;
+$Data::Dumper::Indent   = 1;
 
 use Cwd;
 use Hash::Merge;
@@ -120,8 +120,8 @@ sub _build_files {
     }
     else {
         $self->_parallelize(
-            message => "Reading " . scalar(@$filenames) . " files",
-            input => $self->filenames,
+            message   => "Reading " . scalar(@$filenames) . " files",
+            input     => $self->filenames,
             child_sub => sub {
                 my $filenames = shift;
 
@@ -196,8 +196,8 @@ has diffs => (
 sub _process_node_pair {
     my ( $self, $node_pair, $diffs ) = @_;
 
-    my @nodes = @$node_pair;    # see, a copy
-    my $diff = Code::Refactor::Diff->new( nodes => \@nodes );
+    my @nodes      = @$node_pair;                                     # see, a copy
+    my $diff       = Code::Refactor::Diff->new( nodes => \@nodes );
     my $similarity = $diff->ppi_levenshtein_similarity;
     return if $similarity < $self->min_similarity;
 
@@ -220,17 +220,17 @@ sub _build_diffs {
     if ( $jobs == 1 ) {
         say "Building " . scalar(@node_pairs) . " diffs...";
 
-        $self->_process_node_pair($_, $diffs) for @node_pairs;
+        $self->_process_node_pair( $_, $diffs ) for @node_pairs;
     }
     else {
         $self->_parallelize(
-            message => "Building " . scalar(@node_pairs) . " diffs",
-            input => \@node_pairs,
+            message   => "Building " . scalar(@node_pairs) . " diffs",
+            input     => \@node_pairs,
             child_sub => sub {
                 my $node_pairs = shift;
 
                 my $job_diffs = {};
-                $self->_process_node_pair($_, $job_diffs) for @$node_pairs;
+                $self->_process_node_pair( $_, $job_diffs ) for @$node_pairs;
 
                 return $job_diffs;
             },
@@ -270,7 +270,7 @@ sub _build_groups {
 
     for my $diffs (@$all_diffs) {
         my $base_node = $diffs->[0]->base_node;
-        next if $nodes_seen{$base_node->location};
+        next if $nodes_seen{ $base_node->location };
         push @groups, Code::Refactor::Group->new( base_node => $base_node, diffs => $diffs );
         $nodes_seen{$_}++ for map { $_->indexes->@* } @$diffs;
     }
@@ -295,7 +295,7 @@ sub _node_pairs {
     my @node_pairs;
     for my $type ( keys %$all_nodes ) {
         say "Building $type diffs";
-        my @nodes = sort { $a->location . ''  cmp $b->location . '' } $all_nodes->{$type}->@*;
+        my @nodes = sort { $a->location . '' cmp $b->location . '' } $all_nodes->{$type}->@*;
         for my $i ( 0 .. $#nodes - 1 ) {
             for my $j ( $i + 1 .. $#nodes ) {
                 push @node_pairs, [ $nodes[$i], $nodes[$j] ];
@@ -342,7 +342,7 @@ sub _parallelize {
     for my $job_num ( 0 .. $jobs - 1 ) {
         $pm->start and next JOB;
 
-        my $output = $child_sub->($input_batches[$job_num]);
+        my $output = $child_sub->( $input_batches[$job_num] );
 
         $pm->finish( 0, $output );
     }

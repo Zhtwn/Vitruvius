@@ -89,7 +89,7 @@ my @pdom_classes = qw<
 >;
 
 # encode all tokens to two-char hex strings
-my $i = 0;
+my $i               = 0;
 my %token_for_class = map { $_ => sprintf '%02x', $i++ } @pdom_classes;
 my %class_for_token = reverse %token_for_class;
 
@@ -123,12 +123,13 @@ sub is_interesting {
     }
 
     return;
-#   elsif ( $class eq 'PPI::Structure::Block' ) {
-#       return 1 unless $ppi->parent;
-#       return 1 unless $ppi->parent->class eq 'PPI::Statement::Sub';
-#   }
 
-#   return;
+    #   elsif ( $class eq 'PPI::Structure::Block' ) {
+    #       return 1 unless $ppi->parent;
+    #       return 1 unless $ppi->parent->class eq 'PPI::Statement::Sub';
+    #   }
+
+    #   return;
 }
 
 1;

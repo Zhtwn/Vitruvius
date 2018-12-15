@@ -40,7 +40,6 @@ sub _build_indexes {
     my @locations = map { $_->location . '' } $self->nodes->@*;
 
     return \@locations;
-#   return [ @locations, join( '||', @locations ) ];
 }
 
 =head2 base_node
@@ -126,7 +125,7 @@ sub _build_tree_distance {
     my $first_hashes  = $first->ppi_hashes;
     my $second_hashes = $second->ppi_hashes;
 
-    my $total_length = max length($first->ppi_hash), length($second->ppi_hash);
+    my $total_length = max length( $first->ppi_hash ), length( $second->ppi_hash );
     my $match_length = 0;
 
     for my $hash ( sort { length $a <=> length $b } keys %$first_hashes ) {
@@ -138,14 +137,12 @@ sub _build_tree_distance {
 
             my $left
 
-            # TODO - extract "before" and "after" subtrees from both trees, and run tree_distance on those
+              # TODO - extract "before" and "after" subtrees from both trees, and run tree_distance on those
         }
     }
 
     return $match_length / $total_length;
 }
-
-
 
 =head2 distance
 
@@ -154,8 +151,8 @@ Edit distance between nodes
 =cut
 
 has distance => (
-    is => 'lazy',
-    isa => Int,
+    is      => 'lazy',
+    isa     => Int,
     builder => '_build_distance',
 );
 
@@ -237,8 +234,8 @@ Number of line differences
 =cut
 
 has diff_lines => (
-    is => 'lazy',
-    isa => Num,
+    is      => 'lazy',
+    isa     => Num,
     builder => '_build_diff_lines',
 );
 
@@ -259,8 +256,6 @@ sub _build_diff_lines {
     my @line_counts = map { scalar @$_ } @lines;
 
     my $tot_lines = min @line_counts;
-
-#   my $tot_lines = max map { @$_ } map { [ split /\n/, $_ ] } map { $_->ppi->content } $self->nodes->@*;
 
     return $line_count / $tot_lines;
 }

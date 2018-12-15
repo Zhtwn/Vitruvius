@@ -28,8 +28,8 @@ File, to be passed into Location
 =cut
 
 has file => (
-    is => 'ro',
-    isa => Path,
+    is       => 'ro',
+    isa      => Path,
     required => 1,
 );
 

@@ -22,7 +22,7 @@ Factory to create Location for each node
 
 has location_factory => (
     is       => 'ro',
-    isa      => InstanceOf['Code::Refactor::LocationFactory'],
+    isa      => InstanceOf ['Code::Refactor::LocationFactory'],
     required => 1,
     handles  => ['new_location'],
 );
@@ -34,8 +34,8 @@ PPI for this tree, excluding Data, End, and Pod sections
 =cut
 
 has ppi => (
-    is      => 'lazy',
-    isa     => InstanceOf ['PPI::Node'],
+    is       => 'lazy',
+    isa      => InstanceOf ['PPI::Node'],
     required => 1,
 );
 
@@ -64,7 +64,7 @@ has root => (
 );
 
 sub _tree_node {
-    my ($self, $ppi, $parent) = @_;
+    my ( $self, $ppi, $parent ) = @_;
 
     # pre-calculate the raw content, so Node doesn't need to store PPI
     my $raw_ppi = $ppi->clone;
@@ -74,10 +74,11 @@ sub _tree_node {
 
     my $raw_content = $raw_ppi->content;
 
-    if ($raw_ppi->class eq 'PPI::Statement::Sub') {
+    if ( $raw_ppi->class eq 'PPI::Statement::Sub' ) {
         my ( $tidy_content, $stderr );
 
-        my $perltidy_error = Perl::Tidy::perltidy( argv => '-se', stderr => \$stderr, source => \$raw_content, destination => \$tidy_content );
+        my $perltidy_error =
+          Perl::Tidy::perltidy( argv => '-se', stderr => \$stderr, source => \$raw_content, destination => \$tidy_content );
 
         $raw_content = $tidy_content unless $perltidy_error;
     }
@@ -103,9 +104,9 @@ sub _tree_node {
 sub _build_root {
     my $self = shift;
 
-#   say "Building tree " . $self->file->relative( $self->base_dir );
+    #   say "Building tree " . $self->file->relative( $self->base_dir );
 
-    return $self->_tree_node($self->ppi);
+    return $self->_tree_node( $self->ppi );
 }
 
 =head2 nodes
