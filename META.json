@@ -37,7 +37,24 @@
       },
       "runtime" : {
          "requires" : {
-            "perl" : "5.008005"
+            "Diff::LibXDiff" : "0",
+            "Digest::CRC" : "0",
+            "Hash::Merge" : "0",
+            "List::MoreUtils" : "0",
+            "List::Util" : "0",
+            "Moo" : "0",
+            "MooX::TypeTiny" : "0",
+            "PPI" : "0",
+            "Parallel::ForkManager" : "0",
+            "Path::Tiny" : "0",
+            "Perl::Tidy" : "0",
+            "Scalar::Util" : "0",
+            "Text::Levenshtein::XS" : "0",
+            "Types::Path::Tiny" : "0",
+            "Types::Standard" : "0",
+            "feature" : "0",
+            "parent" : "0",
+            "perl" : "v5.16.0"
          }
       },
       "test" : {

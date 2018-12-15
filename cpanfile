@@ -1,7 +1,26 @@
-requires 'perl', '5.008005';
-
-# requires 'Some::Module', 'VERSION';
+requires 'perl', 'v5.16.0';
+requires 'Diff::LibXDiff';
+requires 'Digest::CRC';
+requires 'Hash::Merge';
+requires 'List::MoreUtils';
+requires 'List::Util';
+requires 'Moo';
+requires 'MooX::TypeTiny';
+requires 'PPI';
+requires 'Parallel::ForkManager';
+requires 'Path::Tiny';
+requires 'Perl::Tidy';
+requires 'Scalar::Util';
+requires 'Text::Levenshtein::XS';
+requires 'Types::Path::Tiny';
+requires 'Types::Standard';
+requires 'feature';
+requires 'parent';
 
 on test => sub {
     requires 'Test::More', '0.96';
+};
+
+on configure => sub {
+    requires 'Module::Build::Tiny', '0.034';
 };
