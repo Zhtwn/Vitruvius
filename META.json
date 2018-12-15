@@ -59,6 +59,7 @@
       },
       "test" : {
          "requires" : {
+            "Test::Compile" : "0",
             "Test::More" : "0.96"
          }
       }

@@ -18,6 +18,7 @@ requires 'feature';
 requires 'parent';
 
 on test => sub {
+    requires 'Test::Compile';
     requires 'Test::More', '0.96';
 };
 
