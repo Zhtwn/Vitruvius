@@ -15,7 +15,7 @@ $Data::Dumper::Indent = 1;
 use Cwd;
 use Hash::Merge;
 use List::MoreUtils 'part';
-use List::Util 'reduce';
+use List::Util 'min';
 use Parallel::ForkManager;
 use Path::Tiny;
 
@@ -112,50 +112,39 @@ sub _build_files {
 
     my $filenames = $self->filenames;
 
+    my $files;
+
     if ( $jobs == 1 ) {
         say "Reading " . scalar(@$filenames) . " files...";
-        return [ map { Code::Refactor::File->new( base_dir => $base_dir, file => $_ ) } @$filenames ];
+        $files = [ map { Code::Refactor::File->new( base_dir => $base_dir, file => $_ ) } @$filenames ];
     }
     else {
-        # partition files across jobs
-        say "Reading " . scalar(@$filenames) . " files using $jobs jobs...";
-        my $i = 0;
-        my @filename_batches = part { $i++ % $jobs } $self->filenames->@*;
+        $self->_parallelize(
+            message => "Reading " . scalar(@$filenames) . " files",
+            input => $self->filenames,
+            child_sub => sub {
+                my $filenames = shift;
 
-        my @files;
+                my $job_files = [];
 
-        my $pm = Parallel::ForkManager->new($jobs);
-
-        $pm->run_on_finish(
-            sub {
-                my ( $pid, $exit_code, $ident, $exit_signal, $core_dump, $job_files ) = @_;
-                if ($job_files) {
-                    push @files, @$job_files;
+                for my $filename (@$filenames) {
+                    my $file = Code::Refactor::File->new(
+                        base_dir => $base_dir,
+                        file     => $filename,
+                    );
+                    $file->nodes;    # force all parsing and building to be done in parallel
+                    push @$job_files, $file;
                 }
-            }
+
+                return $job_files;
+            },
+            finish_sub => sub {
+                my $return = shift;
+                push @$files, @$return;
+            },
         );
-
-      JOB:
-        for my $job_num ( 0 .. $jobs - 1 ) {
-            $pm->start and next JOB;
-
-            my $job_files = [];
-            for my $filename ( $filename_batches[$job_num]->@* ) {
-                my $file = Code::Refactor::File->new(
-                    base_dir => $base_dir,
-                    file     => $filename,
-                );
-                $file->nodes;    # force all parsing and building to be done in parallel
-                push @$job_files, $file;
-            }
-
-            $pm->finish( 0, $job_files );
-        }
-
-        $pm->wait_all_children;
-
-        return \@files;
     }
+    return $files;
 }
 
 =head2 nodes
@@ -221,20 +210,8 @@ sub _build_diffs {
 
     my $min_similarity = $self->min_similarity;
 
-    my $all_nodes = $self->nodes;
-
     # build pairs of nodes first, and then paralellize the Diff creation/calculation
-    my @node_pairs;
-
-    for my $type ( keys %$all_nodes ) {
-        say "Building $type diffs";
-        my @nodes = sort { $a->location . ''  cmp $b->location . '' } $all_nodes->{$type}->@*;
-        for my $i ( 0 .. $#nodes - 1 ) {
-            for my $j ( $i + 1 .. $#nodes ) {
-                push @node_pairs, [ $nodes[$i], $nodes[$j] ];
-            }
-        }
-    }
+    my @node_pairs = $self->_node_pairs;
 
     my $jobs = $self->jobs;
 
@@ -246,44 +223,25 @@ sub _build_diffs {
         $self->_process_node_pair($_, $diffs) for @node_pairs;
     }
     else {
-        # partition diff building across jobs
-        say "Building " . scalar(@node_pairs) . " diffs using $jobs jobs...";
-        my $i = 0;
-        my @diff_batches = part { $i++ % $jobs } @node_pairs;
+        $self->_parallelize(
+            message => "Building " . scalar(@node_pairs) . " diffs",
+            input => \@node_pairs,
+            child_sub => sub {
+                my $node_pairs = shift;
 
-        my $pm = Parallel::ForkManager->new($jobs);
+                my $job_diffs = {};
+                $self->_process_node_pair($_, $job_diffs) for @$node_pairs;
 
-        $pm->run_on_finish(
-            sub {
-                my ( $pid, $exit_code, $ident, $exit_signal, $core_dump, $return ) = @_;
-                if ($return) {
-                    foreach my $index ( keys %$return ) {
-                        push $diffs->{$index}->@*, $return->{$index}->@*;
-                    }
+                return $job_diffs;
+            },
+            finish_sub => sub {
+                my $return = shift;
+                for my $index ( keys %$return ) {
+                    push $diffs->{$index}->@*, $return->{$index}->@*;
                 }
-            }
+            },
         );
-
-      JOB:
-        for my $job_num ( 0 .. $jobs - 1 ) {
-            $pm->start and next JOB;
-
-            my $job_diffs = {};
-            $self->_process_node_pair($_, $job_diffs) for $diff_batches[$job_num]->@*;
-
-            $pm->finish( 0, $job_diffs );
-        }
-
-        $pm->wait_all_children;
     }
-
-#my @FOO = map { [ $_->nodes->[0]->location . '', $_->nodes->[1]->location . '' ] } map { @$_ } values %diffs;
-#my %BAR;
-#map { push $BAR{$_->[0]}->@*, $_->[1] } @FOO;
-
-#$_ = [ sort @$_ ] for values %BAR;
-
-#warn "DIFFS: " . Dumper \%BAR;
 
     return [ values %$diffs ];
 }
@@ -319,6 +277,77 @@ sub _build_groups {
 
     # sort by descending mean similarity
     return [ sort { $b->mean <=> $a->mean } @groups ];
+}
+
+=head1 PRIVATE METHODS
+
+=head2 _node_pairs
+
+Build pairs of nodes
+
+=cut
+
+sub _node_pairs {
+    my $self = shift;
+
+    my $all_nodes = $self->nodes;
+
+    my @node_pairs;
+    for my $type ( keys %$all_nodes ) {
+        say "Building $type diffs";
+        my @nodes = sort { $a->location . ''  cmp $b->location . '' } $all_nodes->{$type}->@*;
+        for my $i ( 0 .. $#nodes - 1 ) {
+            for my $j ( $i + 1 .. $#nodes ) {
+                push @node_pairs, [ $nodes[$i], $nodes[$j] ];
+            }
+        }
+    }
+
+    return @node_pairs;
+}
+
+=head2 _parallelize
+
+Run in parallel jobs
+
+=cut
+
+sub _parallelize {
+    my ( $self, %args ) = @_;
+
+    my $message    = $args{message};
+    my $input      = $args{input};
+    my $child_sub  = $args{child_sub};
+    my $finish_sub = $args{finish_sub};
+
+    # never use more jobs than we have inputs
+    my $jobs = min $self->jobs, scalar @$input;
+
+    say "$message using $jobs jobs...";
+    my $i = 0;
+    my @input_batches = part { $i++ % $jobs } @$input;
+
+    my $pm = Parallel::ForkManager->new($jobs);
+
+    $pm->run_on_finish(
+        sub {
+            my ( $pid, $exit_code, $ident, $exit_signal, $core_dump, $return ) = @_;
+            if ($return) {
+                $finish_sub->($return);
+            }
+        }
+    );
+
+  JOB:
+    for my $job_num ( 0 .. $jobs - 1 ) {
+        $pm->start and next JOB;
+
+        my $output = $child_sub->($input_batches[$job_num]);
+
+        $pm->finish( 0, $output );
+    }
+
+    $pm->wait_all_children;
 }
 
 1;
