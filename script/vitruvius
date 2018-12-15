@@ -1,0 +1,4 @@
+#!/usr/bin/env perl
+use Vitruvius::App;
+Vitruvius::App->new_with_command->run;
+
