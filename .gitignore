@@ -1,3 +1,10 @@
 FOO*
 TODO*
 .*.swp
+/Code-Refactor-*
+/.build
+/_build*
+/Build
+MYMETA.*
+!META.json
+/.prove
