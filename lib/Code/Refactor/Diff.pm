@@ -2,6 +2,8 @@ package Code::Refactor::Diff;
 
 use Moo;
 
+use MooX::TypeTiny;
+
 use Types::Standard qw< Int Str Num Bool ArrayRef InstanceOf Tuple >;
 
 use Diff::LibXDiff;

@@ -2,6 +2,8 @@ package Code::Refactor::Node;
 
 use Moo;
 
+use MooX::TypeTiny;
+
 use Types::Standard qw< Int Str ArrayRef InstanceOf Maybe >;
 
 use Digest::CRC qw< crc32 >;

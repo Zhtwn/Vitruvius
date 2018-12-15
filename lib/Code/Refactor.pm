@@ -3,6 +3,8 @@ package Code::Refactor;
 use Moo;
 use v5.16;
 
+use MooX::TypeTiny;
+
 use feature 'state';
 
 use Types::Path::Tiny qw< Path >;

@@ -2,6 +2,8 @@ package Code::Refactor::Location;
 
 use Moo;
 
+use MooX::TypeTiny;
+
 use feature 'state';
 
 use Types::Path::Tiny qw< File Path >;

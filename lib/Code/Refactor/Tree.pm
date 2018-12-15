@@ -3,6 +3,8 @@ package Code::Refactor::Tree;
 use Moo;
 use v5.16;
 
+use MooX::TypeTiny;
+
 use Types::Path::Tiny qw< File Path >;
 use Types::Standard qw{ HashRef ArrayRef InstanceOf };
 

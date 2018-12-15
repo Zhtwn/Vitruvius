@@ -3,6 +3,8 @@ package Code::Refactor::LocationFactory;
 use Moo;
 use v5.16;
 
+use MooX::TypeTiny;
+
 use Types::Path::Tiny qw< Path >;
 
 use Code::Refactor::Location;

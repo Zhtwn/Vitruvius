@@ -2,6 +2,8 @@ package Code::Refactor::Group;
 
 use Moo;
 
+use MooX::TypeTiny;
+
 use Types::Standard qw< Str Int Num HashRef ArrayRef InstanceOf >;
 
 use List::Util;
