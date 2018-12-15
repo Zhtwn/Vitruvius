@@ -1,4 +1,4 @@
-package Code::Refactor::Tree;
+package Vitruvius::Tree;
 
 use Moo;
 use v5.16;
@@ -11,8 +11,8 @@ use Types::Standard qw{ HashRef ArrayRef InstanceOf };
 use Perl::Tidy;
 use PPI;
 
-use Code::Refactor::Node;
-use Code::Refactor::Util qw< is_interesting >;
+use Vitruvius::Node;
+use Vitruvius::Util qw< is_interesting >;
 
 =head1 PARAMETERS
 
@@ -24,7 +24,7 @@ Factory to create Location for each node
 
 has location_factory => (
     is       => 'ro',
-    isa      => InstanceOf ['Code::Refactor::LocationFactory'],
+    isa      => InstanceOf ['Vitruvius::LocationFactory'],
     required => 1,
     handles  => ['new_location'],
 );
@@ -52,7 +52,7 @@ Root Node of decorated code tree
 has root => (
     is      => 'ro',
     lazy    => 1,
-    isa     => InstanceOf ['Code::Refactor::Node'],
+    isa     => InstanceOf ['Vitruvius::Node'],
     builder => '_build_root',
     handles => [
         qw<
@@ -86,7 +86,7 @@ sub _tree_node {
         $raw_content = $tidy_content unless $perltidy_error;
     }
 
-    my $node = Code::Refactor::Node->new(
+    my $node = Vitruvius::Node->new(
         location    => $self->new_location($ppi),
         content     => $ppi->content,
         raw_content => $raw_content,
@@ -121,7 +121,7 @@ All nodes, depth-first, preorder
 has nodes => (
     is      => 'ro',
     lazy    => 1,
-    isa     => ArrayRef [ InstanceOf ['Code::Refactor::Node'] ],
+    isa     => ArrayRef [ InstanceOf ['Vitruvius::Node'] ],
     builder => '_build_nodes',
 );
 

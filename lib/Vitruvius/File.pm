@@ -1,4 +1,4 @@
-package Code::Refactor::File;
+package Vitruvius::File;
 
 use Moo;
 use v5.16;
@@ -10,9 +10,9 @@ use Types::Standard qw{ HashRef ArrayRef InstanceOf };
 
 use PPI;
 
-use Code::Refactor::LocationFactory;
-use Code::Refactor::Tree;
-use Code::Refactor::Util qw< is_interesting >;
+use Vitruvius::LocationFactory;
+use Vitruvius::Tree;
+use Vitruvius::Util qw< is_interesting >;
 
 =head1 PARAMETERS
 
@@ -52,14 +52,14 @@ Factory to create Location with this base_dir and file
 has location_factory => (
     is      => 'ro',
     lazy    => 1,
-    isa     => InstanceOf ['Code::Refactor::LocationFactory'],
+    isa     => InstanceOf ['Vitruvius::LocationFactory'],
     builder => '_build_location_factory',
 );
 
 sub _build_location_factory {
     my $self = shift;
 
-    return Code::Refactor::LocationFactory->new(
+    return Vitruvius::LocationFactory->new(
         base_dir => $self->base_dir,
         file     => $self->file,
     );
@@ -109,7 +109,7 @@ Code tree
 has tree => (
     is      => 'ro',
     lazy    => 1,
-    isa     => InstanceOf ['Code::Refactor::Tree'],
+    isa     => InstanceOf ['Vitruvius::Tree'],
     builder => '_build_tree',
     handles => [
         qw<
@@ -121,7 +121,7 @@ has tree => (
 sub _build_tree {
     my $self = shift;
 
-    return Code::Refactor::Tree->new(
+    return Vitruvius::Tree->new(
         location_factory => $self->location_factory,
         ppi              => $self->ppi,
     );

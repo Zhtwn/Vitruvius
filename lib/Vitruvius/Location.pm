@@ -1,4 +1,4 @@
-package Code::Refactor::Location;
+package Vitruvius::Location;
 
 use Moo;
 

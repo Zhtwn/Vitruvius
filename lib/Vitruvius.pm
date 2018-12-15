@@ -1,26 +1,37 @@
-# NAME
+package Vitruvius;
+
+use Moo;
+use v5.16;
+our $VERSION = '0.01';
+
+1;
+__END__
+
+=head1 NAME
 
 Vitruvius - tools for code architect
 
-# SYNOPSIS
+=head1 SYNOPSIS
 
-    # TBW
+  # TBW
 
-# DESCRIPTION
+=head1 DESCRIPTION
 
 Vitruvius is a set of tools to help the code architect.
 
-# AUTHOR
+=head1 AUTHOR
 
-Noel Maddy <zhtwnpanta@gmail.com>
+Noel Maddy E<lt>zhtwnpanta@gmail.comE<gt>
 
-# COPYRIGHT
+=head1 COPYRIGHT
 
 Copyright 2018- Noel Maddy
 
-# LICENSE
+=head1 LICENSE
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
-# SEE ALSO
+=head1 SEE ALSO
+
+=cut

@@ -1,4 +1,4 @@
-package Code::Refactor::Util;
+package Vitruvius::Util;
 
 use strict;
 use warnings;

@@ -1,5 +1,5 @@
 {
-   "abstract" : "tools to aid in code refactoring",
+   "abstract" : "tools for code architect",
    "author" : [
       "Noel Maddy <zhtwnpanta@gmail.com>"
    ],
@@ -12,7 +12,7 @@
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
       "version" : 2
    },
-   "name" : "Code-Refactor",
+   "name" : "Vitruvius",
    "no_index" : {
       "directory" : [
          "eg",

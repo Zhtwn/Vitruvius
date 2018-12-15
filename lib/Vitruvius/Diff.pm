@@ -1,4 +1,4 @@
-package Code::Refactor::Diff;
+package Vitruvius::Diff;
 
 use Moo;
 
@@ -20,7 +20,7 @@ ArrayRef of two nodes to be compared
 
 has nodes => (
     is       => 'ro',
-    isa      => Tuple [ InstanceOf ['Code::Refactor::Node'], InstanceOf ['Code::Refactor::Node'] ],
+    isa      => Tuple [ InstanceOf ['Vitruvius::Node'], InstanceOf ['Vitruvius::Node'] ],
     required => 1,
 );
 

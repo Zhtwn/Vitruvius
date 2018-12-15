@@ -1,4 +1,4 @@
-package Code::Refactor::Node;
+package Vitruvius::Node;
 
 use Moo;
 
@@ -9,7 +9,7 @@ use Types::Standard qw< Int Str ArrayRef InstanceOf Maybe >;
 use Digest::CRC qw< crc32 >;
 use Perl::Tidy;
 
-use Code::Refactor::Util qw< ppi_type >;
+use Vitruvius::Util qw< ppi_type >;
 
 =head1 PARAMETERS
 
@@ -21,7 +21,7 @@ Human-readable location for snippet
 
 has location => (
     is       => 'ro',
-    isa      => InstanceOf ['Code::Refactor::Location'],
+    isa      => InstanceOf ['Vitruvius::Location'],
     required => 1,
 );
 
@@ -57,7 +57,7 @@ Parent of this node (undef for top-level node)
 
 has parent => (
     is       => 'ro',
-    isa      => Maybe [ InstanceOf ['Code::Refactor::Node'] ],
+    isa      => Maybe [ InstanceOf ['Vitruvius::Node'] ],
     weak_ref => 1,
     required => 1,
 );
@@ -70,7 +70,7 @@ Children of this node
 
 has children => (
     is      => 'rw',
-    isa     => ArrayRef [ InstanceOf ['Code::Refactor::Node'] ],
+    isa     => ArrayRef [ InstanceOf ['Vitruvius::Node'] ],
     default => sub { return []; },
 );
 

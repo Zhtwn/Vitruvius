@@ -1,4 +1,4 @@
-package Code::Refactor::LocationFactory;
+package Vitruvius::LocationFactory;
 
 use Moo;
 use v5.16;
@@ -7,7 +7,7 @@ use MooX::TypeTiny;
 
 use Types::Path::Tiny qw< Path >;
 
-use Code::Refactor::Location;
+use Vitruvius::Location;
 
 =head1 PARAMETERS
 
@@ -46,7 +46,7 @@ Create new Location for given PPI
 sub new_location {
     my ( $self, $ppi ) = @_;
 
-    return Code::Refactor::Location->new(
+    return Vitruvius::Location->new(
         base_dir => $self->base_dir,
         file     => $self->file,
         ppi      => $ppi,

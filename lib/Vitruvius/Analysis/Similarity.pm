@@ -1,4 +1,4 @@
-package Code::Refactor;
+package Vitruvius::Analysis::Similarity;
 
 use Moo;
 use v5.16;
@@ -22,23 +22,23 @@ use List::Util 'min';
 use Parallel::ForkManager;
 use Path::Tiny;
 
-use Code::Refactor::Diff;
-use Code::Refactor::File;
-use Code::Refactor::Group;
+use Vitruvius::Diff;
+use Vitruvius::File;
+use Vitruvius::Group;
 
 =encoding utf-8
 
 =head1 NAME
 
-Code::Refactor - tools to aid in code refactoring
+Vitruvius::Analysis::Similarity - find code similarity
 
 =head1 SYNOPSIS
 
-  use Code::Refactor;
+  use Vitruvius::Analysis::Similarity;
 
 =head1 DESCRIPTION
 
-Code::Refactor is fun and incomplete
+Vitruvius::Analysis::Similarity is fun and incomplete
 
 =cut
 
@@ -112,14 +112,14 @@ has min_ppi_hash_length => (
 
 =head2 files
 
-Code::Refactor::File instances for all files
+Vitruvius::File instances for all files
 
 =cut
 
 has files => (
     is      => 'ro',
     lazy    => 1,
-    isa     => ArrayRef [ InstanceOf ['Code::Refactor::File'] ],
+    isa     => ArrayRef [ InstanceOf ['Vitruvius::File'] ],
     builder => '_build_files',
 );
 
@@ -136,7 +136,7 @@ sub _build_files {
 
     if ( $jobs == 1 ) {
         say "Reading " . scalar(@$filenames) . " files...";
-        $files = [ map { Code::Refactor::File->new( base_dir => $base_dir, file => $_ ) } @$filenames ];
+        $files = [ map { Vitruvius::File->new( base_dir => $base_dir, file => $_ ) } @$filenames ];
     }
     else {
         $self->_parallelize(
@@ -148,7 +148,7 @@ sub _build_files {
                 my $job_files = [];
 
                 for my $filename (@$filenames) {
-                    my $file = Code::Refactor::File->new(
+                    my $file = Vitruvius::File->new(
                         base_dir => $base_dir,
                         file     => $filename,
                     );
@@ -176,7 +176,7 @@ All nodes from all files, hashed by type
 has nodes => (
     is      => 'ro',
     lazy    => 1,
-    isa     => HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Node'] ] ],
+    isa     => HashRef [ ArrayRef [ InstanceOf ['Vitruvius::Node'] ] ],
     builder => '_build_nodes',
 );
 
@@ -211,7 +211,7 @@ Diff instance for all pairs of nodes, hashed by type
 has diffs => (
     is      => 'ro',
     lazy    => 1,
-    isa     => ArrayRef [ ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ] ],
+    isa     => ArrayRef [ ArrayRef [ InstanceOf ['Vitruvius::Diff'] ] ],
     builder => '_build_diffs',
 );
 
@@ -219,7 +219,7 @@ sub _process_node_pair {
     my ( $self, $node_pair, $diffs ) = @_;
 
     my @nodes      = @$node_pair;                                     # see, a copy
-    my $diff       = Code::Refactor::Diff->new( nodes => \@nodes );
+    my $diff       = Vitruvius::Diff->new( nodes => \@nodes );
     my $similarity = $diff->ppi_levenshtein_similarity;
     return if $similarity < $self->min_similarity;
 
@@ -277,7 +277,7 @@ Groups, ordered by something reasonable
 has groups => (
     is      => 'ro',
     lazy    => 1,
-    isa     => ArrayRef [ InstanceOf ['Code::Refactor::Group'] ],
+    isa     => ArrayRef [ InstanceOf ['Vitruvius::Group'] ],
     builder => '_build_groups',
 );
 
@@ -294,7 +294,7 @@ sub _build_groups {
     for my $diffs (@$all_diffs) {
         my $base_node = $diffs->[0]->base_node;
         next if $nodes_seen{ $base_node->location };
-        push @groups, Code::Refactor::Group->new( base_node => $base_node, diffs => $diffs );
+        push @groups, Vitruvius::Group->new( base_node => $base_node, diffs => $diffs );
         $nodes_seen{$_}++ for map { $_->indexes->@* } @$diffs;
     }
 

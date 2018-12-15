@@ -1,4 +1,4 @@
-package Code::Refactor::Group;
+package Vitruvius::Group;
 
 use Moo;
 
@@ -10,14 +10,14 @@ use List::Util;
 
 has base_node => (
     is       => 'ro',
-    isa      => InstanceOf ['Code::Refactor::Node'],
+    isa      => InstanceOf ['Vitruvius::Node'],
     required => 1,
     handles  => [qw< type >],
 );
 
 has diffs => (
     is       => 'ro',
-    isa      => ArrayRef [ InstanceOf ['Code::Refactor::Diff'] ],
+    isa      => ArrayRef [ InstanceOf ['Vitruvius::Diff'] ],
     required => 1,
 );
 
