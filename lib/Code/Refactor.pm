@@ -2,6 +2,7 @@ package Code::Refactor;
 
 use Moo;
 use v5.16;
+our $VERSION = '0.01';
 
 use MooX::TypeTiny;
 
