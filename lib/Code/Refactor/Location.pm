@@ -143,19 +143,33 @@ sub _build_line_number {
     return $line_number;
 }
 
-=head1 METHODS
+=head2 as_string
 
-=head2 stringify
-
-Human-readable location for snippet, as string
+Human-readable location for node, as string
 
 =cut
 
-sub stringify {
+has as_string => (
+    is      => 'lazy',
+    isa     => Str,
+    builder => '_build_as_string',
+);
+
+sub _build_as_string {
     my $self = shift;
 
     my $sub = $self->subname ? 'sub ' . $self->subname : 'in sub ' . $self->containing_sub;
     return join ', ', grep { $_ } ( $self->rel_file . '', $sub, 'L' . $self->line_number );
 }
+
+=head1 METHODS
+
+=head2 stringify
+
+String location for node, as overload-callable method
+
+=cut
+
+sub stringify { shift->as_string }
 
 1;
