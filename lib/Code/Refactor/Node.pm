@@ -2,17 +2,12 @@ package Code::Refactor::Node;
 
 use Moo;
 
-use Types::Path::Tiny qw< File Path >;
-use Types::Standard qw< Int Str Bool HashRef ArrayRef InstanceOf Tuple Dict Maybe >;
+use Types::Standard qw< Int Str ArrayRef InstanceOf Maybe >;
 
 use Digest::CRC qw< crc32 >;
-use Hash::Merge;
-use List::Util qw< reduce >;
 use Perl::Tidy;
-use Scalar::Util qw< refaddr >;
 
-use Code::Refactor::Location;
-use Code::Refactor::Util qw< ppi_type hash_ppi >;
+use Code::Refactor::Util qw< ppi_type >;
 
 =head1 PARAMETERS
 
@@ -95,53 +90,6 @@ has min_content_length => (
 
 =head1 ATTRIBUTES
 
-=head2 is_valid
-
-Is this snippet valid (i.e., is it long enough to compare?)
-
-=cut
-
-has is_valid => (
-    is      => 'lazy',
-    isa     => Bool,
-    builder => '_build_is_valid',
-);
-
-sub _build_is_valid {
-    my $self = shift;
-
-    return length( $self->raw_content ) >= $self->min_content_length;
-}
-
-=head2 hashes
-
-Hashes of raw PPI structure, excluding comments and whitespace, using different hash methods:
-
-=over
-
-=item * CRC - crc32 hash of raw code content
-
-=item * PPI - hash of PPI structure
-
-=back
-
-=cut
-
-has hashes => (
-    is      => 'lazy',
-    isa     => HashRef [Str],
-    builder => '_build_hashes',
-);
-
-sub _build_hashes {
-    my $self = shift;
-
-    return {
-        CRC  => $self->crc_hash,
-        PPI  => $self->ppi_hash,
-    };
-}
-
 =head2 crc_hash
 
 CRC32 hash for raw code snippet
@@ -219,73 +167,6 @@ sub _build_ppi_hash_length {
     my $self = shift;
 
     return length $self->ppi_hash;
-}
-
-=head2 sibling_ppi_hashes
-
-PPI hash to the left and right of this node
-
-=cut
-
-has sibling_ppi_hashes => (
-    is      => 'lazy',
-    isa     => Dict [ left => Str, right => Str ],
-    builder => '_build_left_ppi_hash',
-);
-
-sub _build_left_ppi_hash {
-    my $self = shift;
-
-    my %hashes = ( left => '', right => '' );
-
-    if ( my $parent = $self->parent ) {
-
-        my $siblings = $parent->children;
-
-        my $is_right;
-        for my $sibling (@$siblings) {
-            if ( refaddr $sibling == refaddr $self) {
-                $is_right = 1;
-            }
-            elsif ($is_right) {
-                $hashes{right} .= $sibling->ppi_hash;
-            }
-            else {
-                $hashes{left} .= $sibling->ppi_hash;
-            }
-        }
-
-        $hashes{left} = $parent->ppi_element_hash . '[' . $hashes{left};
-        $hashes{right} .= ']';
-    }
-
-    return \%hashes;
-}
-
-sub left_ppi_hash { return shift->sibling_ppi_hashes->{left} }
-
-sub right_ppi_hash { return shift->sibling_ppi_hashes->{right} }
-
-has ppi_hashes => (
-    is      => 'lazy',
-    isa     => HashRef [ ArrayRef [ InstanceOf ['Code::Refactor::Node'] ] ],
-    builder => '_build_ppi_hashes',
-);
-
-my $merger = Hash::Merge->new('LEFT_PRECEDENT');
-$merger->set_clone_behavior(0);
-
-sub _build_ppi_hashes {
-    my $self = shift;
-
-    # start with own hash
-    my $hashes = { $self->ppi_hash => [ $self ] };
-
-    # merge in hashes of all children
-    $hashes = reduce { $merger->merge( $a, $b ) }
-    ( $hashes, map { $_->ppi_hashes } $self->children->@* );
-
-    return $hashes;
 }
 
 1;
