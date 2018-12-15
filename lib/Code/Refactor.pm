@@ -26,6 +26,22 @@ use Code::Refactor::Diff;
 use Code::Refactor::File;
 use Code::Refactor::Group;
 
+=encoding utf-8
+
+=head1 NAME
+
+Code::Refactor - tools to aid in code refactoring
+
+=head1 SYNOPSIS
+
+  use Code::Refactor;
+
+=head1 DESCRIPTION
+
+Code::Refactor is fun and incomplete
+
+=cut
+
 =head1 PARAMETERS
 
 =head2 jobs
@@ -354,3 +370,21 @@ sub _parallelize {
 }
 
 1;
+__END__
+
+=head1 AUTHOR
+
+Noel Maddy E<lt>zhtwnpanta@gmail.comE<gt>
+
+=head1 COPYRIGHT
+
+Copyright 2018- Noel Maddy
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+=cut
