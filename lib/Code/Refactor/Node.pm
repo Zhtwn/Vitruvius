@@ -32,7 +32,7 @@ Type of Node -- for now, just the reftype of the PPI node
 =cut
 
 has type => (
-    is       => 'lazy',
+    is       => 'ro',
     isa      => Str,
     required => 1,
 );
@@ -44,7 +44,7 @@ Code content of C<raw_ppi>, run through L<Perl::Tidy> for whitespace standardiza
 =cut
 
 has raw_content => (
-    is       => 'lazy',
+    is       => 'ro',
     isa      => Str,
     required => 1,
 );
@@ -58,7 +58,7 @@ Parent of this node (undef for top-level node)
 has parent => (
     is       => 'ro',
     isa      => Maybe [ InstanceOf ['Code::Refactor::Node'] ],
-    weakref  => 1,
+    weak_ref => 1,
     required => 1,
 );
 

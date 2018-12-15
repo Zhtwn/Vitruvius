@@ -36,7 +36,7 @@ PPI for this tree, excluding Data, End, and Pod sections
 =cut
 
 has ppi => (
-    is       => 'lazy',
+    is       => 'ro',
     isa      => InstanceOf ['PPI::Node'],
     required => 1,
 );
