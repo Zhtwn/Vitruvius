@@ -321,37 +321,4 @@ sub _build_groups {
     return [ sort { $b->mean <=> $a->mean } @groups ];
 }
 
-=head2 distances
-
-FIXME - O(n^2)
-
-=cut
-
-has distances => (
-    is      => 'lazy',
-    isa     => HashRef [ArrayRef],
-    builder => '_build_distances',
-);
-
-sub _build_distances {
-    my $self = shift;
-
-    # get all snippets from all files
-    my @snippets = map { $_->snippets->@* } $self->files->@*;
-
-    my %distances;
-
-    for my $i ( 0 .. $#snippets ) {
-        my $first = $snippets[$i];
-        for my $j ( $i .. $#snippets ) {
-            next if $i == $j;
-            my $second   = $snippets[$j];
-            my $distance = $first->tlsh->total_diff($second->tlsh);
-            push $distances{$distance}->@*, [ $first, $second ];
-        }
-    }
-
-    return \%distances;
-}
-
 1;
