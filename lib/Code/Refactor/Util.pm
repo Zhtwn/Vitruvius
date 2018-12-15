@@ -7,7 +7,6 @@ use parent 'Exporter';
 
 our @EXPORT_OK = qw<
   ppi_type
-  hash_ppi
   is_interesting
 >;
 
@@ -106,27 +105,6 @@ sub ppi_type {
     my $ppi_class = shift;
 
     return $token_for_class{$ppi_class};
-}
-
-=head2 hash_ppi
-
-Return a hash representing the structure of the given PPI
-
-=cut
-
-sub hash_ppi {
-    my $ppi = shift;
-
-    die "not a PPI::Element" unless blessed $ppi && $ppi->isa('PPI::Element');
-
-    my @children = $ppi->can('children') ? $ppi->children : ();
-
-    if (!@children) {
-        return $token_for_class{ref $ppi} // 'XXX';
-    }
-    else {
-        return '[' . join(',', map { hash_ppi($_) } @children ) . ']';
-    }
 }
 
 =head2 is_interesting
