@@ -2,14 +2,19 @@ package Vitruvius::Util;
 
 use strict;
 use warnings;
+use 5.010;
 
 use parent 'Exporter';
 
 our @EXPORT_OK = qw<
   ppi_type
   is_interesting
+  parallelize
 >;
 
+use List::MoreUtils 'part';
+use List::Util 'min';
+use Parallel::ForkManager;
 use Scalar::Util qw< blessed >;
 
 # HACK - copy of the PDOM class tree from PPI documentation
@@ -132,4 +137,67 @@ sub is_interesting {
     #   return;
 }
 
+=head2 parallelize
+
+Run given work in parallel jobs
+
+=cut
+
+sub parallelize {
+    my %args = @_;
+
+    my $jobs       = $args{jobs};
+    my $message    = $args{message};
+    my $input      = $args{input};
+    my $child_sub  = $args{child_sub};
+    my $finish_sub = $args{finish_sub};
+
+    # never use more jobs than we have inputs
+    $jobs = $jobs, scalar @$input;
+
+    say "$message using $jobs jobs...";
+    my $i = 0;
+    my @input_batches = part { $i++ % $jobs } @$input;
+
+    my $pm = Parallel::ForkManager->new($jobs);
+
+    $pm->run_on_finish(
+        sub {
+            my ( $pid, $exit_code, $ident, $exit_signal, $core_dump, $return ) = @_;
+            if ($return) {
+                $finish_sub->($return);
+            }
+        }
+    );
+
+  JOB:
+    for my $job_num ( 0 .. $jobs - 1 ) {
+        $pm->start and next JOB;
+
+        my $output = $child_sub->( $input_batches[$job_num] );
+
+        $pm->finish( 0, $output );
+    }
+
+    $pm->wait_all_children;
+}
+
 1;
+__END__
+
+=head1 AUTHOR
+
+Noel Maddy E<lt>zhtwnpanta@gmail.comE<gt>
+
+=head1 COPYRIGHT
+
+Copyright 2018- Noel Maddy
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+=cut

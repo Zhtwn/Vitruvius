@@ -17,14 +17,13 @@ $Data::Dumper::Indent   = 1;
 
 use Cwd;
 use Hash::Merge;
-use List::MoreUtils 'part';
 use List::Util 'min';
-use Parallel::ForkManager;
 use Path::Tiny;
 
 use Vitruvius::Diff;
 use Vitruvius::File;
 use Vitruvius::Group;
+use Vitruvius::Util qw< parallelize >;
 
 =encoding utf-8
 
@@ -139,7 +138,8 @@ sub _build_files {
         $files = [ map { Vitruvius::File->new( base_dir => $base_dir, file => $_ ) } @$filenames ];
     }
     else {
-        $self->_parallelize(
+        parallelize(
+            jobs      => $self->jobs,
             message   => "Reading " . scalar(@$filenames) . " files",
             input     => $self->filenames,
             child_sub => sub {
@@ -245,7 +245,8 @@ sub _build_diffs {
         $self->_process_node_pair( $_, $diffs ) for @node_pairs;
     }
     else {
-        $self->_parallelize(
+        parallelize(
+            jobs      => $self->jobs,
             message   => "Building " . scalar(@node_pairs) . " diffs",
             input     => \@node_pairs,
             child_sub => sub {
@@ -327,50 +328,6 @@ sub _node_pairs {
     }
 
     return @node_pairs;
-}
-
-=head2 _parallelize
-
-Run in parallel jobs
-
-=cut
-
-sub _parallelize {
-    my ( $self, %args ) = @_;
-
-    my $message    = $args{message};
-    my $input      = $args{input};
-    my $child_sub  = $args{child_sub};
-    my $finish_sub = $args{finish_sub};
-
-    # never use more jobs than we have inputs
-    my $jobs = min $self->jobs, scalar @$input;
-
-    say "$message using $jobs jobs...";
-    my $i = 0;
-    my @input_batches = part { $i++ % $jobs } @$input;
-
-    my $pm = Parallel::ForkManager->new($jobs);
-
-    $pm->run_on_finish(
-        sub {
-            my ( $pid, $exit_code, $ident, $exit_signal, $core_dump, $return ) = @_;
-            if ($return) {
-                $finish_sub->($return);
-            }
-        }
-    );
-
-  JOB:
-    for my $job_num ( 0 .. $jobs - 1 ) {
-        $pm->start and next JOB;
-
-        my $output = $child_sub->( $input_batches[$job_num] );
-
-        $pm->finish( 0, $output );
-    }
-
-    $pm->wait_all_children;
 }
 
 1;
