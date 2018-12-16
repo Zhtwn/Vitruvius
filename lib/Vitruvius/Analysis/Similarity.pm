@@ -22,7 +22,9 @@ use Path::Tiny;
 
 use Vitruvius::Diff;
 use Vitruvius::File;
+use Vitruvius::FileSet;
 use Vitruvius::Group;
+use Vitruvius::NodeSet;
 use Vitruvius::Util qw< parallelize >;
 
 =encoding utf-8
@@ -58,97 +60,43 @@ has config => (
 
 =head1 ATTRIBUTES
 
-=head2 files
+=head2 fileset
 
-Vitruvius::File instances for all files
+Vitruvius::FileSet with all files to be analyzed
 
 =cut
 
-has files => (
+has fileset => (
     is      => 'ro',
     lazy    => 1,
-    isa     => ArrayRef [ InstanceOf ['Vitruvius::File'] ],
-    builder => '_build_files',
+    isa     => InstanceOf ['Vitruvius::FileSet'],
+    builder => '_build_fileset',
 );
 
-sub _build_files {
+sub _build_fileset {
     my $self = shift;
 
-    my $base_dir = $self->base_dir;
-
-    my $jobs = $self->jobs;
-
-    my $filenames = $self->filenames;
-
-    my $files;
-
-    if ( $jobs == 1 ) {
-        say "Reading " . scalar(@$filenames) . " files...";
-        $files = [ map { Vitruvius::File->new( base_dir => $base_dir, file => $_ ) } @$filenames ];
-    }
-    else {
-        parallelize(
-            jobs      => $self->jobs,
-            message   => "Reading " . scalar(@$filenames) . " files",
-            input     => $self->filenames,
-            child_sub => sub {
-                my $filenames = shift;
-
-                my $job_files = [];
-
-                for my $filename (@$filenames) {
-                    my $file = Vitruvius::File->new(
-                        base_dir => $base_dir,
-                        file     => $filename,
-                    );
-                    $file->nodes;    # force all parsing and building to be done in parallel
-                    push @$job_files, $file;
-                }
-
-                return $job_files;
-            },
-            finish_sub => sub {
-                my $return = shift;
-                push @$files, @$return;
-            },
-        );
-    }
-    return $files;
+    return Vitruvius::FileSet->new( config => $self->config );
 }
 
-=head2 nodes
+=head2 nodeset
 
-All nodes from all files, hashed by type
+Vitruvius::NodeSet with all nodes to be analyzed
 
 =cut
 
-has nodes => (
+has nodeset => (
     is      => 'ro',
     lazy    => 1,
-    isa     => HashRef [ ArrayRef [ InstanceOf ['Vitruvius::Node'] ] ],
-    builder => '_build_nodes',
+    isa     => InstanceOf ['Vitruvius::NodeSet'],
+    builder => '_build_nodeset',
+    handles => [qw< nodes >],
 );
 
-sub _build_nodes {
+sub _build_nodeset {
     my $self = shift;
 
-    say "Building nodes...";
-
-    my $min_ppi_size = $self->min_ppi_size;
-
-    my %nodes;
-    my $cnt = 0;
-
-    for my $file ( $self->files->@* ) {
-        for my $node ( $file->nodes->@* ) {
-            next if $node->ppi_size < $min_ppi_size;
-            push $nodes{ $node->type }->@*, $node;
-            ++$cnt;
-        }
-    }
-
-    say "...found $cnt nodes.";
-    return \%nodes;
+    return Vitruvius::NodeSet->new( config => $self->config, fileset => $self->fileset );
 }
 
 =head2 diffs
