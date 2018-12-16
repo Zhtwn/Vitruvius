@@ -1,6 +1,6 @@
 package Vitruvius::App;
 
-use MooseX::App;
+use MooseX::App qw< ConfigHome >;
 
 =head1 NAME
 

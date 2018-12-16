@@ -7,6 +7,7 @@ requires 'List::Util';
 requires 'Moo';
 requires 'MooX::TypeTiny';
 requires 'MooseX::App';
+requires 'MooseX::App::Plugin::ConfigHome';
 requires 'PPI';
 requires 'Parallel::ForkManager';
 requires 'Path::Tiny';
