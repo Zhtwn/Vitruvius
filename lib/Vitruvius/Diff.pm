@@ -193,7 +193,7 @@ sub _build_ppi_levenshtein_similarity {
 
     my $distance = Text::Levenshtein::XS::distance( map { $_->ppi_hash } @$nodes );
 
-    my $max_length = max map { $_->ppi_hash_length } @$nodes;
+    my $max_length = max map { $_->ppi_size } @$nodes;
 
     return int( 100 * ( $max_length - $distance ) / $max_length );
 }

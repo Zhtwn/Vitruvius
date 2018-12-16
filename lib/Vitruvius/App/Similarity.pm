@@ -73,11 +73,11 @@ sub run {
     my $self = shift;
 
     my $similarity = Vitruvius::Analysis::Similarity->new(
-        jobs                => $self->jobs,
-        base_dir            => $self->base_dir,
-        filenames           => $self->filenames,
-        min_similarity      => $self->min_similarity,
-        min_ppi_hash_length => $self->min_ppi_size,
+        jobs           => $self->jobs,
+        base_dir       => $self->base_dir,
+        filenames      => $self->filenames,
+        min_similarity => $self->min_similarity,
+        min_ppi_size   => $self->min_ppi_size,
     );
 
     say for map { $_->report_lines } $similarity->groups->@*;

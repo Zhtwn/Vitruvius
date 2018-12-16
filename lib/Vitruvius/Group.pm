@@ -62,12 +62,12 @@ sub _build_mean {
 sub report_lines {
     my $self = shift;
 
-    my $type        = $self->type;
-    my $hash_length = $self->base_node->ppi_hash_length;
-    my $base_node   = $self->base_node;
+    my $type      = $self->type;
+    my $ppi_size  = $self->base_node->ppi_size;
+    my $base_node = $self->base_node;
 
     my @report_lines = (
-        "SIMILAR: $type (hash length: $hash_length)",
+        "SIMILAR: $type (PPI Size: $ppi_size)",
         "  Base Node: " . $base_node->location,
     );
 

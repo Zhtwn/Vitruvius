@@ -156,20 +156,20 @@ sub _build_ppi_hash {
     return $hash;
 }
 
-=head2 ppi_hash_length
+=head2 ppi_size
 
 Length of PPI hash
 
 =cut
 
-has ppi_hash_length => (
+has ppi_size => (
     is      => 'ro',
     lazy    => 1,
     isa     => Int,
-    builder => '_build_ppi_hash_length',
+    builder => '_build_ppi_size',
 );
 
-sub _build_ppi_hash_length {
+sub _build_ppi_size {
     my $self = shift;
 
     return length $self->ppi_hash;

@@ -96,16 +96,16 @@ has min_similarity => (
     default => 95,
 );
 
-=head2 min_ppi_hash_length
+=head2 min_ppi_size
 
 Minimum PPI hash length - defaults to 100
 
 =cut
 
-has min_ppi_hash_length => (
+has min_ppi_size => (
     is      => 'ro',
     isa     => Int,
-    default => 400,
+    default => 100,
 );
 
 =head1 ATTRIBUTES
@@ -185,14 +185,14 @@ sub _build_nodes {
 
     say "Building nodes...";
 
-    my $min_ppi_hash_length = $self->min_ppi_hash_length;
+    my $min_ppi_size = $self->min_ppi_size;
 
     my %nodes;
     my $cnt = 0;
 
     for my $file ( $self->files->@* ) {
         for my $node ( $file->nodes->@* ) {
-            next if $node->ppi_hash_length < $min_ppi_hash_length;
+            next if $node->ppi_size < $min_ppi_size;
             push $nodes{ $node->type }->@*, $node;
             ++$cnt;
         }
