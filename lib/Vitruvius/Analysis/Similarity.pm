@@ -9,7 +9,7 @@ use MooX::TypeTiny;
 use feature 'state';
 
 use Types::Path::Tiny qw< Path >;
-use Types::Standard qw< Str Int HashRef ArrayRef InstanceOf >;
+use Types::Standard qw< Str Int HashRef ArrayRef InstanceOf HasMethods >;
 
 use Data::Dumper;
 $Data::Dumper::Sortkeys = 1;
@@ -43,68 +43,17 @@ Vitruvius::Analysis::Similarity is fun and incomplete
 
 =head1 PARAMETERS
 
-=head2 jobs
+=head2 config
 
-Number of jobs to use to parse files
-
-Default: 1
+Configuration for Similarity
 
 =cut
 
-has jobs => (
-    is      => 'ro',
-    isa     => Int,
-    default => 1,
-);
-
-=head2 base_dir
-
-Base directory for all files
-
-Default: C<cwd>
-
-=cut
-
-has base_dir => (
-    is      => 'ro',
-    isa     => Path,
-    default => sub { path( cwd() ) },
-);
-
-=head2 filenames
-
-File names to be scanned
-
-=cut
-
-has filenames => (
+has config => (
     is       => 'ro',
-    isa      => ArrayRef,
+    isa      => HasMethods [qw< jobs base_dir filenames min_similarity min_ppi_size >],
     required => 1,
-);
-
-=head2 min_similarity
-
-Minimum "similarity" - defaults to 95
-
-=cut
-
-has min_similarity => (
-    is      => 'ro',
-    isa     => Int,
-    default => 95,
-);
-
-=head2 min_ppi_size
-
-Minimum PPI hash length - defaults to 100
-
-=cut
-
-has min_ppi_size => (
-    is      => 'ro',
-    isa     => Int,
-    default => 100,
+    handles  => [qw< jobs base_dir filenames min_similarity min_ppi_size >],
 );
 
 =head1 ATTRIBUTES

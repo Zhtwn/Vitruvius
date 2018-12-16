@@ -72,13 +72,7 @@ sub _build_filenames {
 sub run {
     my $self = shift;
 
-    my $similarity = Vitruvius::Analysis::Similarity->new(
-        jobs           => $self->jobs,
-        base_dir       => $self->base_dir,
-        filenames      => $self->filenames,
-        min_similarity => $self->min_similarity,
-        min_ppi_size   => $self->min_ppi_size,
-    );
+    my $similarity = Vitruvius::Analysis::Similarity->new( config => $self );
 
     say for map { $_->report_lines } $similarity->groups->@*;
 }
