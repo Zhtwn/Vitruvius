@@ -57,7 +57,7 @@
             "Types::Standard" : "0",
             "feature" : "0",
             "parent" : "0",
-            "perl" : "v5.16.0"
+            "perl" : "5.010"
          }
       },
       "test" : {

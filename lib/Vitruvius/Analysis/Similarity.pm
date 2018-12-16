@@ -1,7 +1,7 @@
 package Vitruvius::Analysis::Similarity;
 
 use Moo;
-use v5.16;
+use 5.010;
 our $VERSION = '0.01';
 
 use MooX::TypeTiny;

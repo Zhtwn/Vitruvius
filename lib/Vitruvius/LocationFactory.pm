@@ -1,7 +1,7 @@
 package Vitruvius::LocationFactory;
 
 use Moo;
-use v5.16;
+use 5.010;
 
 use MooX::TypeTiny;
 

@@ -1,4 +1,4 @@
-requires 'perl', 'v5.16.0';
+requires 'perl', '5.010';
 requires 'Diff::LibXDiff';
 requires 'Digest::CRC';
 requires 'Hash::Merge';
