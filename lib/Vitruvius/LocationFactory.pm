@@ -5,7 +5,7 @@ use 5.010;
 
 use MooX::TypeTiny;
 
-use Types::Path::Tiny qw< Path >;
+use Types::Path::Tiny qw< File Dir >;
 
 use Vitruvius::Location;
 
@@ -19,7 +19,7 @@ Base directory, to be passed into Location
 
 has base_dir => (
     is       => 'ro',
-    isa      => Path,
+    isa      => Dir,
     required => 1,
 );
 
@@ -31,7 +31,7 @@ File, to be passed into Location
 
 has file => (
     is       => 'ro',
-    isa      => Path,
+    isa      => File,
     required => 1,
 );
 
