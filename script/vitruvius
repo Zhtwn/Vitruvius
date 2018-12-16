@@ -1,4 +1,6 @@
 #!/usr/bin/env perl
+use strict;
+use warnings;
 use Vitruvius::App;
 Vitruvius::App->new_with_command->run;
 
