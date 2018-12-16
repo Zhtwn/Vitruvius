@@ -270,4 +270,16 @@ sub _build_diff_lines {
     return $line_count / $tot_lines;
 }
 
+sub report_lines {
+    my $self = shift;
+
+    my @report_lines = (
+        "    Location: " . $self->node->location,
+        "    Simlarity: " . $self->ppi_levenshtein_similarity,
+        map { '    ' . $_ } split /\n/, $self->xdiff,
+    );
+
+    return @report_lines;
+}
+
 1;

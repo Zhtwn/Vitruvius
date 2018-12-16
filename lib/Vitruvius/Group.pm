@@ -59,4 +59,25 @@ sub _build_mean {
     return $self->sum / $self->count;
 }
 
+sub report_lines {
+    my $self = shift;
+
+    my $type        = $self->type;
+    my $hash_length = $self->base_node->ppi_hash_length;
+    my $base_node   = $self->base_node;
+
+    my @report_lines = (
+        "SIMILAR: $type (hash length: $hash_length)",
+        "  Base Node: " . $base_node->location,
+    );
+
+    my $i;
+    for my $diff ($self->diffs->@*) {
+        ++$i;
+        push @report_lines, "  Node $i:", $diff->report_lines;
+    }
+
+    return @report_lines;
+}
+
 1;
