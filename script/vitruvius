@@ -17,9 +17,6 @@ my $service_path = $config->service_path;
 
 my $service = Vitruvius::Container->get_service($service_path);
 
-# FIXME - class-specific reporting code belongs in the class
-say for map { $_->report_lines } $service->groups->@*;
+say for $service->report_lines->@*;
 
 exit 0;
-$service->report;
-

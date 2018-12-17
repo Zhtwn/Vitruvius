@@ -202,6 +202,24 @@ sub _build_groups {
     return [ sort { $b->mean <=> $a->mean } @groups ];
 }
 
+=head2 report_lines
+
+Report of simlar groups found
+
+=cut
+
+has report_lines => (
+    is      => 'ro',
+    lazy    => 1,
+    isa     => ArrayRef [Str],
+    builder => '_build_report_lines',
+);
+
+sub _build_report_lines {
+    my $self = shift;
+    return [ map { $_->report_lines } $self->groups->@* ];
+}
+
 =head1 PRIVATE METHODS
 
 =head2 _node_pairs
