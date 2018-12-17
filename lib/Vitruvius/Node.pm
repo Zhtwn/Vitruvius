@@ -2,6 +2,8 @@ package Vitruvius::Node;
 
 use Moo;
 
+use namespace::autoclean;
+
 use MooX::TypeTiny;
 
 use Types::Standard qw< Int Str ArrayRef InstanceOf Maybe >;

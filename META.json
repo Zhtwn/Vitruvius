@@ -57,6 +57,7 @@
             "Types::Path::Tiny" : "0",
             "Types::Standard" : "0",
             "feature" : "0",
+            "namespace::autoclean" : "0",
             "parent" : "0",
             "perl" : "5.010"
          }

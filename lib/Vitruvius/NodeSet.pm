@@ -3,6 +3,8 @@ package Vitruvius::NodeSet;
 use Moo;
 use 5.010;
 
+use namespace::autoclean;
+
 use MooX::TypeTiny;
 
 use Types::Standard qw< ArrayRef HashRef InstanceOf HasMethods >;

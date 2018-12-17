@@ -3,6 +3,8 @@ package Vitruvius::File;
 use Moo;
 use 5.010;
 
+use namespace::autoclean;
+
 use MooX::TypeTiny;
 
 use Types::Path::Tiny qw< File Path >;

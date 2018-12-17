@@ -5,6 +5,8 @@ extends 'Vitruvius::App';
 
 use 5.010;
 
+use namespace::autoclean;
+
 use Types::Common::Numeric qw< PositiveInt >;
 use Types::Path::Tiny      qw< Dir >;
 use Types::Standard        qw< Str ArrayRef InstanceOf >;

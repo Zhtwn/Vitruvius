@@ -2,6 +2,8 @@ package Vitruvius::Location;
 
 use Moo;
 
+use namespace::autoclean;
+
 use MooX::TypeTiny;
 
 use feature 'state';
