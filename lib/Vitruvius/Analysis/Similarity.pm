@@ -24,9 +24,7 @@ use Path::Tiny;
 
 use Vitruvius::Diff;
 use Vitruvius::File;
-use Vitruvius::FileSet;
 use Vitruvius::Group;
-use Vitruvius::NodeSet;
 use Vitruvius::Util qw< parallelize >;
 
 =encoding utf-8
@@ -60,27 +58,6 @@ has config => (
     handles  => [qw< jobs base_dir filenames min_similarity min_ppi_size >],
 );
 
-=head1 ATTRIBUTES
-
-=head2 fileset
-
-Vitruvius::FileSet with all files to be analyzed
-
-=cut
-
-has fileset => (
-    is      => 'ro',
-    lazy    => 1,
-    isa     => InstanceOf ['Vitruvius::FileSet'],
-    builder => '_build_fileset',
-);
-
-sub _build_fileset {
-    my $self = shift;
-
-    return Vitruvius::FileSet->new( config => $self->config );
-}
-
 =head2 nodeset
 
 Vitruvius::NodeSet with all nodes to be analyzed
@@ -88,18 +65,13 @@ Vitruvius::NodeSet with all nodes to be analyzed
 =cut
 
 has nodeset => (
-    is      => 'ro',
-    lazy    => 1,
-    isa     => InstanceOf ['Vitruvius::NodeSet'],
-    builder => '_build_nodeset',
-    handles => [qw< nodes >],
+    is       => 'ro',
+    isa      => InstanceOf ['Vitruvius::NodeSet'],
+    required => 1,
+    handles  => [qw< nodes >],
 );
 
-sub _build_nodeset {
-    my $self = shift;
-
-    return Vitruvius::NodeSet->new( config => $self->config, fileset => $self->fileset );
-}
+=head1 ATTRIBUTES
 
 =head2 diffs
 
