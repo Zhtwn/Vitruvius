@@ -11,6 +11,7 @@ use Types::Common::Numeric qw< PositiveInt >;
 use Types::Path::Tiny      qw< Dir >;
 use Types::Standard        qw< Str ArrayRef InstanceOf >;
 
+use Carp;
 use Cwd;
 use Path::Tiny;
 
@@ -72,11 +73,7 @@ sub _build_filenames {
 }
 
 sub run {
-    my $self = shift;
-
-    my $similarity = Vitruvius::Analysis::Similarity->new( config => $self );
-
-    say for map { $_->report_lines } $similarity->groups->@*;
+    croak "Run application using Vitruvius::Container->get_service('similarity')";
 }
 
 1;

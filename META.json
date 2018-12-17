@@ -38,6 +38,8 @@
       },
       "runtime" : {
          "requires" : {
+            "Bread::Board" : "0",
+            "Carp" : "0",
             "Diff::LibXDiff" : "0",
             "Digest::CRC" : "0",
             "Hash::Merge" : "0",

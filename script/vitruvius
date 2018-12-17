@@ -1,6 +1,25 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use 5.010;
+
 use Vitruvius::App;
-Vitruvius::App->new_with_command->run;
+use Vitruvius::Container;
+
+my $config = Vitruvius::Container->get_service('config');
+
+if ( $config->isa('MooseX::App::Message::Envelope') ) {
+    say $config;
+    exit $config->exitcode;
+}
+
+my $service_path = $config->service_path;
+
+my $service = Vitruvius::Container->get_service($service_path);
+
+# FIXME - class-specific reporting code belongs in the class
+say for map { $_->report_lines } $service->groups->@*;
+
+exit 0;
+$service->report;
 

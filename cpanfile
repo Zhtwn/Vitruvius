@@ -1,4 +1,6 @@
 requires 'perl', '5.010';
+requires 'Bread::Board';
+requires 'Carp';
 requires 'Diff::LibXDiff';
 requires 'Digest::CRC';
 requires 'Hash::Merge';
