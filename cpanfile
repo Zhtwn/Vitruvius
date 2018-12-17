@@ -13,6 +13,7 @@ requires 'Parallel::ForkManager';
 requires 'Path::Tiny';
 requires 'Perl::Tidy';
 requires 'Scalar::Util';
+requires 'String::CamelCase';
 requires 'Text::Levenshtein::XS';
 requires 'Types::Common::Numeric';
 requires 'Types::Path::Tiny';
