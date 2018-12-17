@@ -83,7 +83,7 @@ sub _tree_node {
         my ( $tidy_content, $stderr );
 
         my $perltidy_error =
-          Perl::Tidy::perltidy( argv => '-se', stderr => \$stderr, source => \$raw_content, destination => \$tidy_content );
+          Perl::Tidy::perltidy( argv => '-se -nst', stderr => \$stderr, source => \$raw_content, destination => \$tidy_content );
 
         $raw_content = $tidy_content unless $perltidy_error;
     }
