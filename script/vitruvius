@@ -6,6 +6,11 @@ use 5.010;
 use Vitruvius::App;
 use Vitruvius::Container;
 
+# HACK - force "help" and "usage" to do what they say
+# (for some reason, MooseX::App lists this in usage for non-top-level commands,
+# but only implements it for top-level commands?)
+s/^(help|usage)$/--$1/ for @ARGV;
+
 my $config = Vitruvius::Container->get_service('config');
 
 if ( $config->isa('MooseX::App::Message::Envelope') ) {
