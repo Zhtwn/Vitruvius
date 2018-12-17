@@ -74,7 +74,8 @@ sub report_lines {
     );
 
     my $i;
-    for my $diff ($self->diffs->@*) {
+    my @diffs = sort { $b->ppi_levenshtein_similarity <=> $a->ppi_levenshtein_similarity || ($a->node->location . '') cmp ($b->node->location . '')} $self->diffs->@*;
+    for my $diff (@diffs) {
         ++$i;
         push @report_lines, "  Node $i:", $diff->report_lines;
     }
