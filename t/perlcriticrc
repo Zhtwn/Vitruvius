@@ -1,2 +1,2 @@
 [TestingAndDebugging::RequireUseStrict]
-equivalent_modules = MooseX::App MooseX::App::Command
+equivalent_modules = MooseX::App MooseX::App::Command MooseX::App::Role

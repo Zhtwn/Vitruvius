@@ -5,6 +5,8 @@ extends 'Vitruvius::App';
 
 use 5.010;
 
+with qw< Vitruvius::Role::App::WithFiles>;
+
 use namespace::autoclean;
 
 use Types::Common::Numeric qw< PositiveInt >;
@@ -16,15 +18,6 @@ use Cwd;
 use Path::Tiny;
 
 use Vitruvius::Analysis::Similarity;
-
-option base_dir => (
-    is            => 'ro',
-    isa           => Dir,
-    cmd_flag      => 'base-dir',
-    cmd_aliases   => ['b'],
-    default       => sub { path( cwd() ); },
-    documentation => 'base directory for source code files',
-);
 
 option min_similarity => (
     is            => 'ro',
@@ -43,26 +36,6 @@ option min_ppi_size => (
     default       => 50,
     documentation => 'minimum PPI size to include in report',
 );
-
-parameter filename => (
-    is            => 'ro',
-    isa           => Str,
-    cmd_flag      => 'filenames',
-    documentation => 'source code files to analyze',
-);
-
-has filenames => (
-    is      => 'ro',
-    lazy    => 1,
-    isa     => ArrayRef [Str],
-    builder => '_build_filenames',
-);
-
-sub _build_filenames {
-    my $self = shift;
-
-    return [ $self->filename, $self->extra_argv->@* ];
-}
 
 sub run {
     croak "Run application using Vitruvius::Container->get_service('similarity')";
