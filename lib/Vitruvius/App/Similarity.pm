@@ -17,14 +17,6 @@ use Path::Tiny;
 
 use Vitruvius::Analysis::Similarity;
 
-option jobs => (
-    is            => 'ro',
-    isa           => PositiveInt,
-    cmd_aliases   => ['j'],
-    default       => 1,
-    documentation => 'number of parallel jobs to run',
-);
-
 option base_dir => (
     is            => 'ro',
     isa           => Dir,

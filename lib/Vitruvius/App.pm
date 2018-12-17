@@ -5,6 +5,7 @@ use MooseX::App qw< ConfigHome >;
 # BROKEN: autoclean removes "new_with_command"
 # use namespace::autoclean;
 
+use Types::Common::Numeric qw< PositiveInt >;
 use Types::Standard qw< Str>;
 
 use String::CamelCase qw< decamelize >;
@@ -12,6 +13,34 @@ use String::CamelCase qw< decamelize >;
 =head1 NAME
 
 Vitruvius::App - base class for vitruvius scripts
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 GLOBAL OPTIONS
+
+=head2 jobs
+
+Number of jobs to use for parallelizable actions.
+
+Default: 1
+
+=cut
+
+option jobs => (
+    is            => 'ro',
+    isa           => PositiveInt,
+    cmd_aliases   => ['j'],
+    default       => 1,
+    documentation => 'number of parallel jobs to run',
+);
+
+=head1 METHODS
+
+=head2 service_path
+
+Service path in L<Vitruvius::Container> that corresponds to the App command class.
 
 =cut
 
