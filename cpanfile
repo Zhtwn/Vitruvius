@@ -29,8 +29,10 @@ requires 'feature';
 requires 'parent';
 
 on test => sub {
+    requires 'perl', '5.012';
     requires 'Test::Compile';
     requires 'Test::More', '0.96';
+    requires 'Test2::Tools::xUnit', '0.003';
 };
 
 on configure => sub {

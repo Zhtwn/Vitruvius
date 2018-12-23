@@ -66,13 +66,15 @@
             "feature" : "0",
             "namespace::autoclean" : "0",
             "parent" : "0",
-            "perl" : "5.010"
+            "perl" : "5.012"
          }
       },
       "test" : {
          "requires" : {
+            "Test2::Tools::xUnit" : "0.003",
             "Test::Compile" : "0",
-            "Test::More" : "0.96"
+            "Test::More" : "0.96",
+            "perl" : "5.012"
          }
       }
    },
