@@ -8,6 +8,8 @@ requires 'Hash::Merge';
 requires 'Import::Into';
 requires 'List::MoreUtils';
 requires 'List::Util';
+requires 'Log::Any';
+requires 'Log::Any::Adapter::Screen';
 requires 'Moo';
 requires 'MooX::TypeTiny';
 requires 'MooseX::App';

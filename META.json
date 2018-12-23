@@ -47,6 +47,8 @@
             "Import::Into" : "0",
             "List::MoreUtils" : "0",
             "List::Util" : "0",
+            "Log::Any" : "0",
+            "Log::Any::Adapter::Screen" : "0",
             "Moo" : "0",
             "MooX::TypeTiny" : "0",
             "MooseX::App" : "0",
