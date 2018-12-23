@@ -81,7 +81,7 @@ sub _build_ppi {
 
     my $filename = $self->file . '';    # stringify Path::Tiny obj
 
-    say "Reading and parsing " . $self->file->relative( $self->base_dir );
+    $self->log->info("Reading and parsing " . $self->file->relative( $self->base_dir ));
 
     my $ppi = PPI::Document->new($filename);
 

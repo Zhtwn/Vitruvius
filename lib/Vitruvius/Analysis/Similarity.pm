@@ -145,7 +145,7 @@ sub _build_groups {
 
     my $all_diffs = $self->diffs;
 
-    say "Building groups...";
+    $self->log->info("Building groups...");
 
     my %nodes_seen;
     my @groups;
@@ -194,7 +194,7 @@ sub _node_pairs {
 
     my @node_pairs;
     for my $type ( keys %$all_nodes ) {
-        say "Building $type diffs";
+        $self->log->info("Building $type diffs");
         my @nodes = sort { $a->location . '' cmp $b->location . '' } $all_nodes->{$type}->@*;
         for my $i ( 0 .. $#nodes - 1 ) {
             for my $j ( $i + 1 .. $#nodes ) {

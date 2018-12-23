@@ -61,7 +61,7 @@ has nodes => (
 sub _build_nodes {
     my $self = shift;
 
-    say "Building nodes...";
+    $self->log->info("Building nodes...");
 
     my $min_ppi_size = $self->min_ppi_size;
 
@@ -76,7 +76,7 @@ sub _build_nodes {
         }
     }
 
-    say "...found $cnt nodes.";
+    $self->log->info("...found $cnt nodes.");
     return \%nodes;
 }
 
