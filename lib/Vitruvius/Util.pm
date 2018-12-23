@@ -149,11 +149,18 @@ sub parallelize {
     my $jobs       = $args{jobs};
     my $message    = $args{message};
     my $input      = $args{input};
+    my $single_sub = $args{single_sub};
     my $child_sub  = $args{child_sub};
     my $finish_sub = $args{finish_sub};
 
     # never use more jobs than we have inputs
     $jobs = $jobs, scalar @$input;
+
+    if ( $jobs == 1 ) {
+        say "$message...";
+        $single_sub->($input);
+        return;
+    }
 
     say "$message using $jobs jobs...";
     my $i = 0;

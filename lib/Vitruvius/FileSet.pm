@@ -61,37 +61,35 @@ sub _build_files {
 
     my $files;
 
-    if ( $jobs == 1 ) {
-        say "Reading " . scalar(@$filenames) . " files...";
-        $files = [ map { Vitruvius::File->new( base_dir => $base_dir, file => $_ ) } @$filenames ];
-    }
-    else {
-        parallelize(
-            jobs      => $self->jobs,
-            message   => "Reading " . scalar(@$filenames) . " files",
-            input     => $self->filenames,
-            child_sub => sub {
-                my $filenames = shift;
+    parallelize(
+        jobs       => $self->jobs,
+        message    => "Reading " . scalar(@$filenames) . " files",
+        input      => $self->filenames,
+        single_sub => sub {
+            $files = [ map { Vitruvius::File->new( base_dir => $base_dir, file => $_ ) } @$filenames ];
+        },
+        child_sub => sub {
+            my $filenames = shift;
 
-                my $job_files = [];
+            my $job_files = [];
 
-                for my $filename (@$filenames) {
-                    my $file = Vitruvius::File->new(
-                        base_dir => $base_dir,
-                        file     => $filename,
-                    );
-                    $file->nodes;    # force all parsing and building to be done in parallel
-                    push @$job_files, $file;
-                }
+            for my $filename (@$filenames) {
+                my $file = Vitruvius::File->new(
+                    base_dir => $base_dir,
+                    file     => $filename,
+                );
+                $file->nodes;    # force all parsing and building to be done in parallel
+                push @$job_files, $file;
+            }
 
-                return $job_files;
-            },
-            finish_sub => sub {
-                my $return = shift;
-                push @$files, @$return;
-            },
-        );
-    }
+            return $job_files;
+        },
+        finish_sub => sub {
+            my $return = shift;
+            push @$files, @$return;
+        },
+    );
+
     return $files;
 }
 

@@ -110,32 +110,26 @@ sub _build_diffs {
 
     my $diffs = {};
 
-    if ( $jobs == 1 ) {
-        say "Building " . scalar(@node_pairs) . " diffs...";
+    parallelize(
+        jobs       => $self->jobs,
+        message    => "Building " . scalar(@node_pairs) . " diffs",
+        input      => \@node_pairs,
+        single_sub => sub { $self->_process_node_pair( $_, $diffs ) for @node_pairs },
+        child_sub  => sub {
+            my $node_pairs = shift;
 
-        $self->_process_node_pair( $_, $diffs ) for @node_pairs;
-    }
-    else {
-        parallelize(
-            jobs      => $self->jobs,
-            message   => "Building " . scalar(@node_pairs) . " diffs",
-            input     => \@node_pairs,
-            child_sub => sub {
-                my $node_pairs = shift;
+            my $job_diffs = {};
+            $self->_process_node_pair( $_, $job_diffs ) for @$node_pairs;
 
-                my $job_diffs = {};
-                $self->_process_node_pair( $_, $job_diffs ) for @$node_pairs;
-
-                return $job_diffs;
-            },
-            finish_sub => sub {
-                my $return = shift;
-                for my $index ( keys %$return ) {
-                    push $diffs->{$index}->@*, $return->{$index}->@*;
-                }
-            },
-        );
-    }
+            return $job_diffs;
+        },
+        finish_sub => sub {
+            my $return = shift;
+            for my $index ( keys %$return ) {
+                push $diffs->{$index}->@*, $return->{$index}->@*;
+            }
+        },
+    );
 
     return [ values %$diffs ];
 }
