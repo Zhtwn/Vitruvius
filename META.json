@@ -42,6 +42,7 @@
             "Carp" : "0",
             "Diff::LibXDiff" : "0",
             "Digest::CRC" : "0",
+            "FindBin::libs" : "0",
             "Hash::Merge" : "0",
             "Import::Into" : "0",
             "List::MoreUtils" : "0",

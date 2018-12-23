@@ -3,6 +3,7 @@ requires 'Bread::Board';
 requires 'Carp';
 requires 'Diff::LibXDiff';
 requires 'Digest::CRC';
+requires 'FindBin::libs';
 requires 'Hash::Merge';
 requires 'Import::Into';
 requires 'List::MoreUtils';
