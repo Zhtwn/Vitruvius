@@ -43,6 +43,7 @@
             "Diff::LibXDiff" : "0",
             "Digest::CRC" : "0",
             "Hash::Merge" : "0",
+            "Import::Into" : "0",
             "List::MoreUtils" : "0",
             "List::Util" : "0",
             "Moo" : "0",

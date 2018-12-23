@@ -4,6 +4,7 @@ requires 'Carp';
 requires 'Diff::LibXDiff';
 requires 'Digest::CRC';
 requires 'Hash::Merge';
+requires 'Import::Into';
 requires 'List::MoreUtils';
 requires 'List::Util';
 requires 'Moo';
