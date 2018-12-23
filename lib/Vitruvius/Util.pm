@@ -144,6 +144,7 @@ Run given work in parallel jobs
 sub parallelize {
     my %args = @_;
 
+    my $log        = $args{log};
     my $jobs       = $args{jobs};
     my $message    = $args{message};
     my $input      = $args{input};
@@ -155,12 +156,12 @@ sub parallelize {
     $jobs = $jobs, scalar @$input;
 
     if ( $jobs == 1 ) {
-        say "$message...";
+        $log->info("$message...");
         $single_sub->($input);
         return;
     }
 
-    say "$message using $jobs jobs...";
+    $log->info("$message using $jobs jobs...");
     my $i = 0;
     my @input_batches = part { $i++ % $jobs } @$input;
 

@@ -59,6 +59,7 @@ sub _build_files {
     my $files;
 
     parallelize(
+        log        => $self->log,
         jobs       => $self->jobs,
         message    => "Reading " . scalar(@$filenames) . " files",
         input      => $self->filenames,

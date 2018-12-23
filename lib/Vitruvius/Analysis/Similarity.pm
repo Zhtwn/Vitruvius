@@ -104,6 +104,7 @@ sub _build_diffs {
     my $diffs = {};
 
     parallelize(
+        log        => $self->log,
         jobs       => $self->jobs,
         message    => "Building " . scalar(@node_pairs) . " diffs",
         input      => \@node_pairs,
