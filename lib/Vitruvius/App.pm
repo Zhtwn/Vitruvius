@@ -6,8 +6,7 @@ use MooseX::App qw< ConfigHome >;
 
 with qw< Vitruvius::Role::WithLog >;
 
-# BROKEN: autoclean removes "new_with_command"
-# use namespace::autoclean;
+use namespace::autoclean -except => 'new_with_command';
 
 use Vitruvius::Types qw< Bool Str PositiveInt >;
 
