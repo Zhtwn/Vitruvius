@@ -67,28 +67,9 @@ has root => (
 sub _tree_node {
     my ( $self, $ppi, $parent ) = @_;
 
-    # pre-calculate the raw content, so Node doesn't need to store PPI
-    my $raw_ppi = $ppi->clone;
-    if ( $raw_ppi->can('prune') ) {
-        $raw_ppi->prune('PPI::Token::Comment');
-    }
-
-    my $raw_content = $raw_ppi->content;
-
-    if ( $raw_ppi->class eq 'PPI::Statement::Sub' ) {
-        my ( $tidy_content, $stderr );
-
-        my $perltidy_error =
-          Perl::Tidy::perltidy( argv => '-se -nst', stderr => \$stderr, source => \$raw_content, destination => \$tidy_content );
-
-        $raw_content = $tidy_content unless $perltidy_error;
-    }
-
     my $node = Vitruvius::Core::Node->new(
+        ppi         => $ppi,
         location    => $self->new_location($ppi),
-        content     => $ppi->content,
-        raw_content => $raw_content,
-        type        => $raw_ppi->class,
         parent      => $parent,
     );
 

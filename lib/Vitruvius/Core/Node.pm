@@ -25,28 +25,17 @@ has location => (
     required => 1,
 );
 
-=head2 type
+=head2 ppi
 
-Type of Node -- for now, just the reftype of the PPI node
-
-=cut
-
-has type => (
-    is       => 'ro',
-    isa      => Str,
-    required => 1,
-);
-
-=head2 raw_content
-
-Code content of C<raw_ppi>, run through L<Perl::Tidy> for whitespace standardization
+PPI for this node
 
 =cut
 
-has raw_content => (
+has ppi => (
     is       => 'ro',
-    isa      => Str,
+    isa      => InstanceOf ['PPI::Element'],
     required => 1,
+    handles  => ['class'],
 );
 
 =head2 parent
@@ -66,6 +55,8 @@ has parent => (
 
 Children of this node
 
+Can be set after construction, to allow Tree to be built reasonably
+
 =cut
 
 has children => (
@@ -73,6 +64,80 @@ has children => (
     isa     => ArrayRef [VtvNode],
     default => sub { return []; },
 );
+
+=head1 ATTRIBUTES
+
+=head2 type
+
+Type of Node -- for now, just the reftype of the PPI node
+
+=cut
+
+has type => (
+    is      => 'ro',
+    lazy    => 1,
+    isa     => Str,
+    default => sub { shift->ppi->class },
+);
+
+=head2 raw_ppi
+
+PPI for this Node, excluding comments
+
+=cut
+
+has raw_ppi => (
+    is      => 'ro',
+    lazy    => 1,
+    isa     => InstanceOf ['PPI::Element'],
+    builder => '_build_raw_ppi',
+);
+
+sub _build_raw_ppi {
+    my $self = shift;
+
+    my $raw_ppi = $self->ppi;
+
+    return $raw_ppi
+      unless $raw_ppi->can('prune');
+
+    $raw_ppi = $raw_ppi->clone;
+
+    $raw_ppi->prune('PPI::Token::Comment');
+
+    return $raw_ppi;
+}
+
+=head2 raw_content
+
+Code content of C<raw_ppi>, run through L<Perl::Tidy> for whitespace standardization
+
+=cut
+
+has raw_content => (
+    is      => 'ro',
+    lazy    => 1,
+    isa     => Str,
+    builder => '_build_raw_content',
+);
+
+sub _build_raw_content {
+    my $self = shift;
+
+    my $raw_content = $self->raw_ppi->content;
+
+    if ( $self->class eq 'PPI::Statement::Sub' ) {
+        my ( $tidy_content, $stderr );
+
+        my $perltidy_error =
+          Perl::Tidy::perltidy( argv => '-se -nst', stderr => \$stderr, source => \$raw_content, destination => \$tidy_content );
+
+        $raw_content = $tidy_content
+          unless $perltidy_error;
+    }
+
+    return $raw_content;
+}
 
 =head1 ATTRIBUTES
 
