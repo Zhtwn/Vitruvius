@@ -4,6 +4,8 @@ use Vitruvius::Skel;
 
 use MooseX::App qw< ConfigHome >;
 
+with qw< Vitruvius::Role::WithLog >;
+
 # BROKEN: autoclean removes "new_with_command"
 # use namespace::autoclean;
 
