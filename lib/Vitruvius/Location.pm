@@ -1,12 +1,6 @@
 package Vitruvius::Location;
 
-use Moo;
-
-use namespace::autoclean;
-
-use MooX::TypeTiny;
-
-use feature 'state';
+use Vitruvius::Skel::Moo;
 
 use Types::Path::Tiny qw< File Path >;
 use Types::Standard qw< Str Int InstanceOf >;

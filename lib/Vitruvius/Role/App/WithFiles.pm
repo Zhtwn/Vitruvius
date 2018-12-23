@@ -1,7 +1,8 @@
 package Vitruvius::Role::App::WithFiles;
 
+use Vitruvius::Skel;
+
 use MooseX::App::Role;
-use 5.010;
 
 use Types::Path::Tiny      qw< Dir >;
 use Types::Standard        qw< Str ArrayRef >;

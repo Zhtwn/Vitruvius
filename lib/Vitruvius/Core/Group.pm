@@ -1,10 +1,6 @@
 package Vitruvius::Core::Group;
 
-use Moo;
-
-use namespace::autoclean;
-
-use MooX::TypeTiny;
+use Vitruvius::Skel::Moo;
 
 use Types::Standard qw< Str Int Num HashRef ArrayRef InstanceOf >;
 

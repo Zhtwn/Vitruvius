@@ -1,11 +1,6 @@
 package Vitruvius::File;
 
-use Moo;
-use 5.010;
-
-use namespace::autoclean;
-
-use MooX::TypeTiny;
+use Vitruvius::Skel::Moo;
 
 use Types::Path::Tiny qw< File Path >;
 use Types::Standard qw{ HashRef ArrayRef InstanceOf };

@@ -1,10 +1,6 @@
 package Vitruvius::Core::Diff;
 
-use Moo;
-
-use namespace::autoclean;
-
-use MooX::TypeTiny;
+use Vitruvius::Skel::Moo;
 
 use Types::Standard qw< Int Str Num Bool ArrayRef InstanceOf Tuple >;
 

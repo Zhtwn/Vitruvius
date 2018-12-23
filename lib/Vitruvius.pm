@@ -1,7 +1,7 @@
 package Vitruvius;
 
-use Moo;
-use 5.010;
+use Vitruvius::Skel;
+
 our $VERSION = '0.01';
 
 1;

@@ -1,14 +1,6 @@
 package Vitruvius::Analysis::Similarity;
 
-use Moo;
-use 5.010;
-our $VERSION = '0.01';
-
-use namespace::autoclean;
-
-use MooX::TypeTiny;
-
-use feature 'state';
+use Vitruvius::Skel::Moo;
 
 use Types::Path::Tiny qw< Path >;
 use Types::Standard qw< Str Int HashRef ArrayRef InstanceOf HasMethods >;

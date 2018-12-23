@@ -1,5 +1,7 @@
 package Vitruvius::App;
 
+use Vitruvius::Skel;
+
 use MooseX::App qw< ConfigHome >;
 
 # BROKEN: autoclean removes "new_with_command"

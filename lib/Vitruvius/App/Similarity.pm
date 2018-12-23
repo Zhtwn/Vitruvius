@@ -1,5 +1,7 @@
 package Vitruvius::App::Similarity;
 
+use Vitruvius::Skel;
+
 use MooseX::App::Command;
 extends 'Vitruvius::App';
 

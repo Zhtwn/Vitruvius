@@ -1,7 +1,6 @@
 package Vitruvius::Container;
 
-use strict;
-use warnings;
+use Vitruvius::Skel;
 
 use Bread::Board;
 
