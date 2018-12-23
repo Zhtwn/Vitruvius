@@ -76,22 +76,6 @@ has children => (
     default => sub { return []; },
 );
 
-=head2 min_content_length
-
-Minimum content length for a snippet, in characters
-
-Defaults to 200
-
-Must be >= 50, since TLSH is not valid below that
-
-=cut
-
-has min_content_length => (
-    is      => 'ro',
-    isa     => Int,
-    default => 200,
-);
-
 =head1 ATTRIBUTES
 
 =head2 crc_hash
