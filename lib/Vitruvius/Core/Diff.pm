@@ -1,4 +1,4 @@
-package Vitruvius::Diff;
+package Vitruvius::Core::Diff;
 
 use Moo;
 
@@ -22,7 +22,7 @@ ArrayRef of two nodes to be compared
 
 has nodes => (
     is       => 'ro',
-    isa      => Tuple [ InstanceOf ['Vitruvius::Node'], InstanceOf ['Vitruvius::Node'] ],
+    isa      => Tuple [ InstanceOf ['Vitruvius::Core::Node'], InstanceOf ['Vitruvius::Core::Node'] ],
     required => 1,
 );
 

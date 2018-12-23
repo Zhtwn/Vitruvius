@@ -22,9 +22,9 @@ use Hash::Merge;
 use List::Util 'min';
 use Path::Tiny;
 
-use Vitruvius::Diff;
+use Vitruvius::Core::Diff;
 use Vitruvius::File;
-use Vitruvius::Group;
+use Vitruvius::Core::Group;
 use Vitruvius::Util qw< parallelize >;
 
 =encoding utf-8
@@ -60,13 +60,13 @@ has config => (
 
 =head2 nodeset
 
-Vitruvius::NodeSet with all nodes to be analyzed
+Vitruvius::Core::NodeSet with all nodes to be analyzed
 
 =cut
 
 has nodeset => (
     is       => 'ro',
-    isa      => InstanceOf ['Vitruvius::NodeSet'],
+    isa      => InstanceOf ['Vitruvius::Core::NodeSet'],
     required => 1,
     handles  => [qw< nodes >],
 );
@@ -82,7 +82,7 @@ Diff instance for all pairs of nodes, hashed by type
 has diffs => (
     is      => 'ro',
     lazy    => 1,
-    isa     => ArrayRef [ ArrayRef [ InstanceOf ['Vitruvius::Diff'] ] ],
+    isa     => ArrayRef [ ArrayRef [ InstanceOf ['Vitruvius::Core::Diff'] ] ],
     builder => '_build_diffs',
 );
 
@@ -90,7 +90,7 @@ sub _process_node_pair {
     my ( $self, $node_pair, $diffs ) = @_;
 
     my @nodes      = @$node_pair;                                     # see, a copy
-    my $diff       = Vitruvius::Diff->new( nodes => \@nodes );
+    my $diff       = Vitruvius::Core::Diff->new( nodes => \@nodes );
     my $similarity = $diff->ppi_levenshtein_similarity;
     return if $similarity < $self->min_similarity;
 
@@ -143,7 +143,7 @@ Groups, ordered by something reasonable
 has groups => (
     is      => 'ro',
     lazy    => 1,
-    isa     => ArrayRef [ InstanceOf ['Vitruvius::Group'] ],
+    isa     => ArrayRef [ InstanceOf ['Vitruvius::Core::Group'] ],
     builder => '_build_groups',
 );
 
@@ -160,7 +160,7 @@ sub _build_groups {
     for my $diffs (@$all_diffs) {
         my $base_node = $diffs->[0]->base_node;
         next if $nodes_seen{ $base_node->location };
-        push @groups, Vitruvius::Group->new( base_node => $base_node, diffs => $diffs );
+        push @groups, Vitruvius::Core::Group->new( base_node => $base_node, diffs => $diffs );
         $nodes_seen{$_}++ for map { $_->indexes->@* } @$diffs;
     }
 

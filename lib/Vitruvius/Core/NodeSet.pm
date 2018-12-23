@@ -1,4 +1,4 @@
-package Vitruvius::NodeSet;
+package Vitruvius::Core::NodeSet;
 
 use Moo;
 use 5.010;
@@ -9,11 +9,11 @@ use MooX::TypeTiny;
 
 use Types::Standard qw< ArrayRef HashRef InstanceOf HasMethods >;
 
-use Vitruvius::Node;
+use Vitruvius::Core::Node;
 
 =head1 NAME
 
-Vitruvius::NodeSet - collection of files to be processed
+Vitruvius::Core::NodeSet - collection of files to be processed
 
 =head1 SYNOPSIS
 
@@ -57,7 +57,7 @@ All nodes from all files, hashed by type
 has nodes => (
     is      => 'ro',
     lazy    => 1,
-    isa     => HashRef [ ArrayRef [ InstanceOf ['Vitruvius::Node'] ] ],
+    isa     => HashRef [ ArrayRef [ InstanceOf ['Vitruvius::Core::Node'] ] ],
     builder => '_build_nodes',
 );
 

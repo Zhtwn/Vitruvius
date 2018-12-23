@@ -13,7 +13,7 @@ use Types::Standard qw{ HashRef ArrayRef InstanceOf };
 use PPI;
 
 use Vitruvius::LocationFactory;
-use Vitruvius::Tree;
+use Vitruvius::Core::Tree;
 use Vitruvius::Util qw< is_interesting >;
 
 =head1 PARAMETERS
@@ -111,7 +111,7 @@ Code tree
 has tree => (
     is      => 'ro',
     lazy    => 1,
-    isa     => InstanceOf ['Vitruvius::Tree'],
+    isa     => InstanceOf ['Vitruvius::Core::Tree'],
     builder => '_build_tree',
     handles => [
         qw<
@@ -123,7 +123,7 @@ has tree => (
 sub _build_tree {
     my $self = shift;
 
-    return Vitruvius::Tree->new(
+    return Vitruvius::Core::Tree->new(
         location_factory => $self->location_factory,
         ppi              => $self->ppi,
     );

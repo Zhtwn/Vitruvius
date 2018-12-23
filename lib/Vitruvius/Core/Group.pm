@@ -1,4 +1,4 @@
-package Vitruvius::Group;
+package Vitruvius::Core::Group;
 
 use Moo;
 
@@ -12,14 +12,14 @@ use List::Util;
 
 has base_node => (
     is       => 'ro',
-    isa      => InstanceOf ['Vitruvius::Node'],
+    isa      => InstanceOf ['Vitruvius::Core::Node'],
     required => 1,
     handles  => [qw< type >],
 );
 
 has diffs => (
     is       => 'ro',
-    isa      => ArrayRef [ InstanceOf ['Vitruvius::Diff'] ],
+    isa      => ArrayRef [ InstanceOf ['Vitruvius::Core::Diff'] ],
     required => 1,
 );
 

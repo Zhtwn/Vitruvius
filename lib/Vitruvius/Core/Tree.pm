@@ -1,4 +1,4 @@
-package Vitruvius::Tree;
+package Vitruvius::Core::Tree;
 
 use Moo;
 use 5.010;
@@ -13,7 +13,7 @@ use Types::Standard qw{ HashRef ArrayRef InstanceOf };
 use Perl::Tidy;
 use PPI;
 
-use Vitruvius::Node;
+use Vitruvius::Core::Node;
 use Vitruvius::Util qw< is_interesting >;
 
 =head1 PARAMETERS
@@ -54,7 +54,7 @@ Root Node of decorated code tree
 has root => (
     is      => 'ro',
     lazy    => 1,
-    isa     => InstanceOf ['Vitruvius::Node'],
+    isa     => InstanceOf ['Vitruvius::Core::Node'],
     builder => '_build_root',
     handles => [
         qw<
@@ -88,7 +88,7 @@ sub _tree_node {
         $raw_content = $tidy_content unless $perltidy_error;
     }
 
-    my $node = Vitruvius::Node->new(
+    my $node = Vitruvius::Core::Node->new(
         location    => $self->new_location($ppi),
         content     => $ppi->content,
         raw_content => $raw_content,
@@ -123,7 +123,7 @@ All nodes, depth-first, preorder
 has nodes => (
     is      => 'ro',
     lazy    => 1,
-    isa     => ArrayRef [ InstanceOf ['Vitruvius::Node'] ],
+    isa     => ArrayRef [ InstanceOf ['Vitruvius::Core::Node'] ],
     builder => '_build_nodes',
 );
 

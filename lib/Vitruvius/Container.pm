@@ -20,7 +20,7 @@ my $app = container app => as {
         dependencies => ['config'],
     );
     service nodeset => (
-        class        => 'Vitruvius::NodeSet',
+        class        => 'Vitruvius::Core::NodeSet',
         dependencies => [ 'config', 'fileset' ],
     );
     service similarity => (

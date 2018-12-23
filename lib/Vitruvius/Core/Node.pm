@@ -1,4 +1,4 @@
-package Vitruvius::Node;
+package Vitruvius::Core::Node;
 
 use Moo;
 
@@ -59,7 +59,7 @@ Parent of this node (undef for top-level node)
 
 has parent => (
     is       => 'ro',
-    isa      => Maybe [ InstanceOf ['Vitruvius::Node'] ],
+    isa      => Maybe [ InstanceOf ['Vitruvius::Core::Node'] ],
     weak_ref => 1,
     required => 1,
 );
@@ -72,7 +72,7 @@ Children of this node
 
 has children => (
     is      => 'rw',
-    isa     => ArrayRef [ InstanceOf ['Vitruvius::Node'] ],
+    isa     => ArrayRef [ InstanceOf ['Vitruvius::Core::Node'] ],
     default => sub { return []; },
 );
 
