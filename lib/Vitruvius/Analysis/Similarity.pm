@@ -2,6 +2,8 @@ package Vitruvius::Analysis::Similarity;
 
 use Vitruvius::Skel::Moo;
 
+extends 'Vitruvius::Core::Base';
+
 use Vitruvius::Types qw< Str Int HashRef ArrayRef HasMethods Path VtvNodeSet VtvDiff VtvGroup >;
 
 use Data::Dumper;
