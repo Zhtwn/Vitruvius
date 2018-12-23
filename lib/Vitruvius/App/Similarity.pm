@@ -11,9 +11,7 @@ with qw< Vitruvius::Role::App::WithFiles>;
 
 use namespace::autoclean;
 
-use Types::Common::Numeric qw< PositiveInt >;
-use Types::Path::Tiny      qw< Dir >;
-use Types::Standard        qw< Str ArrayRef InstanceOf >;
+use Vitruvius::Types qw< Str ArrayRef InstanceOf PositiveInt Dir >;
 
 use Carp;
 use Cwd;

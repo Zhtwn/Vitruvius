@@ -2,8 +2,7 @@ package Vitruvius::Core::Tree;
 
 use Vitruvius::Skel::Moo;
 
-use Types::Path::Tiny qw< File Path >;
-use Types::Standard qw{ HashRef ArrayRef InstanceOf };
+use Vitruvius::Types qw{ HashRef ArrayRef InstanceOf VtvNode };
 
 use Perl::Tidy;
 use PPI;
@@ -49,7 +48,7 @@ Root Node of decorated code tree
 has root => (
     is      => 'ro',
     lazy    => 1,
-    isa     => InstanceOf ['Vitruvius::Core::Node'],
+    isa     => InstanceOf [VtvNode],
     builder => '_build_root',
     handles => [
         qw<
@@ -118,7 +117,7 @@ All nodes, depth-first, preorder
 has nodes => (
     is      => 'ro',
     lazy    => 1,
-    isa     => ArrayRef [ InstanceOf ['Vitruvius::Core::Node'] ],
+    isa     => ArrayRef [VtvNode],
     builder => '_build_nodes',
 );
 

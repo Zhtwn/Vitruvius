@@ -2,7 +2,7 @@ package Vitruvius::Core::Node;
 
 use Vitruvius::Skel::Moo;
 
-use Types::Standard qw< Int Str ArrayRef InstanceOf Maybe >;
+use Vitruvius::Types qw< Int Str ArrayRef InstanceOf Maybe VtvNode >;
 
 use Digest::CRC qw< crc32 >;
 use Perl::Tidy;
@@ -55,7 +55,7 @@ Parent of this node (undef for top-level node)
 
 has parent => (
     is       => 'ro',
-    isa      => Maybe [ InstanceOf ['Vitruvius::Core::Node'] ],
+    isa      => Maybe [VtvNode],
     weak_ref => 1,
     required => 1,
 );
@@ -68,7 +68,7 @@ Children of this node
 
 has children => (
     is      => 'rw',
-    isa     => ArrayRef [ InstanceOf ['Vitruvius::Core::Node'] ],
+    isa     => ArrayRef [VtvNode],
     default => sub { return []; },
 );
 

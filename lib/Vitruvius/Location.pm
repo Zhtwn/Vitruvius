@@ -2,8 +2,7 @@ package Vitruvius::Location;
 
 use Vitruvius::Skel::Moo;
 
-use Types::Path::Tiny qw< File Path >;
-use Types::Standard qw< Str Int InstanceOf >;
+use Vitruvius::Types qw< Str Int InstanceOf Path File>;
 
 use Path::Tiny;
 use Cwd;

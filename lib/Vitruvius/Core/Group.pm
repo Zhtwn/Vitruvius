@@ -2,20 +2,20 @@ package Vitruvius::Core::Group;
 
 use Vitruvius::Skel::Moo;
 
-use Types::Standard qw< Str Int Num HashRef ArrayRef InstanceOf >;
+use Vitruvius::Types qw< Str Int Num HashRef ArrayRef VtvDiff VtvNode >;
 
 use List::Util;
 
 has base_node => (
     is       => 'ro',
-    isa      => InstanceOf ['Vitruvius::Core::Node'],
+    isa      => VtvNode,
     required => 1,
     handles  => [qw< type >],
 );
 
 has diffs => (
     is       => 'ro',
-    isa      => ArrayRef [ InstanceOf ['Vitruvius::Core::Diff'] ],
+    isa      => ArrayRef [VtvDiff],
     required => 1,
 );
 

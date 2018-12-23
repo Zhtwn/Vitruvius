@@ -7,8 +7,7 @@ use MooseX::App qw< ConfigHome >;
 # BROKEN: autoclean removes "new_with_command"
 # use namespace::autoclean;
 
-use Types::Common::Numeric qw< PositiveInt >;
-use Types::Standard qw< Str>;
+use Vitruvius::Types qw< Str PositiveInt >;
 
 use String::CamelCase qw< decamelize >;
 

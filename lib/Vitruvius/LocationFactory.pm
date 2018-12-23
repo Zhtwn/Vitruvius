@@ -2,7 +2,7 @@ package Vitruvius::LocationFactory;
 
 use Vitruvius::Skel::Moo;
 
-use Types::Path::Tiny qw< File Dir >;
+use Vitruvius::Types qw< File Dir >;
 
 use Vitruvius::Location;
 

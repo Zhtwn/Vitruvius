@@ -2,8 +2,7 @@ package Vitruvius::Analysis::Similarity;
 
 use Vitruvius::Skel::Moo;
 
-use Types::Path::Tiny qw< Path >;
-use Types::Standard qw< Str Int HashRef ArrayRef InstanceOf HasMethods >;
+use Vitruvius::Types qw< Str Int HashRef ArrayRef HasMethods Path VtvNodeSet VtvDiff VtvGroup >;
 
 use Data::Dumper;
 $Data::Dumper::Sortkeys = 1;
@@ -58,7 +57,7 @@ Vitruvius::Core::NodeSet with all nodes to be analyzed
 
 has nodeset => (
     is       => 'ro',
-    isa      => InstanceOf ['Vitruvius::Core::NodeSet'],
+    isa      => VtvNodeSet,
     required => 1,
     handles  => [qw< nodes >],
 );
@@ -74,7 +73,7 @@ Diff instance for all pairs of nodes, hashed by type
 has diffs => (
     is      => 'ro',
     lazy    => 1,
-    isa     => ArrayRef [ ArrayRef [ InstanceOf ['Vitruvius::Core::Diff'] ] ],
+    isa     => ArrayRef [ ArrayRef [VtvDiff] ],
     builder => '_build_diffs',
 );
 
@@ -135,7 +134,7 @@ Groups, ordered by something reasonable
 has groups => (
     is      => 'ro',
     lazy    => 1,
-    isa     => ArrayRef [ InstanceOf ['Vitruvius::Core::Group'] ],
+    isa     => ArrayRef [VtvGroup],
     builder => '_build_groups',
 );
 

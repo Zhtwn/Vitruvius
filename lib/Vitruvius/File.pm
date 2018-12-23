@@ -2,8 +2,7 @@ package Vitruvius::File;
 
 use Vitruvius::Skel::Moo;
 
-use Types::Path::Tiny qw< File Path >;
-use Types::Standard qw{ HashRef ArrayRef InstanceOf };
+use Vitruvius::Types qw< HashRef ArrayRef InstanceOf Path File VtvTree >;
 
 use PPI;
 
@@ -106,7 +105,7 @@ Code tree
 has tree => (
     is      => 'ro',
     lazy    => 1,
-    isa     => InstanceOf ['Vitruvius::Core::Tree'],
+    isa     => InstanceOf [VtvTree],
     builder => '_build_tree',
     handles => [
         qw<

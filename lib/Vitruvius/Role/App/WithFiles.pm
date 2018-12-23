@@ -4,8 +4,7 @@ use Vitruvius::Skel;
 
 use MooseX::App::Role;
 
-use Types::Path::Tiny      qw< Dir >;
-use Types::Standard        qw< Str ArrayRef >;
+use Vitruvius::Types qw< Str ArrayRef Dir >;
 
 use Carp;
 use Cwd;

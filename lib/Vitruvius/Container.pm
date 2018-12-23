@@ -4,7 +4,7 @@ use Vitruvius::Skel;
 
 use Bread::Board;
 
-use Types::Path::Tiny qw< File >;
+use Vitruvius::Types qw< File >;
 
 my $app = container app => as {
     service config => (

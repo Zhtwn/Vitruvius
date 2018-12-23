@@ -2,7 +2,7 @@ package Vitruvius::Core::Diff;
 
 use Vitruvius::Skel::Moo;
 
-use Types::Standard qw< Int Str Num Bool ArrayRef InstanceOf Tuple >;
+use Vitruvius::Types qw< Int Str Num Bool ArrayRef Tuple VtvNode >;
 
 use Diff::LibXDiff;
 use List::Util qw< max min >;
@@ -18,7 +18,7 @@ ArrayRef of two nodes to be compared
 
 has nodes => (
     is       => 'ro',
-    isa      => Tuple [ InstanceOf ['Vitruvius::Core::Node'], InstanceOf ['Vitruvius::Core::Node'] ],
+    isa      => Tuple [ VtvNode, VtvNode ],
     required => 1,
 );
 

@@ -2,7 +2,7 @@ package Vitruvius::Core::NodeSet;
 
 use Vitruvius::Skel::Moo;
 
-use Types::Standard qw< ArrayRef HashRef InstanceOf HasMethods >;
+use Vitruvius::Types qw< ArrayRef HashRef InstanceOf HasMethods VtvNode >;
 
 use Vitruvius::Core::Node;
 
@@ -52,7 +52,7 @@ All nodes from all files, hashed by type
 has nodes => (
     is      => 'ro',
     lazy    => 1,
-    isa     => HashRef [ ArrayRef [ InstanceOf ['Vitruvius::Core::Node'] ] ],
+    isa     => HashRef [ ArrayRef [VtvNode] ],
     builder => '_build_nodes',
 );
 

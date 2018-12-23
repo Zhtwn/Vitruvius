@@ -2,7 +2,7 @@ package Vitruvius::FileSet;
 
 use Vitruvius::Skel::Moo;
 
-use Types::Standard qw< ArrayRef InstanceOf HasMethods >;
+use Vitruvius::Types qw< ArrayRef InstanceOf HasMethods >;
 
 use Vitruvius::File;
 use Vitruvius::Util qw< parallelize >;
