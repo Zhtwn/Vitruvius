@@ -11,11 +11,49 @@ use Perl::Tidy;
 
 use Vitruvius::Util qw< ppi_type >;
 
+=head1 NAME
+
+Vitruvius::Core::Code - Data on a code snippet, including PPI
+
+=head1 SYNOPSIS
+
+    # build from PPI
+    my $code = Vitruvius::Core::Code->new( ppi => $ppi );
+
+    # get type of code
+    my $type = $code->type;
+
+    # get original Perl content
+    my $content = $code->content;
+
+    # PPI with comments removed
+    my $raw_ppi = $code->raw_ppi;
+
+    # Perl content with comments removed
+    my $raw_content = $code->raw_content;
+
+    # get CRC hash of raw content
+    my $crc_hash = $code->crc_hash;
+
+    # get encoding of PPI node type (2-char hex)
+    my $ppi_element_hash = $code->crc_element_hash
+
+=head1 DESCRIPTION
+
+A C<Vitruvius::Core::Code> instance contains one snippet Perl code, as
+represented by a C<PPI> element.
+
+The C<raw_ppi> and C<raw_content> attributes contain the original snippet
+with all comments removed, for easier examination and comparision of
+Perl code.
+
 =head1 PARAMETERS
 
 =head2 ppi
 
 PPI for this node
+
+Handles C<class> and C<content>
 
 =cut
 
@@ -23,10 +61,18 @@ has ppi => (
     is       => 'ro',
     isa      => InstanceOf ['PPI::Element'],
     required => 1,
-    handles  => ['class'],
+    handles  => [qw< class content >],
 );
 
 =head1 ATTRIBUTES
+
+=head2 class
+
+Class of C<PPI>. Delegated to C<ppi>.
+
+=head2 content
+
+Content of original C<PPI>. Delegated to C<ppi>.
 
 =head2 type
 
@@ -141,3 +187,19 @@ sub _build_ppi_element_hash {
 }
 
 1;
+__END__
+
+=head1 AUTHOR
+
+Noel Maddy E<lt>zhtwnpanta@gmail.comE<gt>
+
+=head1 COPYRIGHT
+
+Copyright 2018- Noel Maddy
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
