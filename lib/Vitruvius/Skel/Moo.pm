@@ -11,11 +11,19 @@ require namespace::autoclean;
 sub import {
     my $class = shift;
 
-    Vitruvius::Skel->import_into(1);
+    $class->import_into(1);
+}
 
-    Moo->import::into(1);
-    MooX::TypeTiny->import::into(1);
-    namespace::autoclean->import::into(1);
+sub import_into {
+    my ( $class, $level ) = @_;
+
+    $level += 1;
+
+    Vitruvius::Skel->import_into($level);
+
+    Moo->import::into($level);
+    MooX::TypeTiny->import::into($level);
+    namespace::autoclean->import::into($level);
 }
 
 1;
