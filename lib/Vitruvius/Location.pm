@@ -208,7 +208,8 @@ sub _build_as_string {
         $sub = 'no sub';
     }
 
-    return join ', ', grep { $_ } ( $self->rel_file . '', $sub, 'L' . $self->line_number );
+    my $rel_file = $self->rel_file // '';
+    return join ', ', grep { $_ } ( $rel_file . '', $sub, 'L' . $self->line_number );
 }
 
 =head1 METHODS
