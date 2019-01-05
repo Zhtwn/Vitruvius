@@ -107,9 +107,9 @@ sub _build_ppi {
         sub {
             my ( $top, $elt ) = @_;
             return
-                 $self->isa('PPI::Token::Data')
-              || $self->isa('PPI::Token::End')
-              || $self->isa('PPI::Token::Pod');
+                 $elt->isa('PPI::Token::Data')
+              || $elt->isa('PPI::Token::End')
+              || $elt->isa('PPI::Token::Pod');
         }
     );
 
