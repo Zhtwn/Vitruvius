@@ -4,7 +4,7 @@ use Vitruvius::Skel::Moo;
 
 extends 'Vitruvius::Core::Base';
 
-use Vitruvius::Types qw< Str Int InstanceOf Path File>;
+use Vitruvius::Types qw< Str Int Maybe InstanceOf Dir File>;
 
 use Path::Tiny;
 use Cwd;
@@ -21,8 +21,8 @@ Base directory for files
 
 has base_dir => (
     is       => 'ro',
-    isa      => Path,
-    required => 1,
+    isa      => Dir,
+    coerce   => 1,
 );
 
 =head2 file
@@ -33,8 +33,8 @@ File of snippet
 
 has file => (
     is       => 'ro',
-    isa      => InstanceOf ['Path::Tiny'],
-    required => 1,
+    isa      => File,
+    coerce   => 1,
 );
 
 =head2 ppi
@@ -60,12 +60,14 @@ File, relative to base directory
 has rel_file => (
     is      => 'ro',
     lazy    => 1,
-    isa     => InstanceOf ['Path::Tiny'],
+    isa     => Maybe [File],
     builder => '_build_rel_file',
 );
 
 sub _build_rel_file {
     my $self = shift;
+
+    return unless $self->file && $self->base_dir;
 
     return $self->file->relative( $self->base_dir );
 }
