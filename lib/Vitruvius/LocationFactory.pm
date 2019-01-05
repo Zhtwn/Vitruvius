@@ -20,6 +20,7 @@ has base_dir => (
     is       => 'ro',
     isa      => Dir,
     required => 1,
+    coerce   => 1,
 );
 
 =head2
@@ -32,6 +33,7 @@ has file => (
     is       => 'ro',
     isa      => File,
     required => 1,
+    coerce   => 1,
 );
 
 =head1 METHODS
