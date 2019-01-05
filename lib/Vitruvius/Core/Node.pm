@@ -12,6 +12,32 @@ use Perl::Tidy;
 use Vitruvius::Core::Code;
 use Vitruvius::Util qw< ppi_type >;
 
+=head1 NAME
+
+Vitruvius::Core::Node - a Code snippet within a Tree
+
+=head1 SYNOPSIS
+
+    # build Node from PPI, location, and child Nodes
+    my $node = Vitruvius::Core::Node->new(
+        ppi      => $ppi,
+        location => $location_factory->new_location($ppi),
+        children => \@child_nodes,
+    );
+
+    # set parent for all child nodes
+    $_->parent($node) for $node->children->@*;
+
+=head1 DESCRIPTION
+
+A C<Core::Node> represents one Code snippet, in the context of a PPI parse
+tree. It contains the location in the file through a C<Location> object,
+and its parent and children (if any).
+
+A hashed representation of the PPI code structure of the Code snippet is
+provided in C<ppi_hash>. This allows easy detection of common code structures,
+even though they may use different variable or subroutine names.
+
 =head1 PARAMETERS
 
 =head2 location
@@ -28,7 +54,7 @@ has location => (
 
 =head2 code
 
-C<Core::Content> for this Node
+L<Vitruvius::Core::Code> for this Node
 
 =cut
 
@@ -76,7 +102,11 @@ has children => (
 
 =head2 ppi_hash
 
-PPI structure hash for "raw" code (without pod and comments)
+Hashed representation of code structure of this Node and all of its
+children.
+
+Represents the code structure, excluding all pod and comments.
+(Uses C<raw_content> from L<Vitruvius::Core::Code> to ignore pod and comments).
 
 =cut
 
@@ -123,7 +153,7 @@ sub _build_ppi_size {
 
 =head2 around BUILDARGS
 
-If passed a C<ppi>, use it to create a C<Core::Content>
+If passed a C<ppi>, use it to create a C<Core::Code>
 
 =cut
 
@@ -140,3 +170,19 @@ around BUILDARGS => sub {
 };
 
 1;
+__END__
+
+=head1 AUTHOR
+
+Noel Maddy E<lt>zhtwnpanta@gmail.comE<gt>
+
+=head1 COPYRIGHT
+
+Copyright 2019- Noel Maddy
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
