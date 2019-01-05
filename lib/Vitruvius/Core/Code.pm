@@ -136,8 +136,9 @@ sub _build_raw_content {
 
     my ( $tidy_content, $stderr );
 
+    my $argv = '-npro';    # ignore local perltidyrc
     my $perltidy_error =
-      Perl::Tidy::perltidy( argv => '-se -nst', stderr => \$stderr, source => \$raw_content, destination => \$tidy_content );
+      Perl::Tidy::perltidy( argv => $argv, stderr => \$stderr, source => \$raw_content, destination => \$tidy_content );
 
     return $perltidy_error ? $raw_content : $tidy_content;
 }
