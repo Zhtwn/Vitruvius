@@ -111,67 +111,6 @@ sub _build_identical {
     return $first->crc_hash == $second->crc_hash;
 }
 
-=head2 tree_distance
-
-Distance between trees: ratio of common substring length to total
-length
-
-=cut
-
-has tree_distance => (
-    is      => 'ro',
-    lazy    => 1,
-    isa     => Num,
-    builder => '_build_tree_distance',
-);
-
-sub _build_tree_distance {
-    my $self = shift;
-
-    my ( $first, $second ) = $self->nodes->@*;
-    my $first_hashes  = $first->ppi_hashes;
-    my $second_hashes = $second->ppi_hashes;
-
-    my $total_length = max length( $first->ppi_hash ), length( $second->ppi_hash );
-    my $match_length = 0;
-
-    for my $hash ( sort { length $a <=> length $b } keys %$first_hashes ) {
-        if ( my $matches = $second_hashes->{$hash} ) {
-            $match_length += length $hash;
-
-            # arbitrarily choose the first exact match for partitioning
-            my $partition = $matches->[0];
-
-            my $left
-
-              # TODO - extract "before" and "after" subtrees from both trees, and run tree_distance on those
-        }
-    }
-
-    return $match_length / $total_length;
-}
-
-=head2 distance
-
-Edit distance between nodes
-
-=cut
-
-has distance => (
-    is      => 'ro',
-    lazy    => 1,
-    isa     => Int,
-    builder => '_build_distance',
-);
-
-sub _build_distance {
-    my $self = shift;
-
-    my ( $first, $second ) = map { $_->tlsh } $self->nodes->@*;
-
-    return $first->total_diff($second);
-}
-
 =head2 ppi_levenshtein_similarity
 
 Similarity of PPI hashes of the two nodes, as percent
@@ -198,25 +137,6 @@ sub _build_ppi_levenshtein_similarity {
     my $max_length = max map { $_->ppi_size } @$nodes;
 
     return int( 100 * ( $max_length - $distance ) / $max_length );
-}
-
-=head2 levenshtein_distance
-
-Levenshtein distance between uncommented versions of nodes
-
-=cut
-
-has levenshtein_distance => (
-    is      => 'ro',
-    lazy    => 1,
-    isa     => Int,
-    builder => '_build_levenshtein_distance',
-);
-
-sub _build_levenshtein_distance {
-    my $self = shift;
-
-    return Text::Levenshtein::distance( map { $_->raw_content } $self->nodes->@* );
 }
 
 =head2 xdiff
