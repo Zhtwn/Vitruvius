@@ -196,7 +196,18 @@ has as_string => (
 sub _build_as_string {
     my $self = shift;
 
-    my $sub = $self->subname ? 'sub ' . $self->subname : 'in sub ' . $self->containing_sub;
+    my $sub;
+
+    if ($self->subname) {
+        $sub = 'sub ' . $self->subname;
+    }
+    elsif ($self->containing_sub) {
+        $sub = 'in sub ' . $self->containing_sub;
+    }
+    else {
+        $sub = 'no sub';
+    }
+
     return join ', ', grep { $_ } ( $self->rel_file . '', $sub, 'L' . $self->line_number );
 }
 
