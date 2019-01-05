@@ -12,6 +12,33 @@ use PPI;
 use Vitruvius::Core::Node;
 use Vitruvius::Util qw< is_interesting >;
 
+=head1 NAME
+
+Vitruvius::Core::Tree - tree of Nodes
+
+=head1 SYNOPSIS
+
+    my $ppi = PPI::Document->new($file);
+    my $location_factory = Vitruvius::LocationFactory->new(file => $file, base_dir => $base_dir);
+
+    # Constructor
+    my $tree = Vitruvius::Core::Tree->new( location_factory => $location_factory, ppi => $ppi );
+
+    # build Tree of decorated Nodes
+    my $root = $tree->root;
+
+    # do something for every Node in the tree
+    for my $node ( $tree->nodes->@* ) {
+        ...
+    }
+
+=head1 DESCRIPTION
+
+A C<Vitruvius::Tree> contains a tree of C<Node> instances, created by decorating the PPI
+nodes of the parsed code.
+
+It provides the root Node of the tree as C<root>, and an arrayref of all nodes as C<nodes>
+
 =head1 PARAMETERS
 
 =head2 location_factory
