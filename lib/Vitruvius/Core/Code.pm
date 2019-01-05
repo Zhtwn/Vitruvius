@@ -9,6 +9,7 @@ use Vitruvius::Types qw< Int Str ArrayRef InstanceOf Maybe VtvNode >;
 use Digest::CRC qw< crc32 >;
 use Perl::Tidy;
 
+use Vitruvius::Core::Node;
 use Vitruvius::Util qw< ppi_type >;
 
 =head1 NAME

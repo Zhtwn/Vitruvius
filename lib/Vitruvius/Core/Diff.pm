@@ -10,6 +10,8 @@ use Diff::LibXDiff;
 use List::Util qw< max min >;
 use Text::Levenshtein::XS;
 
+use Vitruvius::Core::Node;
+
 =head1 PARAMETERS
 
 =head2 nodes

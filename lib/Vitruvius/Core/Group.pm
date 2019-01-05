@@ -8,6 +8,9 @@ use Vitruvius::Types qw< Str Int Num HashRef ArrayRef VtvDiff VtvNode >;
 
 use List::Util;
 
+use Vitruvius::Core::Diff;
+use Vitruvius::Core::Node;
+
 has base_node => (
     is       => 'ro',
     isa      => VtvNode,
