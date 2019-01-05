@@ -12,6 +12,24 @@ use Vitruvius::LocationFactory;
 use Vitruvius::Core::Tree;
 use Vitruvius::Util qw< is_interesting >;
 
+=head1 NAME
+
+Vitruvius::File - a single processed Perl file
+
+=head1 SYNOPSIS
+
+    # Constructor
+    my $file = Vitruvius::File->new( base_dir => $base_dir, file => $file );
+
+    # Vitruvius::Tree for file
+    my $tree = $file->tree;
+
+
+=head1 DESCRIPTION
+
+A C<Vitruvius::File> represents a single parsed Perl code file. It provides
+a L<Vitruvius::Core::Tree> representing the code in the file.
+
 =head1 PARAMETERS
 
 =head2 base_dir
