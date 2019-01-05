@@ -8,6 +8,25 @@ use Vitruvius::Types qw< File Dir >;
 
 use Vitruvius::Location;
 
+=head1 NAME
+
+Vitruvius::LocationFactory - factory for Locations
+
+=head1 SYNOPSIS
+
+    my $factory = Vitruvius::LocationFactory->new(
+        base_dir => $base_dir,
+        file     => $file,
+    );
+
+    my $location = $factory->new_location($ppi);
+
+=head1 DESCRIPTION
+
+A C<LocationFactory> holds the C<base_dir> and C<file> for Nodes that are
+from the same source file, and provides a C<new_location> method that creates
+a new C<Location> for a given C<PPI>
+
 =head1 PARAMETERS
 
 =head2 base_dir
