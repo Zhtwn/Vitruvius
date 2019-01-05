@@ -4,7 +4,7 @@ use Vitruvius::Skel::Moo;
 
 extends 'Vitruvius::Core::Base';
 
-use Vitruvius::Types qw< Str Int Maybe InstanceOf Dir File>;
+use Vitruvius::Types qw< Str Int Maybe InstanceOf Dir File Path>;
 
 use Path::Tiny;
 use Cwd;
@@ -92,7 +92,7 @@ File, relative to base directory
 has rel_file => (
     is      => 'ro',
     lazy    => 1,
-    isa     => Maybe [File],
+    isa     => Maybe [Path],
     builder => '_build_rel_file',
 );
 
