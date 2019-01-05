@@ -65,20 +65,20 @@ has root => (
 );
 
 sub _tree_node {
-    my ( $self, $ppi, $parent ) = @_;
+    my ( $self, $ppi ) = @_;
+
+    my $children = [];
+    if ( $ppi->can('children') && $ppi->children ) {
+        $children = [ map { $self->_tree_node($_) } $ppi->children ];
+    }
 
     my $node = Vitruvius::Core::Node->new(
         ppi         => $ppi,
         location    => $self->new_location($ppi),
-        parent      => $parent,
+        children    => $children,
     );
 
-    my $children = [];
-    if ( $ppi->can('children') && $ppi->children ) {
-        $children = [ map { $self->_tree_node( $_, $node ) } $ppi->children ];
-    }
-
-    $node->children($children);
+    $_->parent($node) for @$children;
 
     return $node;
 }

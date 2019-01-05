@@ -51,27 +51,25 @@ has code => (
 
 =head2 parent
 
-Parent of this node (undef for top-level node)
+Parent of this node, if any (undefined for top-level node)
 
+Can be set after construction, to allow Tree to be built reasonably
 =cut
 
 has parent => (
-    is       => 'ro',
-    isa      => Maybe [VtvNode],
+    is       => 'rw',
+    isa      => VtvNode,
     weak_ref => 1,
-    required => 1,
 );
 
 =head2 children
 
 Children of this node
 
-Can be set after construction, to allow Tree to be built reasonably
-
 =cut
 
 has children => (
-    is      => 'rw',
+    is      => 'ro',
     isa     => ArrayRef [VtvNode],
     default => sub { return []; },
 );
