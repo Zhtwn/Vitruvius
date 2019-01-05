@@ -11,6 +11,38 @@ use Cwd;
 
 use overload '""' => 'stringify';
 
+=head1 NAME
+
+Vitruvius::Location - location of Node
+
+=head1 SYNOPSIS
+
+    # construction without file
+    my $location = Vitruvius::Location->new( ppi => $ppi );
+
+    # construction with file
+    my $location = Vitruvius::Location->new(
+        ppi      => $ppi,
+        base_dir => '/share/src/Project/lib',
+        file     => '/share/src/Project/lib/Foo.pm'
+    );
+
+    # human-readable location, with filename, subname, and line number
+    my $string_location = $location->stringify;
+
+    # or overloaded
+    my $string_location = $location . '';
+
+=head1 DESCRIPTION
+
+A C<Vitruvius::Location> specifies the location of a L<Vitruvius::Core::Node>.
+
+It extracts the name of the containing subroutine and the line number in the
+file from the provided C<ppi>.
+
+It uses the provided C<base_dir> and C<file> to provide a relative path to
+the file.
+
 =head1 PARAMETERS
 
 =head2 base_dir
