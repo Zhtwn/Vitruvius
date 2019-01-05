@@ -14,8 +14,8 @@ s/^(help|usage)$/--$1/ for @ARGV;
 my $config = Vitruvius::Container->get_service('config');
 
 if ( $config->isa('MooseX::App::Message::Envelope') ) {
-    say $config;
-    exit $config->exitcode;
+    say $config->stringify;
+    exit ($config->exitcode // 0);
 }
 
 my $service_path = $config->service_path;
