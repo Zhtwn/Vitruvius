@@ -33,11 +33,14 @@ my $app = container app => as {
     );
 };
 
+sub get_app {
+    my $class = shift;
+    return $app;
+}
+
 sub get_service {
     my ( $class, $service, %args ) = @_;
-    return $app->resolve( service => $service, %args );
+    return $class->get_app->resolve( service => $service, %args );
 }
 
 1;
-# FIXME - do I want this to be an exporter with a method that provides $app?
-
