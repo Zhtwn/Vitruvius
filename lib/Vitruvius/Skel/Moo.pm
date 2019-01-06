@@ -6,6 +6,7 @@ use Import::Into;
 
 require Moo;
 require Moo::Role;
+require MooX::StrictConstructor;
 require MooX::TypeTiny;
 require namespace::autoclean;
 
@@ -28,6 +29,7 @@ sub import_into {
     Vitruvius::Skel->import_into($import_level);
 
     Moo->import::into($import_level);
+    MooX::StrictConstructor->import::into($import_level);
     MooX::TypeTiny->import::into($import_level);
     namespace::autoclean->import::into($import_level);
 
