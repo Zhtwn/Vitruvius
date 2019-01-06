@@ -10,12 +10,7 @@ our @EXPORT = qw<
 
 use Bread::Board;
 
-use Vitruvius::Types qw< File >;
-
-use Vitruvius::App;
-use Vitruvius::FileSet;
-use Vitruvius::Core::NodeSet;
-use Vitruvius::Analysis::Similarity;
+use Vitruvius::Types qw< File Str >;
 
 my $app = container app => as {
     service config => (
