@@ -12,6 +12,39 @@ use Text::Levenshtein::XS;
 
 use Vitruvius::Core::Node;
 
+=head1 NAME
+
+Vitruvius::Core::Diff - differences between two Nodes
+
+=head1 SYNOPSIS
+
+    my $diff = Vitruvius::Core::Diff->new( nodes => [ $node1, $node2 ] );
+
+    # Type of node (nodes should be of same type)
+    my $type = $diff->type;
+
+    # are the nodes completely identical (including comments)?
+    if ($diff->identical) { ... }
+
+    # PPI similarity
+    my $similarity = $diff->ppi_levenshtein_similarity
+
+    # xdiff between original code of the nodes (as string)
+    my $xdiff = $diff->xdiff;
+
+    # number of line differences in xdiff
+    my $diff_lines = $diff->diff_lines
+
+    # report on node similarity and differences
+    say for $diff->report_lines->@*;
+
+=head1 DESCRIPTION
+
+A C<Core::Diff> represents the differences between two Nodes.
+
+Two different methods of diff are provided: a typical code diff,
+and the similarity between the hashes of the PPI structure.
+
 =head1 PARAMETERS
 
 =head2 nodes
@@ -191,6 +224,15 @@ sub _build_diff_lines {
 
     return $line_count / $tot_lines;
 }
+
+=head1 METHODS
+
+=head2 report_lines
+
+Returns a report of the nodes, their location, and their similarity,
+as a list of lines
+
+=cut
 
 sub report_lines {
     my $self = shift;
