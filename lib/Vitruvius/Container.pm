@@ -2,6 +2,12 @@ package Vitruvius::Container;
 
 use Vitruvius::Skel;
 
+use parent 'Exporter';
+
+our @EXPORT = qw<
+    resolve
+>;
+
 use Bread::Board;
 
 use Vitruvius::Types qw< File >;
@@ -41,6 +47,11 @@ sub get_app {
 sub get_service {
     my ( $class, $service, %args ) = @_;
     return $class->get_app->resolve( service => $service, parameters => \%args );
+}
+
+sub resolve {
+    my ( $service, %args ) = @_;
+    return get_app()->resolve( service => $service, parameters => \%args );
 }
 
 1;
