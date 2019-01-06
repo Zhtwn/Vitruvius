@@ -4,7 +4,7 @@ use Vitruvius::Skel::Moo;
 
 use Vitruvius::Types qw< ArrayRef InstanceOf HasMethods >;
 
-use Vitruvius::File;
+use Vitruvius::Core::SourceFile;
 use Vitruvius::Util qw< parallelize >;
 
 =head1 NAME
@@ -34,14 +34,14 @@ has config => (
 
 =head2 files
 
-Arrayref of L<Vitruvius::File>, built from given filenames
+Arrayref of L<Vitruvius::Core::SourceFile>, built from given filenames
 
 =cut
 
 has files => (
     is      => 'ro',
     lazy    => 1,
-    isa     => ArrayRef [ InstanceOf ['Vitruvius::File'] ],
+    isa     => ArrayRef [ InstanceOf ['Vitruvius::Core::SourceFile'] ],
     builder => '_build_files',
 );
 
@@ -62,7 +62,7 @@ sub _build_files {
         message    => "Reading " . scalar(@$filenames) . " files",
         input      => $self->filenames,
         single_sub => sub {
-            $files = [ map { Vitruvius::File->new( base_dir => $base_dir, file => $_ ) } @$filenames ];
+            $files = [ map { Vitruvius::Core::SourceFile->new( base_dir => $base_dir, file => $_ ) } @$filenames ];
         },
         child_sub => sub {
             my $filenames = shift;
@@ -70,7 +70,7 @@ sub _build_files {
             my $job_files = [];
 
             for my $filename (@$filenames) {
-                my $file = Vitruvius::File->new(
+                my $file = Vitruvius::Core::SourceFile->new(
                     base_dir => $base_dir,
                     file     => $filename,
                 );

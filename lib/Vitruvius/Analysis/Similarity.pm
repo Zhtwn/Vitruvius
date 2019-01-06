@@ -14,7 +14,6 @@ use List::Util 'min';
 use Path::Tiny;
 
 use Vitruvius::Core::Diff;
-use Vitruvius::File;
 use Vitruvius::Core::Group;
 use Vitruvius::Util qw< parallelize >;
 

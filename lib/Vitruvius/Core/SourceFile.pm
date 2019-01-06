@@ -1,4 +1,4 @@
-package Vitruvius::File;
+package Vitruvius::Core::SourceFile;
 
 use Vitruvius::Skel::Moo;
 
@@ -12,12 +12,12 @@ use Vitruvius::Util qw< is_interesting >;
 
 =head1 NAME
 
-Vitruvius::File - a single processed Perl file
+Vitruvius::Core::SourceFile - a single processed Perl file
 
 =head1 SYNOPSIS
 
     # Constructor
-    my $file = Vitruvius::File->new( base_dir => $base_dir, file => $file );
+    my $file = Vitruvius::Core::SourceFile->new( base_dir => $base_dir, file => $file );
 
     # Vitruvius::Tree for file
     my $tree = $file->tree;
@@ -25,7 +25,7 @@ Vitruvius::File - a single processed Perl file
 
 =head1 DESCRIPTION
 
-A C<Vitruvius::File> represents a single parsed Perl code file. It provides
+A C<Vitruvius::Core::SourceFile> represents a single parsed Perl code file. It provides
 a L<Vitruvius::Core::Tree> representing the code in the file.
 
 =head1 PARAMETERS
