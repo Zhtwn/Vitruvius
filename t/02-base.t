@@ -15,6 +15,7 @@ my $found;
 while ( my $mod = $iter->() ) {
     next unless $mod->is_file && $mod->basename =~ /\.pm$/;
     next if $mod =~ m{TestsFor/Vitruvius/Core};
+    next if $mod =~ m{TestsFor/Vitruvius/Analysis};
     $found = 1;
     require $mod;
 }
