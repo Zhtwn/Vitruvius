@@ -3,25 +3,6 @@ use strict;
 use warnings;
 use 5.010;
 
-use Vitruvius::App;
-use Vitruvius::Container;
+use Vitruvius;
 
-# HACK - force "help" and "usage" to do what they say
-# (for some reason, MooseX::App lists this in usage for non-top-level commands,
-# but only implements it for top-level commands?)
-s/^(help|usage)$/--$1/ for @ARGV;
-
-my $config = Vitruvius::Container->get_service('config');
-
-if ( $config->isa('MooseX::App::Message::Envelope') ) {
-    say $config->stringify;
-    exit ($config->exitcode // 0);
-}
-
-my $service_path = $config->service_path;
-
-my $service = Vitruvius::Container->get_service($service_path);
-
-say for $service->report_lines->@*;
-
-exit 0;
+exit Vitruvius->new->run;

@@ -37,8 +37,4 @@ option min_ppi_size => (
     documentation => 'minimum PPI size to include in report',
 );
 
-sub run {
-    croak "Run application using Vitruvius::Container->get_service('similarity')";
-}
-
 1;

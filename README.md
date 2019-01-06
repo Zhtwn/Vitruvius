@@ -10,6 +10,24 @@ Vitruvius - tools for code architect
 
 Vitruvius is a set of tools to help the code architect.
 
+# ATTRIBUTES
+
+## config
+
+Configuration: either `MooseX::App::Message::Envelope` (for help output)
+or `Vitruvius::App::*` (for actual application run)
+
+# service
+
+Service to run (from [Vitruvius::Container](https://metacpan.org/pod/Vitruvius::Container)). Will not be defined if
+"config" (MooseX::App) returns a help message instead of an App to run.
+
+# METHODS
+
+## run
+
+Run the app
+
 # AUTHOR
 
 Noel Maddy <zhtwnpanta@gmail.com>

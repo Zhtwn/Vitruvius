@@ -110,6 +110,18 @@ sub _build_service_path {
     return join '/', map { decamelize $_ } split /::/, $command_name;
 }
 
+=head1 UNMETHODS
+
+=head2 run
+
+Should never be called - use C<< Vitruvius->new->run >> instead
+
+=cut
+
+sub run {
+    croak "Run application using Vitruvius->new->run";
+}
+
 =head1 INTERNAL METHODS
 
 =head2 BUILD
