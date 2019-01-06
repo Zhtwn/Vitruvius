@@ -1,4 +1,4 @@
-package Vitruvius::Location;
+package Vitruvius::Core::Location;
 
 use Vitruvius::Skel::Moo;
 
@@ -11,15 +11,15 @@ use overload '""' => 'stringify';
 
 =head1 NAME
 
-Vitruvius::Location - location of Node
+Vitruvius::Core::Location - location of Node
 
 =head1 SYNOPSIS
 
     # construction without file
-    my $location = Vitruvius::Location->new( ppi => $ppi );
+    my $location = Vitruvius::Core::Location->new( ppi => $ppi );
 
     # construction with file
-    my $location = Vitruvius::Location->new(
+    my $location = Vitruvius::Core::Location->new(
         ppi      => $ppi,
         base_dir => '/share/src/Project/lib',
         file     => '/share/src/Project/lib/Foo.pm'
@@ -33,7 +33,7 @@ Vitruvius::Location - location of Node
 
 =head1 DESCRIPTION
 
-A C<Vitruvius::Location> specifies the location of a L<Vitruvius::Core::Node>.
+A C<Vitruvius::Core::Location> specifies the location of a L<Vitruvius::Core::Node>.
 
 It extracts the name of the containing subroutine and the line number in the
 file from the provided C<ppi>.

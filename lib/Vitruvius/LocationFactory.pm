@@ -4,7 +4,7 @@ use Vitruvius::Skel::Moo;
 
 use Vitruvius::Types qw< File Dir >;
 
-use Vitruvius::Location;
+use Vitruvius::Core::Location;
 
 =head1 NAME
 
@@ -64,7 +64,7 @@ Create new Location for given PPI
 sub new_location {
     my ( $self, $ppi ) = @_;
 
-    return Vitruvius::Location->new(
+    return Vitruvius::Core::Location->new(
         base_dir => $self->base_dir,
         file     => $self->file,
         ppi      => $ppi,

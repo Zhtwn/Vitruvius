@@ -2,7 +2,7 @@ package Vitruvius::Core::Node;
 
 use Vitruvius::Skel::Moo;
 
-use Vitruvius::Types qw< Int Str ArrayRef InstanceOf Maybe VtvNode VtvCode >;
+use Vitruvius::Types qw< Int Str ArrayRef Maybe VtvNode VtvCode VtvLocation >;
 
 use Digest::CRC qw< crc32 >;
 use Perl::Tidy;
@@ -46,7 +46,7 @@ Human-readable location for snippet
 
 has location => (
     is       => 'ro',
-    isa      => InstanceOf ['Vitruvius::Location'],
+    isa      => VtvLocation,
     required => 1,
 );
 

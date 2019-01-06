@@ -6,7 +6,7 @@ use Vitruvius::Test;
 use Perl::Tidy;
 use PPI;
 
-use Vitruvius::Location;
+use Vitruvius::Core::Location;
 use Vitruvius::Util qw< ppi_type >;
 
 sub test_basics : Test {
@@ -26,7 +26,7 @@ EOF
     my $ppi_document = PPI::Document->new( \$perl_code );
 
     # use the location of this file
-    my $location = Vitruvius::Location->new( ppi => $ppi_document );
+    my $location = Vitruvius::Core::Location->new( ppi => $ppi_document );
 
     my $node;
     ok( lives { $node = $CLASS->new( ppi => $ppi_document, location => $location ) }, '->new should succeed' );

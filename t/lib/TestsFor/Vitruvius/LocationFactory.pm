@@ -52,7 +52,7 @@ sub test_basics : Test {
 
             ok( lives { $location = $factory->new_location( $case->{ppi} ) }, '->new_location should succeed' );
 
-            isa_ok( $location, ['Vitruvius::Location'], '->new_location should return Location' );
+            isa_ok( $location, ['Vitruvius::Core::Location'], '->new_location should return Location' );
 
             is( $location->rel_file, 'TestsFor/Vitruvius/LocationFactory.pm', '->rel_file should be correct' )
               if $location->base_dir && $location->file;

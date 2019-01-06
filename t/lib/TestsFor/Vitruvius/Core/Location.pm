@@ -1,4 +1,4 @@
-package TestsFor::Vitruvius::Location;
+package TestsFor::Vitruvius::Core::Location;
 
 use FindBin::libs;
 use Vitruvius::Test;
@@ -29,7 +29,7 @@ sub test_basics : Test {
                 base_dir => $base_dir,
                 file     => $file,
             },
-            stringified => 'TestsFor/Vitruvius/Location.pm, no sub, L1',
+            stringified => 'TestsFor/Vitruvius/Core/Location.pm, no sub, L1',
         },
         {
             name => 'first sub',
@@ -38,7 +38,7 @@ sub test_basics : Test {
                 base_dir => $base_dir,
                 file     => $file,
             },
-            stringified => 'TestsFor/Vitruvius/Location.pm, sub test_basics, L11',
+            stringified => 'TestsFor/Vitruvius/Core/Location.pm, sub test_basics, L11',
         },
         {
             name => 'first block in sub',
@@ -47,7 +47,7 @@ sub test_basics : Test {
                 base_dir => $base_dir,
                 file     => $file,
             },
-            stringified => 'TestsFor/Vitruvius/Location.pm, in sub test_basics, L11',
+            stringified => 'TestsFor/Vitruvius/Core/Location.pm, in sub test_basics, L11',
         },
         {
             name => 'first block in sub, no base_dir',
@@ -76,7 +76,7 @@ sub test_basics : Test {
 
             isa_ok( $location, [$CLASS], '->new should return correct class' );
 
-            is( $location->rel_file, 'TestsFor/Vitruvius/Location.pm', '->rel_file should be correct' )
+            is( $location->rel_file, 'TestsFor/Vitruvius/Core/Location.pm', '->rel_file should be correct' )
               if $location->base_dir && $location->file;
 
             is( $location->stringify, $case->{stringified}, '->stringify should be correct' );
