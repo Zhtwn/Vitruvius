@@ -17,6 +17,13 @@ Vitruvius is a set of tools to help the code architect.
 Configuration: either `MooseX::App::Message::Envelope` (for help output)
 or `Vitruvius::App::*` (for actual application run)
 
+## service\_path
+
+Service path in [Vitruvius::Container](https://metacpan.org/pod/Vitruvius::Container) that corresponds to the App command class.
+
+Maps `Vitruvius::App::FooBar::Baz` into `foo_bar/bar` service name: all components
+after `App` are decamelized and joined by "/".
+
 # service
 
 Service to run (from [Vitruvius::Container](https://metacpan.org/pod/Vitruvius::Container)). Will not be defined if
