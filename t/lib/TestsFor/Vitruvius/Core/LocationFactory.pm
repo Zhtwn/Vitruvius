@@ -1,4 +1,4 @@
-package TestsFor::Vitruvius::LocationFactory;
+package TestsFor::Vitruvius::Core::LocationFactory;
 
 use FindBin::libs;
 use Vitruvius::Test;
@@ -31,17 +31,17 @@ sub test_basics : Test {
         {
             name        => 'full document',
             ppi         => $ppi_document,
-            stringified => 'TestsFor/Vitruvius/LocationFactory.pm, no sub, L1',
+            stringified => 'TestsFor/Vitruvius/Core/LocationFactory.pm, no sub, L1',
         },
         {
             name        => 'first sub',
             ppi         => $ppi_sub,
-            stringified => 'TestsFor/Vitruvius/LocationFactory.pm, sub test_basics, L11',
+            stringified => 'TestsFor/Vitruvius/Core/LocationFactory.pm, sub test_basics, L11',
         },
         {
             name        => 'first block in sub',
             ppi         => $ppi_block,
-            stringified => 'TestsFor/Vitruvius/LocationFactory.pm, in sub test_basics, L11',
+            stringified => 'TestsFor/Vitruvius/Core/LocationFactory.pm, in sub test_basics, L11',
         },
     );
 
@@ -54,7 +54,7 @@ sub test_basics : Test {
 
             isa_ok( $location, ['Vitruvius::Core::Location'], '->new_location should return Location' );
 
-            is( $location->rel_file, 'TestsFor/Vitruvius/LocationFactory.pm', '->rel_file should be correct' )
+            is( $location->rel_file, 'TestsFor/Vitruvius/Core/LocationFactory.pm', '->rel_file should be correct' )
               if $location->base_dir && $location->file;
 
             is( $location->stringify, $case->{stringified}, '->stringify should be correct' );

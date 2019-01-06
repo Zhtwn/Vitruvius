@@ -7,7 +7,7 @@ use Path::Tiny;
 use PPI;
 
 use Vitruvius::Core::Tree;
-use Vitruvius::LocationFactory;
+use Vitruvius::Core::LocationFactory;
 
 sub identical_nodes : Test {
     my $test = shift;
@@ -16,7 +16,7 @@ sub identical_nodes : Test {
 
     my $base_dir = path('./t/lib')->absolute;
 
-    my $factory = Vitruvius::LocationFactory->new( base_dir => $base_dir, file => $file );
+    my $factory = Vitruvius::Core::LocationFactory->new( base_dir => $base_dir, file => $file );
 
     my $ppi = PPI::Document->new($file);
 
@@ -59,7 +59,7 @@ sub different_nodes : Test {
 
     my @nodes;
     for my $file ( $base_file, $other_file ) {
-        my $factory = Vitruvius::LocationFactory->new( base_dir => $base_dir, file => $file );
+        my $factory = Vitruvius::Core::LocationFactory->new( base_dir => $base_dir, file => $file );
         my $ppi = PPI::Document->new($file);
         my $tree = Vitruvius::Core::Tree->new( location_factory => $factory, ppi => $ppi );
         push @nodes, $tree->root;
@@ -97,7 +97,7 @@ sub swapping_nodes : Test {
 
     my @nodes;
     for my $file ( $base_file, $other_file ) {
-        my $factory = Vitruvius::LocationFactory->new( base_dir => $base_dir, file => $file );
+        my $factory = Vitruvius::Core::LocationFactory->new( base_dir => $base_dir, file => $file );
         my $ppi = PPI::Document->new($file);
         my $tree = Vitruvius::Core::Tree->new( location_factory => $factory, ppi => $ppi );
         push @nodes, $tree->root;

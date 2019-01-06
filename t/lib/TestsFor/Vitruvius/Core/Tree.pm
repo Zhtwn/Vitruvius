@@ -6,7 +6,7 @@ use Vitruvius::Test;
 use Path::Tiny;
 use PPI;
 
-use Vitruvius::LocationFactory;
+use Vitruvius::Core::LocationFactory;
 use Vitruvius::Util qw< ppi_type >;
 
 sub test_basics : Test {
@@ -16,7 +16,7 @@ sub test_basics : Test {
 
     my $base_dir = path('./t/lib')->absolute;
 
-    my $factory = Vitruvius::LocationFactory->new( base_dir => $base_dir, file => $file );
+    my $factory = Vitruvius::Core::LocationFactory->new( base_dir => $base_dir, file => $file );
 
     my $ppi_document = PPI::Document->new($file);
 

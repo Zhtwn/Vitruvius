@@ -2,7 +2,7 @@ package Vitruvius::Core::Tree;
 
 use Vitruvius::Skel::Moo;
 
-use Vitruvius::Types qw{ HashRef ArrayRef InstanceOf VtvNode };
+use Vitruvius::Types qw{ HashRef ArrayRef InstanceOf VtvNode VtvLocationFactory };
 
 use Perl::Tidy;
 use PPI;
@@ -17,7 +17,7 @@ Vitruvius::Core::Tree - tree of Nodes
 =head1 SYNOPSIS
 
     my $ppi = PPI::Document->new($file);
-    my $location_factory = Vitruvius::LocationFactory->new(file => $file, base_dir => $base_dir);
+    my $location_factory = Vitruvius::Core::LocationFactory->new(file => $file, base_dir => $base_dir);
 
     # Constructor
     my $tree = Vitruvius::Core::Tree->new( location_factory => $location_factory, ppi => $ppi );
@@ -47,7 +47,7 @@ Factory to create Location for each node
 
 has location_factory => (
     is       => 'ro',
-    isa      => InstanceOf ['Vitruvius::LocationFactory'],
+    isa      => VtvLocationFactory,
     required => 1,
     handles  => ['new_location'],
 );

@@ -2,11 +2,11 @@ package Vitruvius::Core::SourceFile;
 
 use Vitruvius::Skel::Moo;
 
-use Vitruvius::Types qw< HashRef ArrayRef InstanceOf Path File VtvTree >;
+use Vitruvius::Types qw< HashRef ArrayRef InstanceOf Path File VtvTree VtvLocationFactory >;
 
 use PPI;
 
-use Vitruvius::LocationFactory;
+use Vitruvius::Core::LocationFactory;
 use Vitruvius::Core::Tree;
 use Vitruvius::Util qw< is_interesting >;
 
@@ -67,14 +67,14 @@ Factory to create Location with this base_dir and file
 has location_factory => (
     is      => 'ro',
     lazy    => 1,
-    isa     => InstanceOf ['Vitruvius::LocationFactory'],
+    isa     => VtvLocationFactory,
     builder => '_build_location_factory',
 );
 
 sub _build_location_factory {
     my $self = shift;
 
-    return Vitruvius::LocationFactory->new(
+    return Vitruvius::Core::LocationFactory->new(
         base_dir => $self->base_dir,
         file     => $self->file,
     );

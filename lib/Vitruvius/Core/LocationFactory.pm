@@ -1,4 +1,4 @@
-package Vitruvius::LocationFactory;
+package Vitruvius::Core::LocationFactory;
 
 use Vitruvius::Skel::Moo;
 
@@ -8,11 +8,11 @@ use Vitruvius::Core::Location;
 
 =head1 NAME
 
-Vitruvius::LocationFactory - factory for Locations
+Vitruvius::Core::LocationFactory - factory for Locations
 
 =head1 SYNOPSIS
 
-    my $factory = Vitruvius::LocationFactory->new(
+    my $factory = Vitruvius::Core::LocationFactory->new(
         base_dir => $base_dir,
         file     => $file,
     );

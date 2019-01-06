@@ -8,7 +8,7 @@ use Path::Tiny;
 use PPI;
 
 use Vitruvius::Core::Tree;
-use Vitruvius::LocationFactory;
+use Vitruvius::Core::LocationFactory;
 
 sub basic_tests : Test {
     my $test = shift;
@@ -21,7 +21,7 @@ sub basic_tests : Test {
 
     my @nodes;
     for my $file (@files) {
-        my $factory = Vitruvius::LocationFactory->new( base_dir => $base_dir, file => $file );
+        my $factory = Vitruvius::Core::LocationFactory->new( base_dir => $base_dir, file => $file );
         my $ppi     = PPI::Document->new($file);
         my $tree    = Vitruvius::Core::Tree->new( location_factory => $factory, ppi => $ppi );
 
