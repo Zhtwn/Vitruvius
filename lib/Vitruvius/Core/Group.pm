@@ -11,12 +11,59 @@ use List::Util;
 use Vitruvius::Core::Diff;
 use Vitruvius::Core::Node;
 
+=head1 NAME
+
+Vitruvius::Core::Group - group of diffs from a base node
+
+=head1 SYNOPSIS
+
+    my $group = Vitruvius::Core::Group->new( base_node => $node, diffs => \@diffs );
+
+    # location of base node
+    my $location = $group->location;
+
+    # type of base node
+    my $type = $group->type
+
+    # mean of levenshtein distance of PPI hashes from base_node to all diffs
+    my $mean = $group->diff
+
+    # report group
+    say for $group->report_lines
+
+=head1 DESCRIPTION
+
+A C<Core::Group> contains a base node and the diffs from that node to one or more
+other nodes, represented as L<Vitruvius::Core::Diff> instances.
+
+It summarizes the differences by using the C<ppi_levenshtein_similarity> calculated
+in each C<Core::Diff>, and provides a mean of that similarity over all diffs.
+
+=head1 PARAMETERS
+
+=head2 base_node
+
+Base node used for all diffs
+
+=cut
+
 has base_node => (
     is       => 'ro',
     isa      => VtvNode,
     required => 1,
-    handles  => [qw< type >],
+    handles  => [
+        qw<
+          type
+          location
+          >
+    ],
 );
+
+=head2 diffs
+
+C<Core::Diff> instances for all diffs from base_node
+
+=cut
 
 has diffs => (
     is       => 'ro',
@@ -24,12 +71,13 @@ has diffs => (
     required => 1,
 );
 
-has location => (
-    is      => 'ro',
-    lazy    => 1,
-    isa     => Str,
-    default => sub { shift->base_node->location . '' },
-);
+=head1 ATTRIBUTES
+
+=head2 count
+
+Number of diffs in group
+
+=cut
 
 has count => (
     is      => 'ro',
@@ -37,6 +85,12 @@ has count => (
     isa     => Int,
     default => sub { scalar @{ shift->diffs } },
 );
+
+=head2 sum
+
+Sum of C<ppi_levenshtein_similarity> for all diffs
+
+=cut
 
 has sum => (
     is      => 'ro',
@@ -46,6 +100,12 @@ has sum => (
         List::Util::sum( map { $_->ppi_levenshtein_similarity } shift->diffs->@* );
     },
 );
+
+=head2 mean
+
+Mean of C<ppi_levenshtein_similarity> for all diffs
+
+=cut
 
 has mean => (
     is      => 'ro',
@@ -61,6 +121,14 @@ sub _build_mean {
 
     return $self->sum / $self->count;
 }
+
+=head1 METHODS
+
+=head2 report_lines
+
+Report of group, as array of lines
+
+=cut
 
 sub report_lines {
     my $self = shift;
