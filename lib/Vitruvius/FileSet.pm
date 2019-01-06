@@ -2,8 +2,6 @@ package Vitruvius::FileSet;
 
 use Vitruvius::Skel::Moo;
 
-extends 'Vitruvius::Core::Base';
-
 use Vitruvius::Types qw< ArrayRef InstanceOf HasMethods >;
 
 use Vitruvius::File;

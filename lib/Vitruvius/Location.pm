@@ -2,8 +2,6 @@ package Vitruvius::Location;
 
 use Vitruvius::Skel::Moo;
 
-extends 'Vitruvius::Core::Base';
-
 use Vitruvius::Types qw< Str Int Maybe InstanceOf Dir File Path>;
 
 use Path::Tiny;

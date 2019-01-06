@@ -2,8 +2,6 @@ package Vitruvius::Core::Diff;
 
 use Vitruvius::Skel::Moo;
 
-extends 'Vitruvius::Core::Base';
-
 use Vitruvius::Types qw< Int Str Num Bool ArrayRef Tuple VtvNode >;
 
 use Diff::LibXDiff;

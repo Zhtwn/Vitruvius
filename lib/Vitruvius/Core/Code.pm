@@ -2,8 +2,6 @@ package Vitruvius::Core::Code;
 
 use Vitruvius::Skel::Moo;
 
-extends 'Vitruvius::Core::Base';
-
 use Vitruvius::Types qw< Int Str ArrayRef InstanceOf Maybe VtvNode >;
 
 use Digest::CRC qw< crc32 >;

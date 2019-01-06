@@ -2,8 +2,6 @@ package Vitruvius::LocationFactory;
 
 use Vitruvius::Skel::Moo;
 
-extends 'Vitruvius::Core::Base';
-
 use Vitruvius::Types qw< File Dir >;
 
 use Vitruvius::Location;

@@ -2,8 +2,6 @@ package Vitruvius::File;
 
 use Vitruvius::Skel::Moo;
 
-extends 'Vitruvius::Core::Base';
-
 use Vitruvius::Types qw< HashRef ArrayRef InstanceOf Path File VtvTree >;
 
 use PPI;

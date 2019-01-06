@@ -2,8 +2,6 @@ package Vitruvius::Core::Tree;
 
 use Vitruvius::Skel::Moo;
 
-extends 'Vitruvius::Core::Base';
-
 use Vitruvius::Types qw{ HashRef ArrayRef InstanceOf VtvNode };
 
 use Perl::Tidy;

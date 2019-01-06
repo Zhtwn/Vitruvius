@@ -2,8 +2,6 @@ package Vitruvius::Core::Group;
 
 use Vitruvius::Skel::Moo;
 
-extends 'Vitruvius::Core::Base';
-
 use Vitruvius::Types qw< Str Int Num HashRef ArrayRef VtvDiff VtvNode >;
 
 use List::Util;

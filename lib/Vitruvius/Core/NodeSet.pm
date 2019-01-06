@@ -2,8 +2,6 @@ package Vitruvius::Core::NodeSet;
 
 use Vitruvius::Skel::Moo;
 
-extends 'Vitruvius::Core::Base';
-
 use Vitruvius::Types qw< ArrayRef HashRef InstanceOf HasMethods VtvNode >;
 
 use Vitruvius::Core::Node;
