@@ -38,9 +38,10 @@ L<Vitruvius::FileSet> to extract nodes from
 =cut
 
 has fileset => (
-    is      => 'ro',
-    isa     => InstanceOf ['Vitruvius::FileSet'],
-    handles => [qw< files >],
+    is       => 'ro',
+    isa      => InstanceOf ['Vitruvius::FileSet'],
+    required => 1,
+    handles  => [qw< files >],
 );
 
 =head1 ATTRIBUTES
