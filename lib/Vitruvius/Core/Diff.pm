@@ -239,8 +239,9 @@ sub report_lines {
 
     my @report_lines = (
         "    Location: " . $self->node->location,
-        "    Simlarity: " . $self->ppi_levenshtein_similarity,
-        map { '    ' . $_ } split /\n/, $self->xdiff,
+        "    Similarity: " . $self->ppi_levenshtein_similarity,
+        map { '    ' . $_ }
+          split( /\n/, $self->xdiff ),
     );
 
     return @report_lines;
