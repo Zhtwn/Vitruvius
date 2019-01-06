@@ -28,11 +28,21 @@ Vitruvius::Analysis::Similarity - find code similarity
 
 =head1 SYNOPSIS
 
-  use Vitruvius::Analysis::Similarity;
+    use Vitruvius::Analysis::Similarity;
+
+    my $similarity = Vitruvius::Analysis::Similarity( config => $config, nodeset => $nodeset );
+
+    # write report
+    say for $simlarity->report_lines
 
 =head1 DESCRIPTION
 
-Vitruvius::Analysis::Similarity is fun and incomplete
+C<Vitruvius::Analysis::Similarity> analyzes and reports on the code similarity
+between the configured files.
+
+TODO: explain PPI
+
+TODO: explain code similarity
 
 =cut
 
