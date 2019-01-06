@@ -50,6 +50,7 @@
             "Log::Any" : "0",
             "Log::Any::Adapter::Screen" : "0",
             "Moo" : "0",
+            "MooX::StrictConstructor" : "0",
             "MooX::TypeTiny" : "0",
             "MooseX::App" : "0",
             "MooseX::App::Plugin::ConfigHome" : "0",
