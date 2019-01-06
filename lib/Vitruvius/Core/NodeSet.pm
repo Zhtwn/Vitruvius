@@ -14,7 +14,14 @@ Vitruvius::Core::NodeSet - collection of files to be processed
 
 =head1 SYNOPSIS
 
+    my $nodeset = Vitruvius::Core::NodeSet->new( config => $config, fileset => $fileset );
+
+    # get all nodes from all files
+    my $nodes = $nodeset->nodes;
+
 =head1 DESCRIPTION
+
+A C<Core::NodeSet> is a collection of all Nodes for a FileSet.
 
 =head1 PARAMETERS
 
