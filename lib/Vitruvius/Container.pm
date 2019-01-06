@@ -21,7 +21,7 @@ my $app = container app => as {
         },
     );
     service fileset => (
-        class        => 'Vitruvius::FileSet',
+        class        => 'Vitruvius::Core::FileSet',
         dependencies => ['config'],
     );
     service nodeset => (

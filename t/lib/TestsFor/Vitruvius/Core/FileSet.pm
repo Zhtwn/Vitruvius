@@ -1,4 +1,4 @@
-package TestsFor::Vitruvius::FileSet;
+package TestsFor::Vitruvius::Core::FileSet;
 
 use FindBin::libs;
 use Vitruvius::Test;

@@ -1,4 +1,4 @@
-package Vitruvius::FileSet;
+package Vitruvius::Core::FileSet;
 
 use Vitruvius::Skel::Moo;
 
@@ -9,7 +9,7 @@ use Vitruvius::Util qw< parallelize >;
 
 =head1 NAME
 
-Vitruvius::FileSet - collection of files to be processed
+Vitruvius::Core::FileSet - collection of files to be processed
 
 =head1 SYNOPSIS
 

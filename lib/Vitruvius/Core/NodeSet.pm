@@ -2,7 +2,7 @@ package Vitruvius::Core::NodeSet;
 
 use Vitruvius::Skel::Moo;
 
-use Vitruvius::Types qw< ArrayRef HashRef InstanceOf HasMethods VtvNode >;
+use Vitruvius::Types qw< ArrayRef HashRef InstanceOf HasMethods VtvNode VtvFileSet >;
 
 use Vitruvius::Core::Node;
 
@@ -38,13 +38,13 @@ has config => (
 
 =head2 fileset
 
-L<Vitruvius::FileSet> to extract nodes from
+L<Vitruvius::Core::FileSet> to extract nodes from
 
 =cut
 
 has fileset => (
     is       => 'ro',
-    isa      => InstanceOf ['Vitruvius::FileSet'],
+    isa      => VtvFileSet,
     required => 1,
     handles  => [qw< files >],
 );
