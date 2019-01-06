@@ -42,6 +42,7 @@ has base_dir => (
     is       => 'ro',
     isa      => Path,
     required => 1,
+    coerce   => 1,
 );
 
 =head2 file
@@ -54,7 +55,7 @@ has file => (
     is       => 'ro',
     isa      => File,
     required => 1,
-    coerce   => File->coercion,
+    coerce   => 1,
 );
 
 =head1 ATTRIBUTES
