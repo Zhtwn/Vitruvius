@@ -212,7 +212,7 @@ sub _build_diff_lines {
     my %counts;
     $counts{$_}++ for map { substr( $_, 0, 1 ) } split /\n/, $xdiff;
 
-    my $line_count = max( $counts{'+'}, $counts{'-'} );
+    my $line_count = max( $counts{'+'} // 0, $counts{'-'} // 0 );
 
     my @content = map { $_->ppi->content } $self->nodes->@*;
 
