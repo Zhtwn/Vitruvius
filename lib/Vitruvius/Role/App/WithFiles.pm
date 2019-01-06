@@ -4,7 +4,7 @@ use Vitruvius::Skel;
 
 use MooseX::App::Role;
 
-use Vitruvius::Types qw< Str ArrayRef Dir >;
+use Vitruvius::Types qw< Str ArrayRef Dir File >;
 
 use Carp;
 use Cwd;
@@ -15,6 +15,7 @@ use Vitruvius::Analysis::Similarity;
 option base_dir => (
     is            => 'ro',
     isa           => Dir,
+    coerce        => 1,
     cmd_flag      => 'base-dir',
     cmd_aliases   => ['b'],
     default       => sub { path( cwd() ); },
@@ -31,7 +32,8 @@ parameter filename => (
 has filenames => (
     is      => 'ro',
     lazy    => 1,
-    isa     => ArrayRef [Str],
+    isa     => ArrayRef [File],
+    coerce  => 1,
     builder => '_build_filenames',
 );
 
