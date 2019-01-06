@@ -40,7 +40,7 @@ sub get_app {
 
 sub get_service {
     my ( $class, $service, %args ) = @_;
-    return $class->get_app->resolve( service => $service, %args );
+    return $class->get_app->resolve( service => $service, parameters => \%args );
 }
 
 1;
