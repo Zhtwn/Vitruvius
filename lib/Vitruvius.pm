@@ -46,7 +46,7 @@ sub _build_config {
     # but only implements it for top-level commands?)
     s/^(help|usage)$/--$1/ for @ARGV;
 
-    return Vitruvius::Container->get_service('config');
+    return resolve('config');
 }
 
 =head2 service_path
@@ -101,7 +101,7 @@ sub _build_service {
     my $service_path = $self->service_path
       or return;
 
-    return Vitruvius::Container->get_service($service_path);
+    return resolve($service_path);
 }
 
 =head1 METHODS
