@@ -112,7 +112,7 @@ Create Diff with given node first, if needed
 
 sub for_node {
     my ( $self, $index ) = @_;
-    return $self if $self->indexes->[0] eq $index;
+    return $self if $self->indexes->[0] eq $index . '';
 
     my $class = ref $self;
 
