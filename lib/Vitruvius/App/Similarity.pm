@@ -13,7 +13,6 @@ use namespace::autoclean;
 
 use Vitruvius::Types qw< Str ArrayRef InstanceOf PositiveInt Dir >;
 
-use Carp;
 use Cwd;
 use Path::Tiny;
 

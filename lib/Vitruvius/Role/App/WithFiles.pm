@@ -6,7 +6,6 @@ use MooseX::App::Role;
 
 use Vitruvius::Types qw< Str ArrayRef Dir File >;
 
-use Carp;
 use Cwd;
 use Path::Tiny;
 

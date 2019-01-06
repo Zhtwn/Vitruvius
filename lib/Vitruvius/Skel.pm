@@ -5,6 +5,8 @@ use warnings;
 
 use Import::Into;
 
+require Carp;
+
 sub import {
     my $class = shift;
 
@@ -20,6 +22,7 @@ sub import_into {
     warnings->import::into($level);
     utf8->import::into($level);
     feature->import::into( $level, ':5.10' );
+    Carp->import::into($level);
 }
 
 1;
