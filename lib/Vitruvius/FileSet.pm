@@ -2,7 +2,7 @@ package Vitruvius::FileSet;
 
 use Vitruvius::Skel::Moo;
 
-use Vitruvius::Types qw< ArrayRef InstanceOf HasMethods >;
+use Vitruvius::Types qw< ArrayRef HasMethods VtvSourceFile >;
 
 use Vitruvius::Core::SourceFile;
 use Vitruvius::Util qw< parallelize >;
@@ -41,7 +41,7 @@ Arrayref of L<Vitruvius::Core::SourceFile>, built from given filenames
 has files => (
     is      => 'ro',
     lazy    => 1,
-    isa     => ArrayRef [ InstanceOf ['Vitruvius::Core::SourceFile'] ],
+    isa     => ArrayRef [ VtvSourceFile ],
     builder => '_build_files',
 );
 
