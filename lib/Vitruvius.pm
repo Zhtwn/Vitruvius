@@ -46,8 +46,6 @@ Planned tools:
 
 =back
 
-=back
-
 =head1 EXECUTION
 
 You will typically use these tools from the command line. Each tool is a command
@@ -137,6 +135,8 @@ as they are to physical constructs:
 =item * Utility - it should be designed to work
 
 =item * Beauty - it should be designed to be enjoyed
+
+=back
 
 =head1 ARCHITECTURE
 
