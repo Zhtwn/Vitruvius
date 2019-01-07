@@ -25,17 +25,35 @@ Vitruvius::Analysis::Similarity - find code similarity
 
 =head1 SYNOPSIS
 
+    # run from the command line:
+    % vitruvius similarity --min_similarity 80 --min_ppi_size 100 --jobs 8 lib/Vitruvius/Core/*.pm
+
+    # in code
     use Vitruvius::Analysis::Similarity;
 
     my $similarity = Vitruvius::Analysis::Similarity( config => $config, nodeset => $nodeset );
 
-    # write report
+    # process Core::Group instances with similarity
+    for my $group ( $similarity->groups->@* ) {
+        my $base_node = $group->base_node;
+        my $location = $base_node->location;    # human-readable location of code
+
+        my $mean_similarity = $group->mean
+
+        # get Core::Diff instances for all similar nodes
+        for my $diff ( $group->diffs->@*) {
+            my $similarity = $diff->ppi_levenshtein_similarity;
+            my $diff = $diff->xdiff;
+        }
+    }
+
+    # write default report
     say for $simlarity->report_lines
 
 =head1 DESCRIPTION
 
 C<Vitruvius::Analysis::Similarity> analyzes and reports on the code similarity
-between the configured files.
+between the specified files.
 
 The code similarity is determined by creating a hash of the elements in the PPI
 of the code, using only the element type and ignoring the content. In other words,
@@ -55,7 +73,98 @@ and the snippets are grouped to maximize the simliarity.
 In the report, groups with the highest mean similarity across all snippets are
 listed first.
 
-=cut
+=head2 Output
+
+The report lists all groups of nodes (C<Core::Group>s) that are similar, sorted
+by descending mean similarity. Here is some of the output from comparing the
+files in C<lib/Vitruvius/Core>.
+
+First, the base Node of the Group is listed:
+
+  SIMILAR: PPI::Statement::Sub (PPI Size: 114)
+    Base Node: lib/Vitruvius/Core/SourceFile.pm, sub _build_location_factory, L37
+
+Then, each similar Node is listed, with its location, similarity, and the
+diff between the base Node and the similar node. In this example, you can
+see that the similarity is 100, because the code structure is identical:
+a function that calls a class method passing two arguments, each of which
+has a value that is provided by a method call. The only differences here
+are the names: the function name, the class name, the argument names, and
+the method names.
+
+Note: To suppress detection of these possible false positives, set the
+the C<min-ppi-size> option above its default of 50 when running the
+tool (C<vitruvius similarity --min-ppi-size 200 FILE ...>).
+
+    Node 1:
+      Location: lib/Vitruvius/Core/SourceFile.pm, sub _build_tree, L89
+      Similarity: 100
+      @@ -1,8 +1,8 @@
+      -sub _build_location_factory {
+      +sub _build_tree {
+           my $self = shift;
+
+      -    return Vitruvius::Core::LocationFactory->new(
+      -        base_dir => $self->base_dir,
+      -        file     => $self->file,
+      +    return Vitruvius::Core::Tree->new(
+      +        location_factory => $self->location_factory,
+      +        ppi              => $self->ppi,
+           );
+       }
+
+The second similar Node in this report is also likely a false positive:
+
+    Node 2:
+      Location: lib/Vitruvius/Core/Diff.pm, sub _build_xdiff, L109
+      Similarity: 82
+      @@ -1,8 +1,5 @@
+      -sub _build_location_factory {
+      +sub _build_xdiff {
+           my $self = shift;
+
+      -    return Vitruvius::Core::LocationFactory->new(
+      -        base_dir => $self->base_dir,
+      -        file     => $self->file,
+      -    );
+      +    return Diff::LibXDiff->diff( map { $_->raw_content } $self->nodes->@* );
+       }
+
+=head1 RATIONALE
+
+Large or legacy code bases often have many cases where one block of code that works
+has been copied and perhaps slightly changed. This code similarity can make
+maintenance work a lot harder if something in that block of code needs to be
+changed or fixed.
+
+The C<Analysis::Similarity> tool tries to find such similarity across the code
+base, allowing the needed changes to be made in each place it occurs, or allowing
+the code to be refactored to remove the code duplication.
+
+=head1 TODO
+
+=head2 Provide better examples of useful detection
+
+The current examples in this documentation only show similarities that should
+be considered false positives. Replace them with examples that show useful
+detected similarities.
+
+=head2 Allow comparison of non-sub code
+
+Currently, C<Analysis::Similarity> only compares subroutines between the files.
+This filtering happens in L<Vitruvius::Core::Tree>, where the Nodes to be included
+are filtered using C<Util::is_interesting>, which only includes C<PPI::Statement::Sub>
+nodes. This needs to be parameterized so that similarity of other structures
+such as C<PPI::Structure::Block> can also be detected.
+
+=head2 Allow specification of a desired code snippet
+
+Instead of finding all similarities across the specified files, it would be
+useful to be able to specify a base code snippet (e.g., a subroutine or a
+block of code) and be able to find all similar instances in the code base.
+This would involve having a way to specify the base snippet (perhaps by
+file name, type, and line number) and use that as the base Node when building
+the Diffs and Groups.
 
 =head1 PARAMETERS
 
@@ -110,6 +219,8 @@ sub _process_node_pair {
     my @nodes      = @$node_pair;                                     # see, a copy
     my $diff       = Vitruvius::Core::Diff->new( nodes => \@nodes );
     my $similarity = $diff->ppi_levenshtein_similarity;
+
+    # only include Diffs that are at or above minimum similarity
     return if $similarity < $self->min_similarity;
 
     # use for_node() to ensure that the base node is the first one in the Diff
