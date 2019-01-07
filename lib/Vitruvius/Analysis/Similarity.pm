@@ -37,9 +37,23 @@ Vitruvius::Analysis::Similarity - find code similarity
 C<Vitruvius::Analysis::Similarity> analyzes and reports on the code similarity
 between the configured files.
 
-TODO: explain PPI
+The code similarity is determined by creating a hash of the elements in the PPI
+of the code, using only the element type and ignoring the content. In other words,
+code with the same structure but different variable or subroutine names is considered
+similar.
 
-TODO: explain code similarity
+The similarity is represented as a percentage, from 0 to 100. The minimum interesting
+simliarity can be set using the C<min_similarity> option.
+
+For now, the similarity is only calculated for subroutines. All subroutines in
+all of the source code files are compared with all other subroutines, and the most
+similar subroutines are included in the report.
+
+The similar code snippets are grouped so that each snippet is only in one group,
+and the snippets are grouped to maximize the simliarity.
+
+In the report, groups with the highest mean similarity across all snippets are
+listed first.
 
 =cut
 
@@ -47,7 +61,9 @@ TODO: explain code similarity
 
 =head2 config
 
-Configuration for Similarity
+Configuration for Similarity (a L<Vitruvius::App::Similarity> instance)
+
+Typically injected by L<Vitruvius::Container>
 
 =cut
 
@@ -62,6 +78,8 @@ has config => (
 
 Vitruvius::Core::NodeSet with all nodes to be analyzed
 
+Typically injected by L<Vitruvius::Container>
+
 =cut
 
 has nodeset => (
@@ -75,7 +93,7 @@ has nodeset => (
 
 =head2 diffs
 
-Diff instance for all pairs of nodes, hashed by type
+Diff instances for all pairs of nodes, hashed by type
 
 =cut
 
@@ -223,7 +241,7 @@ Noel Maddy E<lt>zhtwnpanta@gmail.comE<gt>
 
 =head1 COPYRIGHT
 
-Copyright 2018- Noel Maddy
+Copyright 2018-2019 Noel Maddy
 
 =head1 LICENSE
 
