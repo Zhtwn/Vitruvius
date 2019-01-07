@@ -33,7 +33,6 @@ Default: 1
 option jobs => (
     is            => 'ro',
     isa           => PositiveInt,
-    cmd_aliases   => ['j'],
     default       => 1,
     documentation => 'number of parallel jobs to run',
 );
