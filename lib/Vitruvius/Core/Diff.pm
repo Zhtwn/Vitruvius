@@ -156,6 +156,9 @@ Similarity of PPI hashes of the two nodes, as percent
 
 Ranges from 0 (completely different) to 100 (completely identical)
 
+Calculated as the levenshtein edit distance between the PPI hashes
+of the nodes divided by length of the longest PPI hash of the nodes.
+
 =cut
 
 has ppi_levenshtein_similarity => (
@@ -180,7 +183,7 @@ sub _build_ppi_levenshtein_similarity {
 
 =head2 xdiff
 
-Diff from libxdiff
+Diff between original code of the two Nodes, from libxdiff
 
 =cut
 
@@ -199,7 +202,9 @@ sub _build_xdiff {
 
 =head2 diff_lines
 
-Number of line differences
+Number of line differences in the diff between the Nodes' code.
+
+Returns the larger of the number of lines added or the number of lines deleted.
 
 =cut
 
@@ -236,7 +241,7 @@ sub _build_diff_lines {
 =head2 report_lines
 
 Returns a report of the nodes, their location, and their similarity,
-as a list of lines
+as a list of output lines.
 
 =cut
 
