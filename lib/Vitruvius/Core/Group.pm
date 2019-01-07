@@ -21,13 +21,13 @@ Vitruvius::Core::Group - group of diffs from a base node
     my $location = $group->location;
 
     # type of base node
-    my $type = $group->type
+    my $type = $group->type;
 
     # mean of levenshtein distance of PPI hashes from base_node to all diffs
-    my $mean = $group->diff
+    my $mean = $group->mean;
 
     # report group
-    say for $group->report_lines
+    say for $group->report_lines;
 
 =head1 DESCRIPTION
 
