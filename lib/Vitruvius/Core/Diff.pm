@@ -115,6 +115,9 @@ sub for_node {
     my ( $self, $location ) = @_;
     return $self if $self->locations->[0] eq $location . '';
 
+    croak "location '$location' does not match either Node in this diff"
+      unless $self->locations->[1] eq $location . '';
+
     my $class = ref $self;
 
     my %args = ( nodes => [ reverse $self->nodes->@* ] );    # shallow copy: same Nodes
