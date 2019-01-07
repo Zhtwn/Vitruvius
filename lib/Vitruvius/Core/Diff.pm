@@ -59,18 +59,20 @@ has nodes => (
 
 =head1 ATTRIBUTES
 
-=head2 indexes
+=head2 locations
+
+Locations of the two nodes
 
 =cut
 
-has indexes => (
+has locations => (
     is      => 'ro',
     lazy    => 1,
     isa     => ArrayRef [Str],
-    builder => '_build_indexes',
+    builder => '_build_locations',
 );
 
-sub _build_indexes {
+sub _build_locations {
     my $self = shift;
 
     my @locations = map { $_->location . '' } $self->nodes->@*;
@@ -102,19 +104,22 @@ Other node
 
 sub node { shift->nodes->[1] }
 
-=head2 for_node
+=head2 for_node( $location )
 
-Create Diff with given node first, if needed
+Return Diff that has node at given location first. Creates a new Diff
+with the nodes swapped, if needed.
 
 =cut
 
 sub for_node {
-    my ( $self, $index ) = @_;
-    return $self if $self->indexes->[0] eq $index . '';
+    my ( $self, $location ) = @_;
+    return $self if $self->locations->[0] eq $location . '';
 
     my $class = ref $self;
 
-    my %args = ( nodes => [ reverse $self->nodes->@* ] );    # see, a copy
+    my %args = ( nodes => [ reverse $self->nodes->@* ] );    # shallow copy: same Nodes
+
+    # copy similarity if it exists, to avoid recalculation
     $args{ppi_levenshtein_similarity} = $self->ppi_levenshtein_similarity
       if $self->has_ppi_levenshtein_similarity;
 

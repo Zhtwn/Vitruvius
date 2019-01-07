@@ -113,7 +113,7 @@ sub _process_node_pair {
     return if $similarity < $self->min_similarity;
 
     # use for_node() to ensure that the base node is the first one in the Diff
-    push $diffs->{$_}->@*, $diff->for_node($_) for $diff->indexes->@*;
+    push $diffs->{$_}->@*, $diff->for_node($_) for $diff->locations->@*;
 }
 
 sub _build_diffs {
@@ -180,7 +180,7 @@ sub _build_groups {
         my $base_node = $diffs->[0]->base_node;
         next if $nodes_seen{ $base_node->location };
         push @groups, Vitruvius::Core::Group->new( base_node => $base_node, diffs => $diffs );
-        $nodes_seen{$_}++ for map { $_->indexes->@* } @$diffs;
+        $nodes_seen{$_}++ for map { $_->locations->@* } @$diffs;
     }
 
     # sort by descending mean similarity
