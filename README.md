@@ -9,7 +9,8 @@ Vitruvius - tools for code architects
 
 # DESCRIPTION
 
-Vitruvius is a framework and set of tools to help the code architect.
+Vitruvius is a framework and set of tools to help the code architect analyze
+a code base.
 
 ## Tools
 
@@ -23,6 +24,82 @@ Planned tools:
 - find methods that could be simpler in a different class
 - find classes that might need merging or splitting
 
+# EXECUTION
+
+You will typically use these tools from the command line. Each tool is a command
+provided by the `script/vitruvius` script. To see the available commands, use
+the `help` command:
+
+    % vitruvius help
+    usage:
+        vitruvius <command> [long options...]
+        vitruvius help
+        vitruvius <command> --help
+
+    short description:
+        base class for vitruvius scripts
+
+    global options:
+        --jobs                number of parallel jobs to run [Default:"1";
+                              Integer]
+        --verbose -v          show verbose progress [Flag]
+        --config              Path to command config file
+        --help -h --usage -?  Prints this usage information. [Flag]
+
+    available commands:
+        similarity
+        help        Prints this usage information
+
+To see the options available for a specific tool, use the `--help` option on
+that command:
+
+    % vitruvius similarity --help
+    usage:
+        vitruvius similarity [filenames] [long options...]
+        vitruvius help
+        vitruvius similarity --help
+
+    parameters:
+        filenames  source code files to analyze
+
+    options:
+        --jobs                number of parallel jobs to run [Default:"1";
+                              Integer]
+        --verbose -v          show verbose progress [Flag]
+        --base-dir -b         base directory for source code files
+        --min-similarity -s   minimum PPI similarity to include in report [
+                              Default:"80"; Integer]
+        --min-ppi-size -p     minimum PPI size to include in report [Default:"50"
+                              ; Integer]
+        --config              Path to command config file
+        --help -h --usage -?  Prints this usage information. [Flag]
+
+    available subcommands:
+        help  Prints this usage information
+
+# CONFIGURATION
+
+Default values for the options can be set in a config file in `$HOME/.vitruvius`,
+using any config file format recognized by [Config::Any](https://metacpan.org/pod/Config::Any). For example, using this
+as `$home/.vitruivus/config.yaml` will set the default `jobs` and `min-ppi-size`:
+
+    ---
+    global:
+        jobs: 8
+    similarity:
+        min_ppi_size: 100
+
+Note: the options need to use the underscored version of the option, as specified
+in the `parameter` and `option` attributes defined in `Vitruvius::App::*`,
+rather than the hyphenated version of the option as accepted by the command-line.
+(This needs to be fixed.)
+
+# RATIONALE
+
+I spend far too much time staring at code trying to analyze its architecture so
+that I can figure out where and how to make the changes I need. `Vitruvius` is
+an attempt to automate the automatable parts of that analysis.
+
 ## Name
 
 Vitruvius was a notable Roman architect, famous for his Three Virtues (Principles)
@@ -32,10 +109,6 @@ as they are to physical constructs:
 - Durability - it should be designed to last
 - Utility - it should be designed to work
 - Beauty - it should be designed to be enjoyed
-
-# EXECUTION
-
-# RATIONALE
 
 # ARCHITECTURE
 
@@ -108,3 +181,15 @@ This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 # SEE ALSO
+
+# POD ERRORS
+
+Hey! **The above document had some coding errors, which are explained below:**
+
+- Around line 39:
+
+    &#x3d;back without =over
+
+- Around line 131:
+
+    You forgot a '=back' before '=head1'
