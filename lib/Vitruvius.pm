@@ -12,15 +12,90 @@ use Vitruvius::Container;
 
 =head1 NAME
 
-Vitruvius - tools for code architect
+Vitruvius - tools for code architects
 
 =head1 SYNOPSIS
 
-  # TBW
+  # find and report similarities in code
+  % vitruvius similarity file ...
 
 =head1 DESCRIPTION
 
-Vitruvius is a set of tools to help the code architect.
+Vitruvius is a framework and set of tools to help the code architect.
+
+=head2 Tools
+
+Available tools:
+
+=over
+
+=item * find similar code (L<Vitruvius::Analysis::Similarity>)
+
+=back
+
+Planned tools:
+
+=over
+
+=item * find methods that are acting as functions, and vice versa
+
+=item * find methods that could be simpler in a different class
+
+=item * find classes that might need merging or splitting
+
+=back
+
+=head2 Name
+
+Vitruvius was a notable Roman architect, famous for his Three Virtues (Principles)
+of good architecture, which are just as applicable to good software architecture
+as they are to physical constructs:
+
+=over
+
+=item * Durability - it should be designed to last
+
+=item * Utility - it should be designed to work
+
+=item * Beauty - it should be designed to be enjoyed
+
+=back
+
+=head1 EXECUTION
+
+=head1 RATIONALE
+
+=head1 ARCHITECTURE
+
+To Be Expanded
+
+=head2 Command-line Application
+
+Vitruvius uses L<MooseX::App>, with one module in C<Vitruvius::App> for each
+possible action. The C<Vitruvius::App> instances also act as Config instances,
+since they have attributes (options or parameters) for all configuration items
+that are used for the application.
+
+=head2 Dependency Injection
+
+Vitruvius uses L<Bread::Board> in L<Vitruvius::Container> to provide dependency
+injection into the main application classes. This allows injecting the C<config>
+object into all of those classes without needing the configuration to be global
+or to be passed between all classes.
+
+The integration between L<Vitruvius::App> and L<Vitruvius::Container> is currently
+done in this class (C<Vitruvius>).
+
+=head2 Core
+
+The core classes are in L<Vitruvius::Core>, and provide all of the components
+needed to load, parse, and compare multiple Perl Files. Although these components
+were initially designed to provide what is needed for C<Analysis::Similarity>,
+it is hoped that they will also provide what is needed for other analyses.
+
+=head1 ADDING ANALYSES
+
+To Be Documented
 
 =head1 ATTRIBUTES
 
