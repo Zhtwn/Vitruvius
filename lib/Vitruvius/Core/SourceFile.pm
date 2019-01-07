@@ -8,7 +8,6 @@ use PPI;
 
 use Vitruvius::Core::LocationFactory;
 use Vitruvius::Core::Tree;
-use Vitruvius::Util qw< is_interesting >;
 
 =head1 NAME
 
