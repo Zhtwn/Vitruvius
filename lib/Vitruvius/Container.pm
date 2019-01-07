@@ -34,19 +34,9 @@ my $app = container app => as {
     );
 };
 
-sub get_app {
-    my $class = shift;
-    return $app;
-}
-
-sub get_service {
-    my ( $class, $service, %args ) = @_;
-    return $class->get_app->resolve( service => $service, parameters => \%args );
-}
-
 sub resolve {
     my ( $service, %args ) = @_;
-    return get_app()->resolve( service => $service, parameters => \%args );
+    return $app->resolve( service => $service, parameters => \%args );
 }
 
 1;
