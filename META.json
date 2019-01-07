@@ -80,6 +80,17 @@
       }
    },
    "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/Zhtwn/Vitruvius/issues"
+      },
+      "homepage" : "https://github.com/Zhtwn/Vitruvius",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/Zhtwn/Vitruvius.git",
+         "web" : "https://github.com/Zhtwn/Vitruvius"
+      }
+   },
    "version" : "0.01",
    "x_generated_by_perl" : "v5.26.2",
    "x_serialization_backend" : "Cpanel::JSON::XS version 4.02",
