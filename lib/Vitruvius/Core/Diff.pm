@@ -197,7 +197,7 @@ has xdiff => (
 sub _build_xdiff {
     my $self = shift;
 
-    return Diff::LibXDiff->diff( map { $_->raw_content } $self->nodes->@* );
+    return Diff::LibXDiff->diff( map { $_->content } $self->nodes->@* );
 }
 
 =head2 diff_lines
