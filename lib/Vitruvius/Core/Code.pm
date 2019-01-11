@@ -60,10 +60,23 @@ has ppi => (
     is       => 'ro',
     isa      => InstanceOf ['PPI::Element'],
     required => 1,
-    handles  => [qw< class content >],
+    handles  => [qw< class >],
 );
 
 =head1 ATTRIBUTES
+
+=head2 content
+
+Content from PPI, as attribute
+
+=cut
+
+has content => (
+    is      => 'ro',
+    lazy    => 1,
+    isa     => Str,
+    default => sub { shift->ppi->content },
+);
 
 =head2 class
 

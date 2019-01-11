@@ -249,7 +249,14 @@ sub _build_diffs {
             my $node_pairs = shift;
 
             my $job_diffs = {};
-            $self->_process_node_pair( $_, $job_diffs ) for @$node_pairs;
+
+            for my $node_pair ( @$node_pairs ) {
+                $self->_process_node_pair( $node_pair, $job_diffs );
+
+                # FIXME - Code->ppi->content does not survive fork, so prebuild content and raw_content
+                $_->raw_content for @$node_pair;
+                $_->content for @$node_pair
+            }
 
             return $job_diffs;
         },
