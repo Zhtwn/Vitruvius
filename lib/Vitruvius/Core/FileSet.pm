@@ -27,7 +27,6 @@ has config => (
     is       => 'ro',
     isa      => HasMethods [qw< jobs base_dir filenames >],
     required => 1,
-    handles  => [qw< jobs base_dir filenames >],
 );
 
 =head1 ATTRIBUTES
@@ -48,19 +47,19 @@ has files => (
 sub _build_files {
     my $self = shift;
 
-    my $base_dir = $self->base_dir;
+    my $config = $self->config;
 
-    my $jobs = $self->jobs;
-
-    my $filenames = $self->filenames;
+    my $base_dir  = $config->base_dir;
+    my $jobs      = $config->jobs;
+    my $filenames = $config->filenames;
 
     my $files;
 
     parallelize(
         log        => $self->log,
-        jobs       => $self->jobs,
+        jobs       => $jobs,
         message    => "Reading " . scalar(@$filenames) . " files",
-        input      => $self->filenames,
+        input      => $filenames,
         single_sub => sub {
             $files = [ map { Vitruvius::Core::SourceFile->new( base_dir => $base_dir, file => $_ ) } @$filenames ];
         },
@@ -74,7 +73,7 @@ sub _build_files {
                     base_dir => $base_dir,
                     file     => $filename,
                 );
-                $file->nodes;    # force all parsing and building to be done in parallel
+                $file->tree->nodes;    # force all parsing and building to be done in parallel
                 push @$job_files, $file;
             }
 

@@ -125,11 +125,6 @@ has tree => (
     lazy    => 1,
     isa     => InstanceOf [VtvTree],
     builder => '_build_tree',
-    handles => [
-        qw<
-          nodes
-          >
-    ],
 );
 
 sub _build_tree {

@@ -180,7 +180,6 @@ has config => (
     is       => 'ro',
     isa      => HasMethods [qw< jobs base_dir filenames min_similarity min_ppi_size >],
     required => 1,
-    handles  => [qw< jobs base_dir filenames min_similarity min_ppi_size >],
 );
 
 =head2 nodeset
@@ -195,7 +194,6 @@ has nodeset => (
     is       => 'ro',
     isa      => VtvNodeSet,
     required => 1,
-    handles  => [qw< nodes >],
 );
 
 =head1 ATTRIBUTES
@@ -221,7 +219,7 @@ sub _process_node_pair {
     my $similarity = $diff->ppi_levenshtein_similarity;
 
     # only include Diffs that are at or above minimum similarity
-    return if $similarity < $self->min_similarity;
+    return if $similarity < $self->config->min_similarity;
 
     # use for_node() to ensure that the base node is the first one in the Diff
     push $diffs->{$_}->@*, $diff->for_node($_) for $diff->locations->@*;
@@ -233,13 +231,13 @@ sub _build_diffs {
     # build pairs of nodes first, and then paralellize the Diff creation/calculation
     my @node_pairs = $self->_node_pairs;
 
-    my $jobs = $self->jobs;
+    my $jobs = $self->config->jobs;
 
     my $diffs = {};
 
     parallelize(
         log        => $self->log,
-        jobs       => $self->jobs,
+        jobs       => $jobs,
         message    => "Building " . scalar(@node_pairs) . " diffs",
         input      => \@node_pairs,
         single_sub => sub { $self->_process_node_pair( $_, $diffs ) for @node_pairs },
@@ -332,7 +330,7 @@ Build pairs of nodes
 sub _node_pairs {
     my $self = shift;
 
-    my $all_nodes = $self->nodes;
+    my $all_nodes = $self->nodeset->nodes;
 
     my @node_pairs;
     for my $type ( keys %$all_nodes ) {

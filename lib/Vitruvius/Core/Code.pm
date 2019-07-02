@@ -60,7 +60,6 @@ has ppi => (
     is       => 'ro',
     isa      => InstanceOf ['PPI::Element'],
     required => 1,
-    handles  => [qw< class >],
 );
 
 =head1 ATTRIBUTES

@@ -33,7 +33,6 @@ has config => (
     is       => 'ro',
     isa      => HasMethods [qw< min_ppi_size >],
     required => 1,
-    handles  => [qw< min_ppi_size >],
 );
 
 =head2 fileset
@@ -46,7 +45,6 @@ has fileset => (
     is       => 'ro',
     isa      => VtvFileSet,
     required => 1,
-    handles  => [qw< files >],
 );
 
 =head1 ATTRIBUTES
@@ -69,13 +67,13 @@ sub _build_nodes {
 
     $self->log->info("Building nodes...");
 
-    my $min_ppi_size = $self->min_ppi_size;
+    my $min_ppi_size = $self->config->min_ppi_size;
 
     my %nodes;
     my $cnt = 0;
 
-    for my $file ( $self->files->@* ) {
-        for my $node ( $file->nodes->@* ) {
+    for my $file ( $self->fileset->files->@* ) {
+        for my $node ( $file->tree->nodes->@* ) {
             next if $node->ppi_size < $min_ppi_size;
             push $nodes{ $node->type }->@*, $node;
             ++$cnt;

@@ -49,7 +49,6 @@ has location_factory => (
     is       => 'ro',
     isa      => VtvLocationFactory,
     required => 1,
-    handles  => ['new_location'],
 );
 
 =head2 ppi
@@ -99,7 +98,7 @@ sub _tree_node {
 
     my $node = Vitruvius::Core::Node->new(
         ppi         => $ppi,
-        location    => $self->new_location($ppi),
+        location    => $self->location_factory->new_location($ppi),
         children    => $children,
     );
 
