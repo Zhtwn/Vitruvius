@@ -230,8 +230,6 @@ sub _process_node_pair {
 sub _build_diffs {
     my $self = shift;
 
-    my $min_similarity = $self->min_similarity;
-
     # build pairs of nodes first, and then paralellize the Diff creation/calculation
     my @node_pairs = $self->_node_pairs;
 
