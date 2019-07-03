@@ -10,7 +10,12 @@ our @EXPORT = qw<
 
 use Bread::Board;
 
-use Vitruvius::Types qw< File Str >;
+use Vitruvius::Types qw< Path File Str >;
+
+# NOTE: Bread::Board's class auto-load seems not to be fork-safe,
+# so manually load any classes needed by services that need to be
+# fork-safe
+use Vitruvius::Core::SourceFile;
 
 my $app = container app => as {
     service config => (
@@ -31,6 +36,13 @@ my $app = container app => as {
     service similarity => (
         class        => 'Vitruvius::Analysis::Similarity',
         dependencies => [ 'config', 'node_set' ],
+    );
+    service source_file => (
+        class        => 'Vitruvius::Core::SourceFile',
+        parameters   => {
+            base_dir => { isa => Path, coerce => 1 },
+            file     => { isa => File, coerce => 1 },
+        },
     );
 };
 
