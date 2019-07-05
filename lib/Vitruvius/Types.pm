@@ -33,4 +33,8 @@ while ( my $core_file = $core_iter->() ) {
     class_type $type => { class => $module };
 }
 
+class_type PPIElement => { class => 'PPI::Element' };
+
+coerce 'VtvCode', from 'PPIElement', via { Vitruvius::Core::Code->new( ppi => $_ ) };
+
 1;
