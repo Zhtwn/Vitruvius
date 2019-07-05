@@ -4,7 +4,7 @@ use Vitruvius::Skel::Moo;
 
 use Vitruvius::Types qw< ArrayRef HasMethods VtvSourceFile >;
 
-use Vitruvius::Core::SourceFile;
+use Vitruvius::Container;
 use Vitruvius::Util qw< parallelize >;
 
 =head1 NAME
@@ -61,7 +61,7 @@ sub _build_files {
         message    => "Reading " . scalar(@$filenames) . " files",
         input      => $filenames,
         single_sub => sub {
-            $files = [ map { Vitruvius::Core::SourceFile->new( base_dir => $base_dir, file => $_ ) } @$filenames ];
+            $files = [ map { construct( 'source_file', base_dir => $base_dir, file => $_ ) } @$filenames ];
         },
         child_sub => sub {
             my $filenames = shift;
@@ -69,10 +69,7 @@ sub _build_files {
             my $job_files = [];
 
             for my $filename (@$filenames) {
-                my $file = Vitruvius::Core::SourceFile->new(
-                    base_dir => $base_dir,
-                    file     => $filename,
-                );
+                my $file = construct( 'source_file', base_dir => $base_dir, file => $filename );
                 $file->tree->nodes;    # force all parsing and building to be done in parallel
                 push @$job_files, $file;
             }
