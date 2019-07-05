@@ -194,7 +194,7 @@ sub _build_config {
     # but only implements it for top-level commands?)
     s/^(help|usage)$/--$1/ for @ARGV;
 
-    return resolve('config');
+    return construct('config');
 }
 
 =head2 service_path
@@ -249,7 +249,7 @@ sub _build_service {
     my $service_path = $self->service_path
       or return;
 
-    return resolve($service_path);
+    return construct($service_path);
 }
 
 =head1 METHODS

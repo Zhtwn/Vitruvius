@@ -5,7 +5,7 @@ use Vitruvius::Skel;
 use parent 'Exporter';
 
 our @EXPORT = qw<
-    resolve
+    construct
 >;
 
 use Bread::Board;
@@ -34,7 +34,7 @@ my $app = container app => as {
     );
 };
 
-sub resolve {
+sub construct {
     my ( $service, %args ) = @_;
     return $app->resolve( service => $service, parameters => \%args );
 }
