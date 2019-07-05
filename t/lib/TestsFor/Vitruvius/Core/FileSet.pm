@@ -23,13 +23,13 @@ sub single_job : Test {
         filenames => \@files,
     );
 
-    my $fileset;
+    my $file_set;
 
-    ok( lives { $fileset = $CLASS->new( config => $config ) }, '->new should succeed', $@ );
+    ok( lives { $file_set = $CLASS->new( config => $config ) }, '->new should succeed', $@ );
 
-    isa_ok( $fileset, [$CLASS], '->new should return correct class' );
+    isa_ok( $file_set, [$CLASS], '->new should return correct class' );
 
-    ok( lives { $fileset->files }, '->files should succeed' );
+    ok( lives { $file_set->files }, '->files should succeed' );
 }
 
 sub multiple_jobs : Test {
@@ -47,13 +47,13 @@ sub multiple_jobs : Test {
         filenames => \@files,
     );
 
-    my $fileset;
+    my $file_set;
 
-    ok( lives { $fileset = $CLASS->new( config => $config ) }, '->new should succeed', $@ );
+    ok( lives { $file_set = $CLASS->new( config => $config ) }, '->new should succeed', $@ );
 
-    isa_ok( $fileset, [$CLASS], '->new should return correct class' );
+    isa_ok( $file_set, [$CLASS], '->new should return correct class' );
 
-    ok( lives { $fileset->files }, '->files should succeed' );
+    ok( lives { $file_set->files }, '->files should succeed' );
 }
 
 1;

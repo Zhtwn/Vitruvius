@@ -12,10 +12,10 @@ Vitruvius::Core::NodeSet - collection of files to be processed
 
 =head1 SYNOPSIS
 
-    my $nodeset = Vitruvius::Core::NodeSet->new( config => $config, fileset => $fileset );
+    my $node_set = Vitruvius::Core::NodeSet->new( config => $config, file_set => $file_set );
 
     # get all nodes from all files
-    my $nodes = $nodeset->nodes;
+    my $nodes = $node_set->nodes;
 
 =head1 DESCRIPTION
 
@@ -35,13 +35,13 @@ has config => (
     required => 1,
 );
 
-=head2 fileset
+=head2 file_set
 
 L<Vitruvius::Core::FileSet> to extract nodes from
 
 =cut
 
-has fileset => (
+has file_set => (
     is       => 'ro',
     isa      => VtvFileSet,
     required => 1,
@@ -72,7 +72,7 @@ sub _build_nodes {
     my %nodes;
     my $cnt = 0;
 
-    for my $file ( $self->fileset->files->@* ) {
+    for my $file ( $self->file_set->files->@* ) {
         for my $node ( $file->tree->nodes->@* ) {
             next if $node->ppi_size < $min_ppi_size;
             push $nodes{ $node->type }->@*, $node;

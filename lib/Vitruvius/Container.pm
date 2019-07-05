@@ -20,17 +20,17 @@ my $app = container app => as {
             return Vitruvius::App->new_with_command;
         },
     );
-    service fileset => (
+    service file_set => (
         class        => 'Vitruvius::Core::FileSet',
         dependencies => ['config'],
     );
-    service nodeset => (
+    service node_set => (
         class        => 'Vitruvius::Core::NodeSet',
-        dependencies => [ 'config', 'fileset' ],
+        dependencies => [ 'config', 'file_set' ],
     );
     service similarity => (
         class        => 'Vitruvius::Analysis::Similarity',
-        dependencies => [ 'config', 'nodeset' ],
+        dependencies => [ 'config', 'node_set' ],
     );
 };
 

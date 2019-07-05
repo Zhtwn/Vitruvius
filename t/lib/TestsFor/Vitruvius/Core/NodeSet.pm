@@ -25,15 +25,15 @@ sub single_job : Test {
         filenames => \@files,
     );
 
-    my $fileset = Vitruvius::Core::FileSet->new( config => $config );
+    my $file_set = Vitruvius::Core::FileSet->new( config => $config );
 
-    my $nodeset;
+    my $node_set;
 
-    ok( lives { $nodeset = $CLASS->new( config => $config, fileset => $fileset ) }, '->new should succeed', $@ );
+    ok( lives { $node_set = $CLASS->new( config => $config, file_set => $file_set ) }, '->new should succeed', $@ );
 
-    isa_ok( $nodeset, [$CLASS], '->new should return correct class' );
+    isa_ok( $node_set, [$CLASS], '->new should return correct class' );
 
-    ok( lives { $nodeset->nodes }, '->nodes should succeed', $@ . '' );
+    ok( lives { $node_set->nodes }, '->nodes should succeed', $@ . '' );
 }
 
 sub multiple_jobs : Test {
@@ -51,15 +51,15 @@ sub multiple_jobs : Test {
         filenames => \@files,
     );
 
-    my $fileset = Vitruvius::Core::FileSet->new( config => $config );
+    my $file_set = Vitruvius::Core::FileSet->new( config => $config );
 
-    my $nodeset;
+    my $node_set;
 
-    ok( lives { $nodeset = $CLASS->new( config => $config, fileset => $fileset ) }, '->new should succeed', $@ );
+    ok( lives { $node_set = $CLASS->new( config => $config, file_set => $file_set ) }, '->new should succeed', $@ );
 
-    isa_ok( $nodeset, [$CLASS], '->new should return correct class' );
+    isa_ok( $node_set, [$CLASS], '->new should return correct class' );
 
-    ok( lives { $nodeset->nodes }, '->nodes should succeed', $@ . '' );
+    ok( lives { $node_set->nodes }, '->nodes should succeed', $@ . '' );
 }
 
 1;

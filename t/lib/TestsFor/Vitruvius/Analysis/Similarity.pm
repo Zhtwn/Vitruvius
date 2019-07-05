@@ -25,13 +25,13 @@ sub single_job : Test {
         filenames => \@files,
     );
 
-    my $fileset = Vitruvius::Core::FileSet->new( config => $config );
+    my $file_set = Vitruvius::Core::FileSet->new( config => $config );
 
-    my $nodeset = Vitruvius::Core::NodeSet->new( config => $config, fileset => $fileset );
+    my $node_set = Vitruvius::Core::NodeSet->new( config => $config, file_set => $file_set );
 
     my $similarity;
 
-    ok( lives { $similarity = $CLASS->new( config => $config, nodeset => $nodeset ) }, '->new should succeed', $@ );
+    ok( lives { $similarity = $CLASS->new( config => $config, node_set => $node_set ) }, '->new should succeed', $@ );
 
     isa_ok( $similarity, [$CLASS], '->new should return correct class' );
 
@@ -57,13 +57,13 @@ sub multiple_jobs : Test {
         filenames => \@files,
     );
 
-    my $fileset = Vitruvius::Core::FileSet->new( config => $config );
+    my $file_set = Vitruvius::Core::FileSet->new( config => $config );
 
-    my $nodeset = Vitruvius::Core::NodeSet->new( config => $config, fileset => $fileset );
+    my $node_set = Vitruvius::Core::NodeSet->new( config => $config, file_set => $file_set );
 
     my $similarity;
 
-    ok( lives { $similarity = $CLASS->new( config => $config, nodeset => $nodeset ) }, '->new should succeed', $@ );
+    ok( lives { $similarity = $CLASS->new( config => $config, node_set => $node_set ) }, '->new should succeed', $@ );
 
     isa_ok( $similarity, [$CLASS], '->new should return correct class' );
 

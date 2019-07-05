@@ -31,7 +31,7 @@ Vitruvius::Analysis::Similarity - find code similarity
     # in code
     use Vitruvius::Analysis::Similarity;
 
-    my $similarity = Vitruvius::Analysis::Similarity( config => $config, nodeset => $nodeset );
+    my $similarity = Vitruvius::Analysis::Similarity( config => $config, node_set => $node_set );
 
     # process Core::Group instances with similarity
     for my $group ( $similarity->groups->@* ) {
@@ -182,7 +182,7 @@ has config => (
     required => 1,
 );
 
-=head2 nodeset
+=head2 node_set
 
 Vitruvius::Core::NodeSet with all nodes to be analyzed
 
@@ -190,7 +190,7 @@ Typically injected by L<Vitruvius::Container>
 
 =cut
 
-has nodeset => (
+has node_set => (
     is       => 'ro',
     isa      => VtvNodeSet,
     required => 1,
@@ -330,7 +330,7 @@ Build pairs of nodes
 sub _node_pairs {
     my $self = shift;
 
-    my $all_nodes = $self->nodeset->nodes;
+    my $all_nodes = $self->node_set->nodes;
 
     my @node_pairs;
     for my $type ( keys %$all_nodes ) {
